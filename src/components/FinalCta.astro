@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { IMAGES, CONTACT_EMAIL } from '../data/site';
 ---
 
@@ -12,7 +13,7 @@ import { IMAGES, CONTACT_EMAIL } from '../data/site';
         <a href={`mailto:${CONTACT_EMAIL}`} class="final__mail">{CONTACT_EMAIL}</a>
       </div>
     </div>
-    <img src={IMAGES.surprised} alt="Mo’" class="final__img" loading="lazy" />
+    <Image src={IMAGES.surprised} alt="Mo’" class="final__img" widths={[340, 680]} sizes="(min-width: 420px) 340px, 100vw" />
   </div>
 </section>
 
@@ -35,5 +36,5 @@ import { IMAGES, CONTACT_EMAIL } from '../data/site';
   .final__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
   .final__mail { color: #fff; font-weight: 700; font-size: 16px; padding: 16px 8px; }
   .final__mail:hover { color: var(--ink); }
-  .final__img { width: 100%; max-width: 340px; justify-self: center; display: block; }
+  .final__card :global(.final__img) { width: 100%; max-width: 340px; justify-self: center; display: block; }
 </style>

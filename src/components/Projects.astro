@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { IMAGES } from '../data/site';
 // ⚠ Captures Lucas Invest Immo et Atelier Brume à fournir (placeholders rayés en attendant).
 ---
@@ -11,7 +12,7 @@ import { IMAGES } from '../data/site';
     </div>
     <div class="projects__row">
       <a href="https://tkllobster.com" class="project project--main" target="_blank" rel="noopener">
-        <img src={IMAGES.tkl} alt="Site TKL Miami" class="project__shot" loading="lazy" />
+        <Image src={IMAGES.tkl} alt="Site TKL Miami" class="project__shot" widths={[700, 1395]} sizes="(min-width: 1240px) 790px, 100vw" />
         <div class="project__foot">
           <span class="project__name" style="font-size:22px">TKL Miami</span>
           <span class="project__link">Voir le site ↗</span>
@@ -55,7 +56,7 @@ import { IMAGES } from '../data/site';
     transition: transform .12s, box-shadow .12s;
   }
   .project--main:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); color: var(--ink); }
-  .project__shot { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-bottom: var(--border); }
+  .project :global(.project__shot) { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-bottom: var(--border); }
   .project__foot { padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .project--main .project__foot { padding: 18px 22px; }
   .project__name { font-family: var(--font-display); font-weight: 800; font-size: 19px; }

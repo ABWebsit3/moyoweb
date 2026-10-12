@@ -1,10 +1,11 @@
 ---
+import { Image } from 'astro:assets';
 import { IMAGES, nav } from '../data/site';
 ---
 
 <header class="header">
   <div class="container header__inner">
-    <a href="/" class="header__logo"><img src={IMAGES.logo} alt="Moyo" height="26" /></a>
+    <a href="/" class="header__logo"><Image src={IMAGES.logo} alt="Moyo" width={180} loading="eager" /></a>
     <nav class="header__nav" aria-label="Navigation principale">
       {nav.map((item) => <a href={item.href}>{item.label}</a>)}
     </nav>
@@ -30,7 +31,7 @@ import { IMAGES, nav } from '../data/site';
     gap: 24px;
     flex-wrap: wrap;
   }
-  .header__logo img { height: 26px; width: auto; display: block; }
+  .header__logo :global(img) { height: 26px; width: auto; display: block; }
   .header__nav {
     display: flex;
     gap: 22px;

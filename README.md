@@ -20,14 +20,9 @@ npx astro check  # vérification des types
 - `src/scripts/devis.ts` : logique du devis en 4 étapes (forfait → options → coordonnées → ticket).
 - `src/styles/global.css` : tokens de design (couleurs, typo, ombres, boutons).
 
-## Images à ajouter
+## Images
 
-Placer ces fichiers dans `public/images/` (repris du site actuel) :
-
-- `moyo_logo.png`
-- `moyo_transat.png`
-- `moyo_surprised.png`
-- `tkllobster.webp`
+Les images sont dans `src/assets/` et passent par `<Image>` (`astro:assets`) : au build, Astro les convertit en WebP et génère les tailles utiles. Elles sont déclarées dans `IMAGES` (`src/data/site.ts`). `moyo_eating.png` est disponible mais pas encore utilisée.
 
 Placeholders à remplacer : captures Lucas Invest Immo et Atelier Brume (`Projects.astro`), logos clients (`ClientLogos.astro`).
 

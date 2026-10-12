@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { IMAGES, compare } from '../data/site';
 ---
 
@@ -10,7 +11,7 @@ import { IMAGES, compare } from '../data/site';
         <p class="concept__lead">Pourquoi payer 1 500 € d’un coup pour un site… quand on peut le payer tous les mois, tranquille ?</p>
         <p class="concept__sub">Et surtout… zéro facture massive qui fait mal au portefeuille.</p>
       </div>
-      <img src={IMAGES.surprised} alt="Mo’ surpris" class="concept__img" loading="lazy" />
+      <Image src={IMAGES.surprised} alt="Mo’ surpris" class="concept__img" widths={[440, 880]} sizes="(min-width: 520px) 440px, 100vw" />
     </div>
 
     <div class="compare">
@@ -52,7 +53,7 @@ import { IMAGES, compare } from '../data/site';
     text-wrap: pretty;
   }
   .concept__sub { font-size: 17px; line-height: 1.5; margin: 0; max-width: 520px; }
-  .concept__img { width: 100%; max-width: 440px; justify-self: center; display: block; }
+  .concept__top :global(.concept__img) { width: 100%; max-width: 440px; justify-self: center; display: block; }
 
   .compare {
     background: var(--bg);

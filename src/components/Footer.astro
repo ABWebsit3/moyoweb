@@ -1,11 +1,12 @@
 ---
+import { Image } from 'astro:assets';
 import { IMAGES } from '../data/site';
 // TODO : brancher les pages légales (mentions légales, CGV, confidentialité).
 ---
 
 <footer class="footer">
   <div class="container footer__inner">
-    <img src={IMAGES.logo} alt="Moyo" height="22" class="footer__logo" />
+    <Image src={IMAGES.logo} alt="Moyo" width={150} class="footer__logo" />
     <nav class="footer__links" aria-label="Liens légaux">
       <a href="#">Mentions légales</a>
       <a href="#">CGV</a>
@@ -28,7 +29,7 @@ import { IMAGES } from '../data/site';
     font-size: 14px;
     color: var(--text-2);
   }
-  .footer__logo { height: 22px; width: auto; }
+  .footer__inner :global(.footer__logo) { height: 22px; width: auto; }
   .footer__links { display: flex; gap: 20px; flex-wrap: wrap; }
   .footer__links a { color: var(--text-2); }
 </style>

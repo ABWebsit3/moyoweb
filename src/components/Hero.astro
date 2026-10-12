@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { IMAGES } from '../data/site';
 
 const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours', 'Dès 44,99 €/mois'];
@@ -25,7 +26,7 @@ const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours', 'Dès 44,9
   <div class="hero__visual">
     <div class="hero__blob" aria-hidden="true"></div>
     <div class="hero__dot" aria-hidden="true"></div>
-    <img src={IMAGES.transat} alt="Mo’ sur son petit transat" class="hero__img" />
+    <Image src={IMAGES.transat} alt="Mo’ sur son petit transat" class="hero__img" loading="eager" fetchpriority="high" />
     <div class="hero__quote">
       <span class="display">“C’est le Netflix du site internet.”</span>
       <span class="hero__rating">★★★★★ 4,9/5 · 127 avis</span>
@@ -107,7 +108,7 @@ const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours', 'Dès 44,9
     border: var(--border);
     border-radius: 50%;
   }
-  .hero__img {
+  .hero__visual :global(.hero__img) {
     position: absolute;
     inset: 4% 2% 6% 6%;
     width: 92%;

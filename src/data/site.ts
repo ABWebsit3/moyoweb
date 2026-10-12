@@ -1,12 +1,13 @@
 // Contenus de la page d'accueil (repris de la maquette « Moyo Landing »).
 // ⚠ Avis, note 4,9/5, « 150+ sites », logos clients : données fictives à remplacer.
 
-export const IMAGES = {
-  logo: '/images/moyo_logo.png',
-  transat: '/images/moyo_transat.png',
-  surprised: '/images/moyo_surprised.png',
-  tkl: '/images/tkllobster.webp',
-};
+import logo from '../assets/moyo_logo.png';
+import transat from '../assets/moyo_transat.png';
+import surprised from '../assets/moyo_surprised.png';
+import tkl from '../assets/tkllobster.webp';
+
+// Images optimisées au build via <Image> (astro:assets).
+export const IMAGES = { logo, transat, surprised, tkl };
 
 export const CONTACT_EMAIL = 'hello@moyoweb.fr';
 
