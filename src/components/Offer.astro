@@ -1,0 +1,127 @@
+---
+// Texte client : à conserver verbatim.
+const included = [
+  ['Ton site sur mesure', ', selon l’offre choisie.'],
+  ['Hébergement inclus', ' dans ton abonnement.'],
+  ['Maintenance technique complète', ', avec mises à jour, sauvegardes et contrôles de sécurité courants.'],
+  ['60 minutes de petites modifications par mois', ' pour garder tes contenus à jour.'],
+  ['Ton nom de domaine à ton nom', ', avec gestion technique par Moyo.'],
+];
+
+const afterTerm = [
+  { n: 1, bg: '#7EE08F', title: 'Tu continues avec Moyo', html: 'grâce à notre formule Gardiennage à <strong>25,99 €/mois</strong>, incluant l’hébergement, la maintenance prévue au contrat et 45 minutes d’assistance par mois.' },
+  { n: 2, bg: '#F49B2A', title: 'Tu récupères ton site', html: 'nous proposons une prestation de transfert à <strong>490 €</strong>, à la fin des 24 mois ou pendant la formule Gardiennage.' },
+  { n: 3, bg: '#EFE6FF', title: 'Tu arrêtes le service', html: 'ton site est désactivé et les données sont traitées selon les modalités et délais prévus au contrat.' },
+];
+---
+
+<section class="container offer">
+  <div class="offer__card">
+    <div class="offer__intro">
+      <h2 class="h2 h2--sm">Un site pro, <span class="hl hl--green">sans le prix d’un site pro</span></h2>
+      <p class="offer__lead">Avec Moyo, tu loues un site internet professionnel conçu pour ton activité. On s’occupe de la technique, tu te concentres sur ton métier.</p>
+    </div>
+    <div class="offer__list">
+      <strong style="font-size:17px">Tout est pensé pour te simplifier la vie :</strong>
+      <ul>
+        {included.map(([b, rest]) => (
+          <li><span class="check-dot offer__dot" aria-hidden="true">✓</span><span><strong>{b}</strong>{rest}</span></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <div class="offer__term">
+    <div class="section-head" style="gap:16px">
+      <h3 class="offer__h3">Une location de 24 mois, puis tu choisis</h3>
+      <p class="offer__term-intro">La location comprend un engagement initial de 24 mois. À la fin de cette période, trois possibilités s’offrent à toi :</p>
+    </div>
+    <div class="offer__choices">
+      {afterTerm.map((c) => (
+        <div class="card offer__choice" style={`background:${c.bg}`}>
+          <span class="offer__num">{c.n}</span>
+          <h4 class="offer__choice-title">{c.title}</h4>
+          <p class="offer__choice-text" set:html={c.html} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="offer__foot">
+    <div class="offer__nosurprise">
+      <h3 class="offer__choice-title">Pas de mauvaise surprise</h3>
+      <p>Les modifications importantes, nouvelles pages, refontes et fonctionnalités supplémentaires sont proposées sur devis avant intervention.</p>
+      <p>Les minutes non utilisées ne sont pas reportées au mois suivant.</p>
+    </div>
+    <p class="offer__slogan">Moyo, le site qui travaille pour ton activité, sans te rajouter du boulot.</p>
+  </div>
+</section>
+
+<style>
+  .offer { padding-top: 0; padding-bottom: 96px; display: flex; flex-direction: column; gap: 28px; }
+  .offer__card {
+    background: #fff;
+    border: var(--border);
+    border-radius: 28px;
+    box-shadow: 8px 8px 0 var(--ink);
+    padding: clamp(24px, 4vw, 52px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 36px 48px;
+  }
+  .offer__intro { flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+  .offer__lead { margin: 0; font-size: 18px; line-height: 1.5; color: var(--text); text-wrap: pretty; }
+  .offer__list { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .offer__list ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .offer__list li { display: flex; gap: 12px; align-items: flex-start; font-size: 16.5px; line-height: 1.5; }
+  .offer__dot { width: 24px; height: 24px; font-size: 12px; font-weight: 800; margin-top: 1px; }
+  .offer__term { display: flex; flex-direction: column; gap: 18px; padding-top: 28px; }
+  .offer__h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(28px, 3.4vw, 42px);
+    line-height: 1.02;
+    letter-spacing: -.03em;
+    margin: 0;
+  }
+  .offer__term-intro { margin: 0; font-size: 16px; line-height: 1.5; color: var(--text); max-width: 460px; }
+  .offer__choices { display: flex; flex-wrap: wrap; gap: 18px; }
+  .offer__choice { flex: 1 1 260px; min-width: 0; padding: 24px; display: flex; flex-direction: column; gap: 12px; color: var(--ink); }
+  .offer__num {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: var(--border);
+    background: #fff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+  }
+  .offer__choice-title { font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: -.015em; margin: 0; }
+  .offer__choice-text { margin: 0; font-size: 15.5px; line-height: 1.5; }
+  .offer__foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 40px;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 2px dashed #cfc6db;
+    padding-top: 26px;
+    margin-top: 8px;
+  }
+  .offer__nosurprise { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+  .offer__nosurprise p { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--text); }
+  .offer__slogan {
+    flex: 1 1 340px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    color: var(--violet-dark);
+    text-wrap: balance;
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+import { tech, timeline } from '../data/site';
+---
+
+<section id="techno" class="container techno">
+  <div class="section-head">
+    <h2 class="h2 h2--sm techno__title">Comment est fait ton site ?</h2>
+    <p class="techno__intro">Des outils solides et modernes, pour un site rapide aujourd’hui et facile à faire évoluer demain.</p>
+  </div>
+  <div class="grid-auto" style="--min:260px">
+    {tech.map((t) => (
+      <div class="card techno__card" style={`background:${t.bg};color:${t.fg}`}>
+        <span class="mono techno__kicker">{t.kicker}</span>
+        <h3 class="techno__name">{t.title}</h3>
+        <p class="techno__text">{t.text}</p>
+      </div>
+    ))}
+  </div>
+  <ol class="timeline">
+    {timeline.map((tl) => (
+      <li class="timeline__step">
+        <span class="timeline__day">{tl.day}</span>
+        <span class="timeline__text">{tl.text}</span>
+      </li>
+    ))}
+  </ol>
+  <p class="techno__note">Délai de 3 à 5 jours sous réserve de recevoir tous les contenus nécessaires.</p>
+</section>
+
+<style>
+  .techno { padding-top: 0; padding-bottom: 96px; display: flex; flex-direction: column; gap: 36px; }
+  .techno__title { max-width: 720px; }
+  .techno__intro { margin: 0; font-size: 17px; line-height: 1.5; max-width: 420px; color: var(--text); }
+  .techno__card { padding: 26px; display: flex; flex-direction: column; gap: 12px; }
+  .techno__kicker { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .techno__name { font-family: var(--font-display); font-weight: 800; font-size: 26px; letter-spacing: -.02em; margin: 0; }
+  .techno__text { margin: 0; font-size: 16px; line-height: 1.5; }
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: var(--border);
+    border-radius: 22px;
+    background: #fff;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    overflow: hidden;
+  }
+  .timeline__step {
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-right: 2px dashed var(--rule);
+  }
+  .timeline__day { font-family: var(--font-display); font-weight: 800; font-size: 28px; color: var(--violet); letter-spacing: -.02em; }
+  .timeline__text { font-size: 15.5px; font-weight: 600; line-height: 1.4; }
+  .techno__note { margin: 0; font-size: 14px; color: var(--muted); }
+</style>

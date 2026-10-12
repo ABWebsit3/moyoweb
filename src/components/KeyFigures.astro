@@ -1,0 +1,41 @@
+---
+import { keyFigures } from '../data/site';
+---
+
+<section class="band figures">
+  <div class="figures__grid">
+    {keyFigures.map((f) => (
+      <div class="figures__cell">
+        <span class="figures__value">{f.value}</span>
+        <span class="figures__label">{f.label}</span>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .figures { background: var(--ink); }
+  .figures__grid {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 2px;
+    background: var(--ink);
+  }
+  .figures__cell {
+    background: var(--bg);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .figures__value {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 44px;
+    letter-spacing: -.03em;
+    color: var(--violet);
+  }
+  .figures__label { font-weight: 600; }
+</style>

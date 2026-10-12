@@ -1,0 +1,79 @@
+---
+import { IMAGES, compare } from '../data/site';
+---
+
+<section id="concept" class="band concept">
+  <div class="container concept__inner">
+    <div class="concept__top">
+      <div class="concept__text">
+        <h2 class="h2">Chez Moyo, on a eu une idée toute simple !</h2>
+        <p class="concept__lead">Pourquoi payer 1 500 € d’un coup pour un site… quand on peut le payer tous les mois, tranquille ?</p>
+        <p class="concept__sub">Et surtout… zéro facture massive qui fait mal au portefeuille.</p>
+      </div>
+      <img src={IMAGES.surprised} alt="Mo’ surpris" class="concept__img" loading="lazy" />
+    </div>
+
+    <div class="compare">
+      <div class="compare__table" role="table" aria-label="Comparatif agence classique et Moyo">
+        <div role="row" class="compare__row">
+          <div role="columnheader" class="compare__head"></div>
+          <div role="columnheader" class="compare__head compare__head--them">Agence classique</div>
+          <div role="columnheader" class="compare__head compare__head--us">Moyo</div>
+        </div>
+        {compare.map((row) => (
+          <div role="row" class="compare__row">
+            <div role="rowheader" class="compare__cell compare__label">{row.label}</div>
+            <div role="cell" class="compare__cell compare__them">{row.them}</div>
+            <div role="cell" class="compare__cell compare__us">✓ {row.us}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .concept { background: var(--violet); color: #fff; margin-top: 48px; }
+  .concept__inner { padding-top: 88px; padding-bottom: 88px; display: flex; flex-direction: column; gap: 48px; }
+  .concept__top {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 32px;
+    align-items: center;
+  }
+  .concept__text { display: flex; flex-direction: column; gap: 20px; }
+  .concept .h2 { line-height: .98; }
+  .concept__lead {
+    font-size: clamp(19px, 2vw, 24px);
+    line-height: 1.35;
+    font-weight: 600;
+    margin: 0;
+    max-width: 540px;
+    text-wrap: pretty;
+  }
+  .concept__sub { font-size: 17px; line-height: 1.5; margin: 0; max-width: 520px; }
+  .concept__img { width: 100%; max-width: 440px; justify-self: center; display: block; }
+
+  .compare {
+    background: var(--bg);
+    color: var(--ink);
+    border: var(--border);
+    border-radius: 24px;
+    box-shadow: 8px 8px 0 var(--ink);
+    overflow: hidden;
+  }
+  .compare__table { font-size: clamp(14px, 1.4vw, 17px); }
+  .compare__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .compare__head { padding: 20px 22px; font-weight: 700; border-bottom: var(--border); }
+  .compare__head--them, .compare__head--us { border-left: var(--border); }
+  .compare__head--them { color: var(--muted); }
+  .compare__head--us { font-family: var(--font-display); font-weight: 800; font-size: 20px; background: var(--green); }
+  .compare__cell { padding: 16px 22px; border-top: 1px solid var(--rule); }
+  .compare__row:nth-child(2) .compare__cell { border-top: none; }
+  .compare__label { font-weight: 600; }
+  .compare__them { border-left: var(--border); color: var(--muted); }
+  .compare__us { border-left: var(--border); border-top-color: #c5efcb; background: var(--green-light); font-weight: 700; }
+</style>

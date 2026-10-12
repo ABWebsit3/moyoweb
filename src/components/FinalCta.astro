@@ -1,0 +1,39 @@
+---
+import { IMAGES, CONTACT_EMAIL } from '../data/site';
+---
+
+<section id="contact" class="container final">
+  <div class="final__card">
+    <div class="final__text">
+      <h2 class="h2" style="font-size:clamp(36px,4.6vw,60px)">Ton site en ligne dans 5 jours ?</h2>
+      <p>2 minutes pour ton devis. Avec ou sans engagement, c’est toi qui choisis.</p>
+      <div class="final__ctas">
+        <a href="#devis" class="btn btn--green">Faire mon devis</a>
+        <a href={`mailto:${CONTACT_EMAIL}`} class="final__mail">{CONTACT_EMAIL}</a>
+      </div>
+    </div>
+    <img src={IMAGES.surprised} alt="Mo’" class="final__img" loading="lazy" />
+  </div>
+</section>
+
+<style>
+  .final { padding-top: 96px; padding-bottom: 96px; }
+  .final__card {
+    background: var(--violet);
+    color: #fff;
+    border: var(--border);
+    border-radius: 32px;
+    box-shadow: 10px 10px 0 var(--ink);
+    padding: clamp(28px, 5vw, 64px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 32px;
+    align-items: center;
+  }
+  .final__text { display: flex; flex-direction: column; gap: 20px; }
+  .final__text p { margin: 0; font-size: 18px; line-height: 1.5; max-width: 460px; }
+  .final__ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .final__mail { color: #fff; font-weight: 700; font-size: 16px; padding: 16px 8px; }
+  .final__mail:hover { color: var(--ink); }
+  .final__img { width: 100%; max-width: 340px; justify-self: center; display: block; }
+</style>

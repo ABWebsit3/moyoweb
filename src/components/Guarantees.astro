@@ -1,0 +1,37 @@
+---
+import { guarantees } from '../data/site';
+---
+
+<section class="guarantees">
+  <div class="container guarantees__inner">
+    <h2 class="h2" style="max-width:760px">Zéro risque, <span style="color:var(--green)">promis juré.</span></h2>
+    <div class="grid-auto" style="gap:18px">
+      {guarantees.map((g) => (
+        <div class="guarantee">
+          <span class="guarantee__icon" style={`background:${g.color}`} aria-hidden="true">{g.icon}</span>
+          <h3 class="guarantee__title">{g.title}</h3>
+          <p class="guarantee__text">{g.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .guarantees { background: var(--ink); color: var(--bg); }
+  .guarantees__inner { padding-top: 88px; padding-bottom: 88px; display: flex; flex-direction: column; gap: 40px; }
+  .guarantee { border: 2px solid var(--bg); border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .guarantee__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .guarantee__title { font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: -.015em; margin: 0; }
+  .guarantee__text { margin: 0; font-size: 15.5px; line-height: 1.5; color: #d8d2e2; }
+</style>

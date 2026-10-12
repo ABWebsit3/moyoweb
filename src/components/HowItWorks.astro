@@ -1,0 +1,37 @@
+---
+import { steps } from '../data/site';
+---
+
+<section class="container how">
+  <h2 class="h2"><span class="hl">Comment ça marche ?</span></h2>
+  <ol class="grid-auto how__list">
+    {steps.map((s) => (
+      <li class="card how__card">
+        <span class="how__num" style={`background:${s.color}`}>{s.n}</span>
+        <h3 class="how__title">{s.title}</h3>
+        <p class="how__text">{s.text}</p>
+      </li>
+    ))}
+  </ol>
+  <p class="how__note">“Tu envoies un message, on gère. La magie Moyo.”</p>
+</section>
+
+<style>
+  .how { padding-top: 96px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 44px; }
+  .how__list { list-style: none; margin: 0; padding: 0; }
+  .how__card { padding: 26px; display: flex; flex-direction: column; gap: 14px; min-height: 240px; }
+  .how__num {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    border: var(--border);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 22px;
+  }
+  .how__title { font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -.02em; margin: 0; }
+  .how__text { margin: 0; font-size: 16px; line-height: 1.5; color: var(--text); }
+  .how__note { margin: 0; font-size: 15px; color: var(--muted); }
+</style>

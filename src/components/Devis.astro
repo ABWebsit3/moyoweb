@@ -1,0 +1,325 @@
+---
+// Module de devis en 4 étapes : forfait → options → coordonnées → ticket de caisse.
+// Le rendu des étapes est fait côté client par src/scripts/devis.ts.
+// Envoi réel : définir PUBLIC_DEVIS_ENDPOINT (URL qui reçoit le devis en JSON, POST).
+const endpoint = import.meta.env.PUBLIC_DEVIS_ENDPOINT ?? '';
+---
+
+<section id="devis" class="container devis" data-devis data-endpoint={endpoint}>
+  <div class="devis__head">
+    <h2 class="h2"><span class="hl">Combien ça coûte ?</span></h2>
+    <p class="devis__intro">Compose ton site, on calcule ta mensualité en direct. Aucun paiement à cette étape.</p>
+  </div>
+
+  <div class="devis__stepper" data-stepper aria-label="Étapes du devis" role="group"></div>
+
+  <div class="devis__body">
+    <div class="devis__main" data-panel aria-live="polite">
+      <noscript>
+        <p>Le calculateur de devis nécessite JavaScript. Écris-nous à <a href="mailto:hello@moyoweb.fr">hello@moyoweb.fr</a> pour recevoir ton devis.</p>
+      </noscript>
+    </div>
+    <aside class="devis__ticket-col" data-ticket hidden></aside>
+  </div>
+</section>
+
+<script>
+  import { initDevis } from '../scripts/devis';
+  const root = document.querySelector<HTMLElement>('[data-devis]');
+  if (root) initDevis(root);
+</script>
+
+<style is:global>
+  .devis { padding-top: 96px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 36px; }
+  .devis__head { display: flex; flex-direction: column; gap: 14px; }
+  .devis__intro { margin: 0; font-size: 18px; line-height: 1.5; max-width: 620px; color: var(--text); }
+
+  /* Stepper */
+  .devis__stepper { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dv-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px 10px 10px;
+    border-radius: 999px;
+    border: var(--border);
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    background: #fff;
+    color: var(--ink);
+  }
+  .dv-step[disabled] { opacity: .45; cursor: default; }
+  .dv-step.is-current { background: var(--ink); color: #fff; }
+  .dv-step.is-frozen { cursor: default; }
+  .dv-step__dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    background: #fff;
+    color: var(--ink);
+    border: var(--border);
+  }
+  .dv-step.is-current .dv-step__dot { background: var(--violet); color: #fff; }
+  .dv-step.is-done .dv-step__dot { background: var(--green); }
+
+  .devis__body { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+  .devis__main { flex: 2 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+  .dv-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px 16px; flex-wrap: wrap; }
+
+  /* Étape 1 */
+  .dv-toggle-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+  .dv-toggle {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: #fff;
+    border: var(--border);
+    border-radius: 16px;
+    flex-wrap: wrap;
+  }
+  .dv-toggle button {
+    border: none;
+    border-radius: 11px;
+    padding: 11px 16px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: transparent;
+    color: var(--ink);
+  }
+  .dv-toggle button[aria-pressed='true'] { background: var(--ink); color: #fff; }
+  .dv-toggle__badge {
+    background: var(--green);
+    color: var(--ink);
+    border: var(--border);
+    border-radius: 999px;
+    padding: 1px 8px;
+    font-size: 12px;
+  }
+  .dv-note { margin: 0; font-size: 14.5px; line-height: 1.45; color: var(--text); max-width: 420px; }
+  .dv-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 18px; }
+  .dv-plan {
+    text-align: left;
+    cursor: pointer;
+    position: relative;
+    border: var(--border);
+    border-radius: 22px;
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform .15s, box-shadow .15s;
+    font-size: 16px;
+  }
+  .dv-plan.is-selected { border-width: 3px; box-shadow: 8px 8px 0 var(--ink); transform: translate(-3px, -3px); }
+  .dv-plan__top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .dv-box {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    border: var(--border);
+    background: #fff;
+    color: var(--ink);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+  }
+  .dv-pill { background: var(--ink); color: #fff; border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 700; }
+  .dv-plan__name { font-family: var(--font-display); font-weight: 800; font-size: 26px; letter-spacing: -.02em; }
+  .dv-plan__tag { font-weight: 600; font-size: 15px; }
+  .dv-plan__from { font-size: 13px; font-weight: 600; }
+  .dv-plan__price { display: flex; align-items: baseline; gap: 2px; }
+  .dv-plan__int { font-family: var(--font-display); font-weight: 800; font-size: 58px; line-height: 1; letter-spacing: -.04em; }
+  .dv-plan__dec { font-weight: 700; font-size: 16px; }
+  .dv-plan__setup { font-size: 13px; font-weight: 700; min-height: 18px; }
+  .dv-plan__desc { margin: 0; font-size: 14.5px; line-height: 1.45; }
+  .dv-plan__feats {
+    list-style: none;
+    margin: 0;
+    padding: 14px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-size: 14.5px;
+    font-weight: 500;
+    border-top: 2px dashed var(--rule-c);
+  }
+  .dv-plan__feats li { display: flex; gap: 8px; }
+  .dv-plan__feats li::before { content: '✓'; font-weight: 800; }
+  .dv-help { font-weight: 600; font-size: 15px; color: var(--ink); }
+
+  /* Étape 2 */
+  .dv-text { margin: 0; font-size: 16px; color: var(--text); }
+  .dv-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 14px; }
+  .dv-opt {
+    background: #fff;
+    color: var(--ink);
+    border: var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 2px 2px 0 var(--ink);
+    transition: transform .12s, box-shadow .12s;
+    cursor: pointer;
+  }
+  .dv-opt.is-on { box-shadow: 5px 5px 0 var(--ink); transform: translate(-2px, -2px); }
+  .dv-opt.is-included, .dv-opt.is-qty { cursor: default; }
+  .dv-opt:focus-visible, .dv-plan:focus-visible, .dv-step:focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; }
+  .dv-opt__top { display: flex; align-items: flex-start; gap: 12px; }
+  .dv-opt .dv-box { width: 26px; height: 26px; border-radius: 8px; font-size: 14px; }
+  .dv-opt__name { font-family: var(--font-display); font-weight: 800; font-size: 18px; line-height: 1.15; letter-spacing: -.01em; }
+  .dv-opt__desc { margin: 0; font-size: 14px; line-height: 1.45; }
+  .dv-opt__foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; }
+  .dv-opt__price { font-weight: 700; font-size: 15px; }
+  .dv-opt .dv-pill { padding: 3px 9px; }
+  .dv-qty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    color: var(--ink);
+    border: var(--border);
+    border-radius: 12px;
+    padding: 6px;
+    align-self: flex-start;
+  }
+  .dv-qty button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: var(--border);
+    background: var(--bg);
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .dv-qty__label { font-family: var(--font-mono); font-weight: 700; min-width: 84px; text-align: center; font-size: 14px; }
+
+  /* Étape 3 */
+  .dv-form {
+    background: #fff;
+    border: var(--border);
+    border-radius: 22px;
+    padding: clamp(20px, 3vw, 32px);
+    box-shadow: 6px 6px 0 var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .dv-form__head { display: flex; flex-direction: column; gap: 6px; }
+  .dv-form__head p { margin: 0; font-size: 15px; color: var(--text-2); }
+  .dv-h3 { font-family: var(--font-display); font-weight: 800; font-size: 28px; letter-spacing: -.02em; margin: 0; }
+  .dv-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; }
+  .dv-field { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700; }
+  .dv-field input {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 14px;
+    border: var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    outline: none;
+    color: var(--ink);
+  }
+  .dv-field input:focus { background: #fff; box-shadow: 0 0 0 4px var(--lilac-2); }
+  .dv-consent { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; line-height: 1.45; cursor: pointer; }
+  .dv-consent input { width: 22px; height: 22px; accent-color: var(--violet); flex: none; margin: 0; }
+  .dv-consent em { color: var(--muted); }
+  .dv-submit {
+    background: var(--violet);
+    color: #fff;
+    border: var(--border);
+    border-radius: 14px;
+    padding: 15px 24px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+  .dv-submit[disabled] { background: var(--disabled); cursor: not-allowed; box-shadow: none; }
+  .dv-error { margin: 0; font-size: 14.5px; font-weight: 600; color: #b42318; }
+
+  /* Étape 4 */
+  .dv-sent {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 8px;
+    background: var(--green);
+    border: var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+  .dv-result-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(30px, 3.6vw, 44px);
+    line-height: 1.02;
+    letter-spacing: -.03em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .dv-result-text { display: flex; flex-direction: column; gap: 12px; font-size: 16.5px; line-height: 1.55; color: var(--text); max-width: 620px; }
+  .dv-result-text p { margin: 0; }
+  .dv-restart { background: transparent; border: none; font-weight: 700; font-size: 15px; text-decoration: underline; cursor: pointer; color: var(--ink); }
+  .dv-reassure { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; font-weight: 600; color: var(--text); }
+
+  /* Ticket de caisse */
+  .devis__ticket-col { flex: 1 1 320px; position: sticky; top: 96px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .devis__ticket-col[hidden] { display: none; }
+  .dv-ticket-shadow { filter: drop-shadow(6px 8px 0 rgba(23, 19, 31, .9)); }
+  .dv-ticket {
+    --scallop: radial-gradient(circle 7px at 50% 0, #0000 97%, #000) 50% 0 / 16px 51% repeat-x,
+      radial-gradient(circle 7px at 50% 100%, #0000 97%, #000) 50% 100% / 16px 51% repeat-x;
+    background: #fff;
+    padding: 34px 24px 36px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink);
+    -webkit-mask: var(--scallop);
+    mask: var(--scallop);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .dv-ticket__head { text-align: center; display: flex; flex-direction: column; gap: 2px; }
+  .dv-ticket__title { font-weight: 700; font-size: 24px; letter-spacing: .02em; }
+  .dv-ticket__rule { border-top: 2px dashed var(--ink); }
+  .dv-ticket__line { display: flex; justify-content: space-between; gap: 10px; }
+  .dv-ticket__line > span:last-child { white-space: nowrap; }
+  .dv-ticket__upper { text-transform: uppercase; }
+  .dv-ticket__muted { color: var(--logo-grey); }
+  .dv-ticket__total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 20px;
+    background: var(--ink);
+    color: #fff;
+    margin: 4px -10px;
+    padding: 8px 10px;
+  }
+  .dv-ticket__barcode {
+    height: 54px;
+    margin: 6px 10px 0;
+    background: repeating-linear-gradient(90deg, #17131f 0 2px, #fff 2px 4px, #17131f 4px 5px, #fff 5px 8px, #17131f 8px 11px, #fff 11px 12px, #17131f 12px 13px, #fff 13px 16px);
+  }
+  .dv-center { text-align: center; }
+  .dv-ticket a { color: var(--ink); }
+</style>

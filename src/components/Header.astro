@@ -1,0 +1,55 @@
+---
+import { IMAGES, nav } from '../data/site';
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="/" class="header__logo"><img src={IMAGES.logo} alt="Moyo" height="26" /></a>
+    <nav class="header__nav" aria-label="Navigation principale">
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+    <a href="#devis" class="header__cta">Faire mon devis →</a>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(255, 250, 242, .92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: var(--border);
+  }
+  .header__inner {
+    padding-top: 14px;
+    padding-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .header__logo img { height: 26px; width: auto; display: block; }
+  .header__nav {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-weight: 600;
+    font-size: 15px;
+    margin-left: auto;
+  }
+  .header__nav a { color: var(--ink); text-decoration: none; }
+  .header__nav a:hover { color: var(--violet-dark); }
+  .header__cta {
+    background: var(--ink);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 11px 18px;
+    border-radius: 999px;
+    transition: background .12s;
+  }
+  .header__cta:hover { background: var(--violet); color: #fff; }
+</style>

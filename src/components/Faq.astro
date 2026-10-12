@@ -1,0 +1,71 @@
+---
+import { faq } from '../data/site';
+---
+
+<section id="faq" class="band faq">
+  <div class="container faq__inner">
+    <div class="faq__intro">
+      <h2 class="h2">Les questions qu’on nous pose</h2>
+      <p>Une autre question ? Écris-nous, un humain te répond sous 24 h.</p>
+    </div>
+    <div class="faq__list" data-faq>
+      {faq.map((item, i) => (
+        <details class="faq__item" name="faq" open={i === 0}>
+          <summary class="faq__q">
+            {item.q}
+            <span class="faq__sign" aria-hidden="true"></span>
+          </summary>
+          <p class="faq__a">{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Un seul élément ouvert à la fois (repli pour les navigateurs sans <details name>).
+  const items = document.querySelectorAll<HTMLDetailsElement>('[data-faq] details');
+  items.forEach((d) =>
+    d.addEventListener('toggle', () => {
+      if (d.open) items.forEach((o) => { if (o !== d) o.open = false; });
+    }),
+  );
+</script>
+
+<style>
+  .faq { background: var(--lilac); }
+  .faq__inner { padding-top: 88px; padding-bottom: 88px; display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; }
+  .faq__intro { flex: 1 1 320px; display: flex; flex-direction: column; gap: 16px; }
+  .faq__intro p { margin: 0; font-size: 17px; line-height: 1.5; color: var(--text); }
+  .faq__list { flex: 2 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+  .faq__item { background: #fff; border: var(--border); border-radius: 18px; overflow: hidden; }
+  .faq__q {
+    list-style: none;
+    padding: 20px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: -.01em;
+  }
+  .faq__q::-webkit-details-marker { display: none; }
+  .faq__sign {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    background: #fff;
+  }
+  .faq__sign::before { content: '+'; }
+  .faq__item[open] .faq__sign { background: var(--violet); }
+  .faq__item[open] .faq__sign::before { content: '−'; }
+  .faq__a { margin: 0; padding: 0 22px 22px; font-size: 16px; line-height: 1.55; color: var(--text); }
+</style>
