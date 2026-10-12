@@ -13,6 +13,9 @@ export const IMAGES = { logo, transat, surprised, tkl, jd, lucas };
 
 export const CONTACT_EMAIL = 'hello@moyoweb.fr';
 
+// Prise de rendez-vous après un devis (simple lien : aucun script ni cookie Calendly sur le site).
+export const CALENDLY_URL = 'https://calendly.com/moyoweb/30min';
+
 // Clients réels. Jessica Da Veiga (jdeventandhomedesign.fr) est mise en avant : seul site encore en ligne.
 export const clients = ['Jessica Da Veiga', 'TKL Miami', 'Lucas Invest Immo'];
 

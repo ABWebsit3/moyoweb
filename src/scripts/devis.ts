@@ -1,5 +1,6 @@
 import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, type Option, type PlanId } from '../data/devis';
 import { computeQuote, seoQty as sharedSeoQty, type QuoteInput } from '../lib/quote';
+import { CALENDLY_URL } from '../data/site';
 
 type Step = 1 | 2 | 3 | 4;
 type FormKey = 'nom' | 'prenom' | 'societe' | 'email';
@@ -233,7 +234,7 @@ export function initDevis(root: HTMLElement) {
           <p>Donc, pas de panique : les montants et les services indiqués aujourd’hui ne sont pas gravés dans le marbre.</p>
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-          <a href="#contact" class="btn btn--violet">Prendre rendez-vous (15 min)</a>
+          <a href="${CALENDLY_URL}" class="btn btn--violet" target="_blank" rel="noopener">Prendre rendez-vous (30 min)</a>
           <button type="button" class="dv-restart" data-restart>Refaire un devis</button>
         </div>
         <div class="dv-reassure">
