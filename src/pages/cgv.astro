@@ -1,26 +1,26 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import Field from '../components/Field.astro';
-import { company } from '../data/legal';
+import { company, mediator } from '../data/legal';
 import { PLANS, SETUP_FEE } from '../data/devis';
 
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
-// Projet de CGV à faire relire par un professionnel du droit avant publication.
+// Projet de CGV à faire relire par un professionnel du droit avant de le considérer comme définitif.
 ---
 
 <LegalLayout title="Conditions générales de vente" description="Conditions générales de vente des offres de location de site internet Moyo.">
   <h2>1. Objet</h2>
   <p>
     Les présentes conditions générales de vente (CGV) régissent les prestations de location de site internet
-    proposées sous le nom {company.brand} par <Field v={company.name} label="nom ou raison sociale" /> (ci-après « Moyo »)
-    à ses clients
-    (ci-après « le Client »). Elles prévalent sur tout autre document, sauf accord écrit contraire.
+    proposées sous le nom {company.brand} par {company.name}, {company.owner} – EI, SIRET {company.siret}
+    (ci-après « Moyo »), à ses clients (ci-après « le Client »). Elles prévalent sur tout autre document, sauf accord
+    écrit contraire.
   </p>
 
   <h2>2. Clients concernés</h2>
   <p>
-    Les offres Moyo s’adressent aux professionnels (indépendants, entreprises, associations).
-    <Field label="préciser si les particuliers (consommateurs) peuvent souscrire : dans ce cas, droit de rétractation de 14 jours et médiateur de la consommation obligatoires" />
+    Les offres Moyo s’adressent aux professionnels (indépendants, entreprises, associations) comme aux particuliers.
+    Certaines clauses ne s’appliquent qu’aux consommateurs ou qu’aux professionnels : elles l’indiquent expressément.
   </p>
 
   <h2>3. Offres et tarifs</h2>
@@ -39,7 +39,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   </div>
   <p>
     Les offres sans engagement comportent en outre des frais de mise en service de {eur(SETUP_FEE)}, payables au
-    démarrage. Les options sont facturées selon le tarif indiqué dans le devis.
+    démarrage. Les options sont facturées selon le tarif indiqué dans le devis. Les prix sont exprimés en euros.
     {company.vatMention}.
   </p>
   <p>Le contenu de chaque forfait et des options est celui décrit sur le site et repris dans le devis accepté.</p>
@@ -47,33 +47,68 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   <h2>4. Commande</h2>
   <p>
     Le devis généré sur le site est indicatif. La commande devient ferme après validation d’un devis définitif et
-    signature du contrat par le Client.
+    acceptation du contrat par le Client.
   </p>
 
-  <h2>5. Durée et engagement</h2>
+  <h2>5. Droit de rétractation (consommateurs)</h2>
+  <p>
+    Le Client consommateur dispose d’un délai de 14 jours à compter de la conclusion du contrat pour se rétracter,
+    sans avoir à se justifier. Il notifie sa décision par une déclaration dénuée d’ambiguïté, par exemple par e-mail
+    à <a href={`mailto:${company.email}`}>{company.email}</a> ou par courrier à {company.address}, en utilisant s’il
+    le souhaite le formulaire ci-dessous.
+  </p>
+  <p>
+    Si le Client demande expressément que la création de son site commence avant la fin de ce délai et se rétracte
+    ensuite, il doit un montant proportionnel au service fourni jusqu’à la communication de sa rétractation, par
+    rapport au prix total de la prestation. Les sommes dues au Client lui sont remboursées au plus tard 14 jours
+    après réception de sa rétractation, par le même moyen de paiement.
+  </p>
+  <h3>Formulaire de rétractation</h3>
+  <p>
+    <em>(Compléter et renvoyer le présent formulaire uniquement si vous souhaitez vous rétracter du contrat.)</em><br />
+    À l’attention de {company.name}, {company.owner} – EI, {company.address}, {company.email} :<br />
+    Je vous notifie par la présente ma rétractation du contrat portant sur la prestation de services ci-dessous :<br />
+    Commandé le :<br />
+    Nom du consommateur :<br />
+    Adresse du consommateur :<br />
+    Signature du consommateur (uniquement en cas de notification du présent formulaire sur papier) :<br />
+    Date :
+  </p>
+
+  <h2>6. Durée, engagement et résiliation</h2>
   <h3>Avec engagement</h3>
   <p>
-    Le contrat est conclu pour une durée initiale de 24 mois à compter de la mise en ligne du site. À la fin de cette
-    période, le Client peut :
+    Le contrat est conclu pour une durée initiale de 24 mois à compter de la mise en ligne du site. En cas de
+    résiliation anticipée à l’initiative du Client, hors manquement de Moyo ou motif légitime, les mensualités
+    restant à courir jusqu’au terme des 24 mois restent dues.
   </p>
+  <p>À la fin de cette période, le Client peut :</p>
   <ul>
     <li>poursuivre avec la formule Gardiennage à 25,99 €/mois (hébergement, maintenance prévue au contrat et 45 minutes d’assistance par mois) ;</li>
-    <li>récupérer son site grâce à une prestation de transfert à 490 €, à la fin des 24 mois ou pendant la formule Gardiennage ;</li>
+    <li>récupérer son site grâce à une prestation de transfert à 490 €, à la fin des 24 mois ou pendant la formule Gardiennage (voir article 11) ;</li>
     <li>arrêter le service : le site est alors désactivé et les données sont traitées selon les modalités et délais prévus au contrat.</li>
   </ul>
   <h3>Sans engagement</h3>
   <p>
-    Le contrat est conclu pour une durée indéterminée et peut être résilié par le Client
-    <Field label="préavis et modalités de résiliation" />.
+    Le contrat est conclu pour une durée indéterminée. Le Client peut le résilier à tout moment, sans frais ni
+    justification, moyennant un préavis d’un mois : la résiliation prend effet à la fin de la période mensuelle en
+    cours à l’expiration de ce préavis. Les frais de mise en service restent acquis à Moyo, sauf exercice du droit
+    de rétractation. À la date d’effet, le site est désactivé, sauf si le Client a demandé son transfert (voir
+    article 11).
+  </p>
+  <h3>Comment résilier</h3>
+  <p>
+    La résiliation est notifiée par e-mail à <a href={`mailto:${company.email}`}>{company.email}</a> ou par
+    courrier à {company.address}. Moyo en accuse réception par e-mail en indiquant la date d’effet.
   </p>
 
-  <h2>6. Délai de mise en ligne</h2>
+  <h2>7. Délai de mise en ligne</h2>
   <p>
     Le délai cible de mise en ligne est de 3 à 5 jours ouvrés à compter de la réception de l’ensemble des contenus
     nécessaires (textes, images, logo…). Un retard dans la transmission des contenus décale d’autant ce délai.
   </p>
 
-  <h2>7. Prestations incluses</h2>
+  <h2>8. Prestations incluses</h2>
   <ul>
     <li>Création et mise en service du site selon l’offre souscrite ;</li>
     <li>hébergement pendant toute la durée du service ;</li>
@@ -87,44 +122,78 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
     devis préalable.
   </p>
 
-  <h2>8. Obligations du Client</h2>
+  <h2>9. Obligations du Client</h2>
   <p>
     Le Client fournit les contenus nécessaires à la création du site et garantit en détenir les droits. Il reste
     responsable des contenus publiés sur son site.
   </p>
 
-  <h2>9. Paiement</h2>
+  <h2>10. Paiement</h2>
   <p>
-    Les mensualités sont payables d’avance, par prélèvement SEPA ou carte bancaire.
-    <Field label="date de prélèvement / échéance" />
+    Les mensualités sont payables d’avance, par prélèvement SEPA ou carte bancaire. Elles sont prélevées chaque mois
+    à la date anniversaire du premier paiement.
   </p>
   <p>
-    Tout retard de paiement entraîne de plein droit des pénalités de retard au taux de
-    <Field label="taux des pénalités (au minimum 3 fois le taux d’intérêt légal)" />, ainsi qu’une indemnité
-    forfaitaire pour frais de recouvrement de 40 € (articles L441-10 et D441-5 du Code de commerce). En cas
-    d’impayé, Moyo peut suspendre le service après mise en demeure restée sans effet.
+    <strong>Client professionnel :</strong> tout retard de paiement entraîne de plein droit des pénalités de retard
+    au taux de trois fois le taux d’intérêt légal, ainsi qu’une indemnité forfaitaire pour frais de recouvrement de
+    40 € (articles L441-10 et D441-5 du Code de commerce).
+  </p>
+  <p>
+    <strong>Client consommateur :</strong> les sommes impayées portent intérêt au taux légal à compter de la mise en
+    demeure (article 1231-6 du Code civil).
+  </p>
+  <p>En cas d’impayé, Moyo peut suspendre le service après une mise en demeure restée sans effet.</p>
+
+  <h2>11. Propriété du site</h2>
+  <p>
+    Pendant toute la durée de la location, le site (code, design, développements, configuration) reste la propriété
+    de {company.name}. Le Client dispose d’un droit d’utilisation pour la durée du contrat. Les contenus fournis par
+    le Client (textes, images, logo, données) restent sa propriété, et le nom de domaine est enregistré à son nom.
+  </p>
+  <p>
+    À l’issue de la période d’engagement, pendant la formule Gardiennage ou lors de la résiliation d’une formule sans
+    engagement, le Client peut acquérir son site moyennant la prestation de transfert à 490 €. Après paiement complet,
+    Moyo lui remet les fichiers et contenus du site pour un hébergement de son choix et lui cède les droits
+    patrimoniaux d’auteur sur le site (reproduction, représentation et adaptation), pour le monde entier et pour
+    toute la durée légale de protection. Les éléments sous licence de tiers (thèmes, extensions, polices, photos de
+    banque d’images) restent soumis à leurs propres licences.
   </p>
 
-  <h2>10. Propriété du site</h2>
-  <p>
-    Le nom de domaine est enregistré au nom du Client. <Field label="propriété du site et de ses fichiers pendant et après la location (ex. : propriété de Moyo jusqu’à la prestation de transfert)" />
-  </p>
-
-  <h2>11. Responsabilité</h2>
+  <h2>12. Responsabilité</h2>
   <p>
     Moyo est tenu d’une obligation de moyens. Sa responsabilité ne saurait être engagée en cas d’interruption due à
-    l’hébergeur, à un cas de force majeure ou à une mauvaise utilisation du site par le Client.
-    <Field label="plafond de responsabilité éventuel" />
+    un cas de force majeure ou à une mauvaise utilisation du site par le Client.
+  </p>
+  <p>
+    <strong>Client professionnel :</strong> la responsabilité de Moyo est limitée aux préjudices directs et, toutes
+    causes confondues, au montant des sommes payées par le Client au cours des 12 mois précédant le fait générateur.
+  </p>
+  <p>
+    <strong>Client consommateur :</strong> aucune limitation de responsabilité ne lui est opposable. Il bénéficie de
+    la garantie légale de conformité applicable aux contenus et services numériques (articles L224-25-12 et suivants
+    du Code de la consommation).
   </p>
 
-  <h2>12. Données personnelles</h2>
+  <h2>13. Données personnelles</h2>
   <p>
     Les données du Client sont traitées conformément à notre <a href="/confidentialite/">politique de confidentialité</a>.
   </p>
 
-  <h2>13. Droit applicable et litiges</h2>
+  <h2>14. Réclamations et médiation (consommateurs)</h2>
+  <p>
+    Toute réclamation est adressée en premier lieu à <a href={`mailto:${company.email}`}>{company.email}</a>. En cas
+    de litige non résolu après cette réclamation écrite, le Client consommateur peut recourir gratuitement au
+    médiateur de la consommation suivant :
+    <Field v={mediator.name} label="nom du médiateur de la consommation" />,
+    <Field v={mediator.address} label="adresse du médiateur" />,
+    {mediator.url ? <a href={mediator.url} target="_blank" rel="noopener">{mediator.url}</a> : <Field label="site internet du médiateur" />}.
+  </p>
+
+  <h2>15. Droit applicable et litiges</h2>
   <p>
     Les présentes CGV sont soumises au droit français. En cas de litige, les parties recherchent d’abord une solution
-    amiable. À défaut, le litige est porté devant <Field label="tribunal compétent" />.
+    amiable. À défaut, le litige est porté devant la juridiction compétente selon les règles de droit commun. Le
+    Client consommateur peut en outre saisir la juridiction du lieu où il demeurait au moment de la conclusion du
+    contrat ou de la survenance du fait dommageable (article R631-3 du Code de la consommation).
   </p>
 </LegalLayout>

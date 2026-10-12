@@ -33,4 +33,12 @@ export const mail = {
   host: 'Hostinger International Ltd', // Messagerie hello@moyoweb.fr
 };
 
+// Médiateur de la consommation (obligatoire dès lors que des particuliers peuvent souscrire, art. L612-1 C. conso).
+// À choisir parmi les médiateurs référencés par la CECMC, puis à renseigner ici.
+export const mediator = {
+  name: '',
+  address: '',
+  url: '',
+};
+
 export const legalUpdatedAt = '12 octobre 2026';
