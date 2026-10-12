@@ -1,4 +1,5 @@
-// Relais serveur : reçoit une demande de devis et la crée dans Dolibarr.
+// Relais serveur : reçoit une demande de devis, la crée dans Dolibarr et envoie les e-mails
+// (notification à Moyo + ticket au client avec le lien de prise de rendez-vous).
 // La clé API reste côté serveur (variable d'environnement DOLIBARR_API_KEY), jamais dans le navigateur.
 //
 // Dans Dolibarr : retrouve le tiers par e-mail (ou le crée en prospect), ajoute un contact si une société
@@ -6,7 +7,8 @@
 import type { APIRoute } from 'astro';
 import { OPTS, SEO_OPTION_ID, type PlanId } from '../../data/devis';
 import { computeQuote, findPlan, type Quote } from '../../lib/quote';
-import { json, str, EMAIL_RE, rateLimiter, dolibarr, dolibarrKey, findThirdpartyByEmail } from '../../lib/server';
+import { json, str, EMAIL_RE, rateLimiter, dolibarr, dolibarrKey, findThirdpartyByEmail, smtpConfigured, sendMail, MAIL_FROM } from '../../lib/server';
+import { CALENDLY_URL } from '../../data/site';
 
 export const prerender = false;
 
@@ -61,10 +63,125 @@ function proposalLines(q: Quote) {
   return lines;
 }
 
+// --- Enregistrement Dolibarr --------------------------------------------------
+async function saveInDolibarr(contact: Contact, quote: Quote, ticketNo: string) {
+  const thirdparty = await findOrCreateThirdparty(contact);
+
+  if (thirdparty.created && contact.societe) {
+    await dolibarr('POST', '/contacts', {
+      socid: thirdparty.id,
+      lastname: contact.nom,
+      firstname: contact.prenom,
+      email: contact.email,
+    });
+  }
+
+  const notes = [
+    `Demande de devis en ligne (moyoweb.fr) ${ticketNo}`.trim(),
+    `Contact : ${contact.prenom} ${contact.nom}${contact.societe ? ` – ${contact.societe}` : ''} <${contact.email}>`,
+    `Formule : ${quote.plan.name}, ${quote.engage ? 'engagement 24 mois' : 'sans engagement'}`,
+    `Total mensuel : ${eur(quote.totalMonthly)}/mois${quote.setupFee ? ` + ${eur(quote.setupFee)} de mise en service au démarrage` : ''}`,
+    'Attention : le total de la proposition additionne mensualités et frais uniques.',
+  ].join('\n');
+
+  const proposalId = await dolibarr<number>('POST', '/proposals', {
+    socid: thirdparty.id,
+    date: Math.floor(Date.now() / 1000),
+    note_private: notes,
+  });
+
+  for (const line of proposalLines(quote)) {
+    await dolibarr('POST', `/proposals/${proposalId}/line`, line);
+  }
+}
+
+// --- E-mails -----------------------------------------------------------------
+function ticketText(quote: Quote, ticketNo: string) {
+  const rows = [
+    `Devis ${ticketNo} – ${new Date().toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' })}`,
+    '',
+    `Forfait : Offre ${quote.plan.name} (${quote.engage ? 'engagement 24 mois' : 'sans engagement'}) – ${eur(quote.planPrice)}/mois`,
+  ];
+  if (quote.setupFee) rows.push(`Mise en service (une fois, au démarrage) : ${eur(quote.setupFee)}`);
+  rows.push('', 'Options :');
+  if (!quote.lines.length) rows.push('  – aucune option –');
+  for (const l of quote.lines) rows.push(`  • ${l.name} : ${l.included ? 'inclus' : `${eur(l.total)}/mois`}`);
+  rows.push('', `TOTAL : ${eur(quote.totalMonthly)}/mois`);
+  if (quote.setupFee) rows.push(`À payer au démarrage : ${eur(quote.setupFee)}`);
+  rows.push(
+    'TVA non applicable, art. 293 B du CGI.',
+    quote.engage
+      ? 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.'
+      : 'Sans engagement, résiliable selon les conditions générales de vente.',
+    'Hébergement, nom de domaine et maintenance inclus.',
+  );
+  return rows.join('\n');
+}
+
+async function sendQuoteEmails(contact: Contact, quote: Quote, ticketNo: string, crmOk: boolean) {
+  const ticket = ticketText(quote, ticketNo);
+  let ownerOk = false;
+  let clientOk = false;
+
+  try {
+    await sendMail({
+      to: MAIL_FROM(),
+      replyTo: contact.email,
+      subject: `Nouveau devis : ${contact.societe || `${contact.prenom} ${contact.nom}`} – ${quote.plan.name} – ${eur(quote.totalMonthly)}/mois`,
+      text: [
+        crmOk
+          ? '✓ Enregistré dans Dolibarr (tiers + proposition commerciale en brouillon).'
+          : '⚠ Échec de l’enregistrement dans Dolibarr : à saisir à la main (voir les logs du serveur).',
+        '',
+        `Contact : ${contact.prenom} ${contact.nom}`,
+        `Société / association : ${contact.societe || '—'}`,
+        `E-mail : ${contact.email}`,
+        '',
+        ticket,
+        '',
+        'Réponds directement à cet e-mail pour écrire au client.',
+      ].join('\n'),
+    });
+    ownerOk = true;
+  } catch (err) {
+    console.error('[devis] e-mail de notification impossible :', err);
+  }
+
+  try {
+    await sendMail({
+      to: contact.email,
+      replyTo: MAIL_FROM(),
+      subject: `Ton devis Moyo : Offre ${quote.plan.name} – ${eur(quote.totalMonthly)}/mois`,
+      text: [
+        `Bonjour ${contact.prenom},`,
+        '',
+        'Merci pour ta demande ! Voici le récapitulatif de ton devis :',
+        '',
+        ticket,
+        '',
+        'Ce devis est une première esquisse : il sert à te donner une idée générale. Après un premier échange',
+        'avec notre équipe, on pourra peaufiner les chiffres et ajuster les options à tes besoins.',
+        '',
+        `On en parle ? Réserve un créneau de 30 minutes : ${CALENDLY_URL}`,
+        '',
+        'Conditions générales de vente : https://moyoweb.fr/cgv/',
+        'Une question ? Réponds simplement à cet e-mail.',
+        '',
+        'L’équipe Moyo',
+      ].join('\n'),
+    });
+    clientOk = true;
+  } catch (err) {
+    console.error('[devis] e-mail au client impossible :', err);
+  }
+
+  return { ownerOk, clientOk };
+}
+
 // --- Route -------------------------------------------------------------------
 export const POST: APIRoute = async ({ request, clientAddress }) => {
-  if (!dolibarrKey()) {
-    console.error('[devis] DOLIBARR_API_KEY manquante');
+  if (!dolibarrKey() && !smtpConfigured()) {
+    console.error('[devis] ni DOLIBARR_API_KEY ni SMTP_PASSWORD : la demande ne peut être ni enregistrée ni transmise');
     return json(500, { ok: false, error: 'config' });
   }
 
@@ -100,39 +217,19 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const quote = computeQuote({ plan: plan as PlanId, engage: data.engage !== false, selected, seo });
   const ticketNo = str(data.ticketNo, 40);
 
-  try {
-    const thirdparty = await findOrCreateThirdparty(contact);
-
-    if (thirdparty.created && contact.societe) {
-      await dolibarr('POST', '/contacts', {
-        socid: thirdparty.id,
-        lastname: contact.nom,
-        firstname: contact.prenom,
-        email: contact.email,
-      });
+  // Rien ne doit se perdre : Dolibarr et e-mails sont tentés indépendamment.
+  let crmOk = false;
+  if (dolibarrKey()) {
+    try {
+      await saveInDolibarr(contact, quote, ticketNo);
+      crmOk = true;
+    } catch (err) {
+      console.error('[devis] échec de l’envoi vers Dolibarr :', err);
     }
-
-    const notes = [
-      `Demande de devis en ligne (moyoweb.fr) ${ticketNo}`.trim(),
-      `Contact : ${contact.prenom} ${contact.nom}${contact.societe ? ` – ${contact.societe}` : ''} <${contact.email}>`,
-      `Formule : ${quote.plan.name}, ${quote.engage ? 'engagement 24 mois' : 'sans engagement'}`,
-      `Total mensuel : ${eur(quote.totalMonthly)}/mois${quote.setupFee ? ` + ${eur(quote.setupFee)} de mise en service au démarrage` : ''}`,
-      'Attention : le total de la proposition additionne mensualités et frais uniques.',
-    ].join('\n');
-
-    const proposalId = await dolibarr<number>('POST', '/proposals', {
-      socid: thirdparty.id,
-      date: Math.floor(Date.now() / 1000),
-      note_private: notes,
-    });
-
-    for (const line of proposalLines(quote)) {
-      await dolibarr('POST', `/proposals/${proposalId}/line`, line);
-    }
-
-    return json(200, { ok: true });
-  } catch (err) {
-    console.error('[devis] échec de l’envoi vers Dolibarr :', err);
-    return json(502, { ok: false, error: 'crm' });
   }
+
+  const mails = smtpConfigured() ? await sendQuoteEmails(contact, quote, ticketNo, crmOk) : { ownerOk: false, clientOk: false };
+
+  if (!crmOk && !mails.ownerOk) return json(502, { ok: false, error: 'crm' });
+  return json(200, { ok: true, mailed: mails.clientOk });
 };

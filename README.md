@@ -54,7 +54,9 @@ La GitHub Action (`.github/workflows/deploy.yml`) vérifie que le site compile e
 3. Dans Dolibarr : recherche le tiers par e-mail ; sinon le crée en **prospect** (code client automatique) ; ajoute un **contact** si une société est renseignée.
 4. Crée une **proposition commerciale en brouillon** : forfait, mise en service (sans engagement), options (incluses à 0 €), articles SEO supplémentaires. TVA à 0 (art. 293 B du CGI). Le détail et le total mensuel sont dans la note privée.
 
-En cas d'erreur Dolibarr, le visiteur voit un message et reste sur le formulaire ; l'erreur est journalisée côté serveur. L'utilisateur Dolibarr associé à la clé doit avoir les droits de création sur les tiers, contacts et propositions commerciales.
+5. Envoie deux **e-mails** (si `SMTP_PASSWORD` est défini) : une notification à `hello@moyoweb.fr` (avec l'état de l'enregistrement Dolibarr, réponse directe au client) et le **ticket au client** avec le lien Calendly.
+
+Rien ne se perd : Dolibarr et les e-mails sont tentés indépendamment. La demande n'échoue que si ni Dolibarr ni la notification e-mail n'ont abouti ; si seul l'e-mail au client échoue, l'écran final affiche « Demande de devis enregistrée » au lieu de « Devis envoyé à… ». Les erreurs sont journalisées côté serveur. L'utilisateur Dolibarr associé à la clé doit avoir les droits de création sur les tiers, contacts et propositions commerciales.
 
 `PUBLIC_DEVIS_ENDPOINT` permet de pointer le formulaire vers une autre URL si besoin.
 
@@ -65,6 +67,18 @@ Page `/resiliation/` (lien dans le footer de toutes les pages), conforme au prin
 `src/pages/api/resiliation.ts` envoie un **accusé de réception par e-mail** au client (copie cachée à `hello@moyoweb.fr`) puis crée un **événement d'agenda** dans Dolibarr, rattaché au tiers retrouvé par e-mail (au mieux : un échec Dolibarr ne bloque pas l'accusé). La date de fin du contrat et les effets de la résiliation sont ensuite confirmés à la main par e-mail.
 
 E-mails : SMTP Hostinger (`smtp.hostinger.com`, port 465 SSL) avec la boîte `hello@moyoweb.fr` ; définir `SMTP_PASSWORD` (mot de passe de la boîte). Sans lui, la résiliation en ligne renvoie une erreur et invite à écrire par e-mail. Propriétaire de l'événement Dolibarr : `DOLIBARR_USER_ID`, sinon l'utilisateur lié à la clé API (`GET /users/info`).
+
+## Événements Google Analytics 4
+
+Envoyés depuis `src/scripts/devis.ts` via `src/lib/analytics.ts`, **uniquement après consentement** (tarteaucitron) et sans donnée personnelle :
+
+| Événement | Quand | Paramètres |
+| --- | --- | --- |
+| `devis_start` | première interaction avec le module de devis | `plan`, `engagement` |
+| `generate_lead` | renseignements envoyés avec succès | `value` (total mensuel), `currency`, `plan`, `engagement` |
+| `calendly_click` | clic vers Calendly | `location` (`devis_besoin_specifique` ou `devis_resultat`), `plan` |
+
+Pour en faire des conversions : GA4 → Administration → Événements → marquer `generate_lead` (et `calendly_click`) comme événements clés.
 
 ## SEO et IA
 

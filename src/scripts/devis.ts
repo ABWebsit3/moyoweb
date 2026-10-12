@@ -1,6 +1,7 @@
 import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, type Option, type PlanId } from '../data/devis';
 import { computeQuote, seoQty as sharedSeoQty, type QuoteInput } from '../lib/quote';
 import { CALENDLY_URL } from '../data/site';
+import { track } from '../lib/analytics';
 
 type Step = 1 | 2 | 3 | 4;
 type FormKey = 'nom' | 'prenom' | 'societe' | 'email';
@@ -14,6 +15,7 @@ interface State {
   form: Record<FormKey, string>;
   consent: boolean;
   sending: boolean;
+  mailed: boolean; // le ticket a bien été envoyé par e-mail au client
   error: string;
   ticketNo: string;
   barcode: string;
@@ -48,6 +50,7 @@ export function initDevis(root: HTMLElement) {
     form: { nom: '', prenom: '', societe: '', email: '' },
     consent: false,
     sending: false,
+    mailed: false,
     error: '',
     ticketNo: 'DEVIS#' + rand(14),
     barcode: [rand(4), rand(4), rand(4), rand(4), rand(2)].join(' '),
@@ -141,7 +144,7 @@ export function initDevis(root: HTMLElement) {
       </div>
       <div class="dv-plans">${plans}</div>
       <div class="dv-actions">
-        <a href="#contact" class="dv-help">Allô Houston ! J’ai un besoin spécifique → on en parle autour d’un café virtuel ?</a>
+        <a href="${CALENDLY_URL}" class="dv-help" target="_blank" rel="noopener">Allô Houston ! J’ai un besoin spécifique → on en parle autour d’un café virtuel ?</a>
         <button type="button" class="btn-dark" data-next>Continuer : les options →</button>
       </div>`;
   }
@@ -226,7 +229,7 @@ export function initDevis(root: HTMLElement) {
     const { total } = quote();
     return `
       <div style="display:flex;flex-direction:column;gap:20px">
-        <div class="dv-sent">✓ Devis envoyé à ${esc(s.form.email.trim())}</div>
+        <div class="dv-sent">${s.mailed ? `✓ Devis envoyé à ${esc(s.form.email.trim())}` : '✓ Demande de devis enregistrée'}</div>
         <h3 class="dv-result-title">Ton site ${plan().name} pour ${eur(total)}/mois, ${esc(s.form.prenom.trim() || 'toi')}.</h3>
         <div class="dv-result-text">
           <p>Le devis que tu vois n’est qu’une première esquisse : il sert à te donner une idée générale.</p>
@@ -316,6 +319,11 @@ export function initDevis(root: HTMLElement) {
           body: JSON.stringify({ ticketNo: s.ticketNo, contact: { ...s.form }, consent: s.consent, website: honeypot, ...quoteInput() }),
         });
         if (!res.ok) throw new Error(String(res.status));
+        const body = await res.json().catch(() => ({}));
+        s.mailed = body.mailed === true;
+        const q = computeQuote(quoteInput());
+        // GA4 : renseignements envoyés (événement recommandé « generate_lead »).
+        track('generate_lead', { value: q.totalMonthly, currency: 'EUR', plan: q.plan.name, engagement: q.engage });
       } catch {
         s.sending = false;
         s.error = 'Oups, l’envoi n’a pas fonctionné. Réessaie dans un instant ou écris-nous à hello@moyoweb.fr.';
@@ -341,11 +349,23 @@ export function initDevis(root: HTMLElement) {
     root.querySelector<HTMLElement>(`[data-opt="${id}"]`)?.focus();
   }
 
+  // GA4 : « devis_start » à la première interaction avec le module, une seule fois par visite de page.
+  let started = false;
+  const markStarted = () => {
+    if (started) return;
+    started = true;
+    track('devis_start', { plan: s.plan, engagement: s.engage });
+  };
+
   root.addEventListener('click', (e) => {
+    // GA4 : clic vers Calendly (étape 1 « Allô Houston » ou étape 4 « Prendre rendez-vous »).
+    const cal = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href*="calendly.com"]');
+    if (cal) track('calendly_click', { location: s.step === 4 ? 'devis_resultat' : 'devis_besoin_specifique', plan: s.plan });
     const t = (e.target as HTMLElement).closest<HTMLElement>(
       '[data-go],[data-engage],[data-plan],[data-next],[data-prev],[data-restart],[data-seo],[data-opt]',
     );
     if (!t || !root.contains(t)) return;
+    markStarted();
     const d = t.dataset;
 
     if (d.go) {
@@ -384,6 +404,7 @@ export function initDevis(root: HTMLElement) {
   root.addEventListener('input', (e) => {
     const t = e.target as HTMLInputElement;
     const key = t.dataset.field as FormKey | undefined;
+    if (key) markStarted();
     if (key) s.form[key] = t.value;
     updateSubmit();
   });
