@@ -205,6 +205,7 @@ export function initDevis(root: HTMLElement) {
         <div class="dv-form__head">
           <h3 class="dv-h3">Dernière étape avant ton devis !</h3>
           <p>On t’envoie aussi ton ticket par mail pour le garder sous le coude.</p>
+          <p>Offre réservée aux professionnels et aux associations.</p>
         </div>
         <div class="dv-fields">${fields}</div>
         <div class="dv-hp" aria-hidden="true"><label>Site web <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
