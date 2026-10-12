@@ -32,10 +32,14 @@ Le site est pré-généré (pages statiques) avec une seule route serveur, `/api
 
 | Réglage hPanel | Valeur |
 | --- | --- |
+| Préréglage de framework | Astro |
 | Version de Node.js | 22 |
 | Commande de build | `npm run build` |
-| Commande de démarrage | `npm run start` (lance `dist/server/entry.mjs`) |
+| Répertoire de sortie | `dist` |
+| Fichier d'entrée | `server.mjs` |
 | Variables d'environnement | `DOLIBARR_API_KEY` (obligatoire), `DOLIBARR_API_URL` (facultatif), `PUBLIC_GA4_ID` (facultatif) |
+
+`server.mjs` existe à la racine du projet et dans `dist/` (créé par `scripts/postbuild.mjs`) : Hostinger résout le fichier d'entrée depuis l'un ou l'autre selon le framework. Les deux démarrent le serveur Astro (`dist/server/entry.mjs`). En local : `npm run start`.
 
 `DOLIBARR_API_URL` vaut par défaut `https://doli.agence-abweb.fr/htdocs/api/index.php`. `PUBLIC_GA4_ID` est lu au build : le définir avant de lancer le build.
 

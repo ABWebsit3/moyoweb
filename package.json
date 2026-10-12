@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "start": "node ./dist/server/entry.mjs"
+    "start": "node ./server.mjs",
+    "postbuild": "node scripts/postbuild.mjs"
   },
   "dependencies": {
     "@astrojs/node": "9.5.5",
