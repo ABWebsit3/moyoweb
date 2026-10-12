@@ -1,8 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import { IMAGES } from '../data/site';
-// JD Event & Home Design est mis en avant : seul site client encore en ligne.
-// ⚠ Captures JD Event & Home Design et Lucas Invest Immo à fournir (placeholders rayés en attendant).
+// Jessica Da Veiga (jdeventandhomedesign.fr) est mise en avant : seul site client encore en ligne.
+// ⚠ Capture Lucas Invest Immo à fournir (placeholder rayé en attendant).
 ---
 
 <section id="projets" class="band projects">
@@ -13,9 +13,12 @@ import { IMAGES } from '../data/site';
     </div>
     <div class="projects__row" data-reveal-stagger>
       <a href="https://jdeventandhomedesign.fr/" class="project project--main" target="_blank" rel="noopener">
-        <div class="project__placeholder project__placeholder--main" style="--a:#EFE6FF;--b:#E2D4FF;color:#5B2DC9">jdeventandhomedesign.fr</div>
+        <Image src={IMAGES.jd} alt="Site de Jessica Da Veiga, décoration événementielle" class="project__shot" widths={[700, 1400]} sizes="(min-width: 1240px) 790px, 100vw" />
         <div class="project__foot">
-          <span class="project__name" style="font-size:22px">JD Event &amp; Home Design</span>
+          <span style="display:flex;flex-direction:column;gap:2px">
+            <span class="project__name" style="font-size:22px">Jessica Da Veiga</span>
+            <span class="project__sub">Décoration événementielle</span>
+          </span>
           <span class="project__link">Voir le site ↗</span>
         </div>
       </a>
@@ -72,7 +75,7 @@ import { IMAGES } from '../data/site';
     font-size: 12px;
     border-bottom: var(--border);
   }
-  .project__placeholder--main { flex: none; aspect-ratio: 16 / 9; font-size: 14px; }
+  .project__sub { font-size: 14px; font-weight: 600; color: var(--muted); }
   /* Dans la colonne latérale, la capture remplit l'espace restant sans pousser le nom hors de la carte. */
   .projects__side .project :global(.project__shot) {
     flex: 1 1 0;

@@ -24,7 +24,7 @@ npx astro check  # vérification des types
 
 Les images sont dans `src/assets/` et passent par `<Image>` (`astro:assets`) : au build, Astro les convertit en WebP et génère les tailles utiles. Elles sont déclarées dans `IMAGES` (`src/data/site.ts`). `moyo_eating.png` est disponible mais pas encore utilisée.
 
-Placeholders à remplacer : captures JD Event & Home Design et Lucas Invest Immo (`Projects.astro`), logos clients (`ClientLogos.astro`).
+Placeholders à remplacer : capture Lucas Invest Immo (`Projects.astro`), logos clients (`ClientLogos.astro`).
 
 ## Mise en ligne sur Hostinger
 
@@ -72,7 +72,7 @@ Le devis est envoyé en `POST` JSON (`ticketNo`, `contact`, `plan`, `engagement`
 ## Points restant à valider
 
 - Avis clients : fictifs, section masquée (`SHOW_REVIEWS` dans `src/data/site.ts`).
-- Captures à fournir : JD Event & Home Design, Lucas Invest Immo.
+- Capture à fournir : Lucas Invest Immo.
 - Garantie « Livré en 3 à 5 jours… En retard ? Ton premier mois est offert » : reprise de la maquette, à confirmer.
 - Citation « C'est le Netflix du site internet. » du hero : à garder comme slogan ou à retirer.
 - Formule sans engagement : à confirmer (prix = prix avec engagement × 1,3).

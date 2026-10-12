@@ -5,14 +5,15 @@ import logo from '../assets/moyo_logo.png';
 import transat from '../assets/moyo_transat.png';
 import surprised from '../assets/moyo_surprised.png';
 import tkl from '../assets/tkllobster.webp';
+import jd from '../assets/jdeventandhomedesign.webp';
 
 // Images optimisées au build via <Image> (astro:assets).
-export const IMAGES = { logo, transat, surprised, tkl };
+export const IMAGES = { logo, transat, surprised, tkl, jd };
 
 export const CONTACT_EMAIL = 'hello@moyoweb.fr';
 
-// Clients réels. JD Event & Home Design est mis en avant (seul site encore en ligne).
-export const clients = ['JD Event & Home Design', 'TKL Miami', 'Lucas Invest Immo'];
+// Clients réels. Jessica Da Veiga (jdeventandhomedesign.fr) est mise en avant : seul site encore en ligne.
+export const clients = ['Jessica Da Veiga', 'TKL Miami', 'Lucas Invest Immo'];
 
 export const nav = [
   { href: '/#concept', label: 'Quésako ?' },
