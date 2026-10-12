@@ -4,8 +4,8 @@ import { guarantees } from '../data/site';
 
 <section class="guarantees">
   <div class="container guarantees__inner">
-    <h2 class="h2" style="max-width:760px">Zéro risque, <span style="color:var(--green)">promis juré.</span></h2>
-    <div class="grid-auto" style="gap:18px">
+    <h2 class="h2" style="max-width:760px" data-reveal>Zéro risque, <span style="color:var(--green)">promis juré.</span></h2>
+    <div class="grid-auto" style="gap:18px" data-reveal-stagger>
       {guarantees.map((g) => (
         <div class="guarantee">
           <span class="guarantee__icon" style={`background:${g.color}`} aria-hidden="true">{g.icon}</span>

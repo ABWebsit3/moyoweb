@@ -88,8 +88,12 @@ export function initDevis(root: HTMLElement) {
   function go(step: Step) {
     s.step = step;
     render();
-    const top = root.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
-    window.scrollTo({ top, behavior: 'smooth' });
+    if (window.moyoLenis) {
+      window.moyoLenis.scrollTo(root); // Lenis applique le scroll-margin-top de #devis
+    } else {
+      const top = root.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
   }
 
   // --- Rendu -----------------------------------------------------------------
@@ -260,7 +264,6 @@ export function initDevis(root: HTMLElement) {
     const line = (a: string, b: string, cls = '') =>
       `<div class="dv-ticket__line"><span class="${cls}">${a}</span><span>${b}</span></div>`;
 
-    // TVA à 0,00 € comme sur la maquette : à ajuster selon le régime fiscal.
     ticketEl.innerHTML = `
       <div class="dv-ticket-shadow">
         <div class="dv-ticket" aria-label="Récapitulatif du devis">
@@ -278,13 +281,13 @@ export function initDevis(root: HTMLElement) {
           ${lines.length ? '' : '<span class="dv-ticket__muted">— aucune option —</span>'}
           <div class="dv-ticket__rule"></div>
           ${line('SOUS-TOTAL', eur(total))}
-          ${line('TVA', '0,00 €')}
+          <span style="font-size:11.5px">TVA non applicable, art. 293 B du CGI</span>
           <div class="dv-ticket__total"><span>TOTAL</span><span>${eur(total)}/mois</span></div>
           ${setup ? `<div class="dv-ticket__line" style="font-weight:700"><span>À PAYER AU DÉMARRAGE</span><span>${eur(SETUP_FEE)}</span></div>` : ''}
           <div class="dv-ticket__barcode" aria-hidden="true"></div>
           <span class="dv-center" style="letter-spacing:.12em">${s.barcode}</span>
           <span class="dv-center" style="font-size:11.5px;line-height:1.5">${terms}<br>Hébergement, domaine, maintenance inclus.</span>
-          <span class="dv-center"><a href="#">Voir les CGV</a></span>
+          <span class="dv-center"><a href="/cgv/">Voir les CGV</a></span>
           <span class="dv-center" style="font-weight:700;padding-top:4px">MERCI &amp; À BIENTÔT !</span>
         </div>
       </div>`;

@@ -3,8 +3,8 @@ import { steps } from '../data/site';
 ---
 
 <section class="container how">
-  <h2 class="h2"><span class="hl">Comment ça marche ?</span></h2>
-  <ol class="grid-auto how__list">
+  <h2 class="h2" data-reveal><span class="hl">Comment ça marche ?</span></h2>
+  <ol class="grid-auto how__list" data-reveal-stagger>
     {steps.map((s) => (
       <li class="card how__card">
         <span class="how__num" style={`background:${s.color}`}>{s.n}</span>

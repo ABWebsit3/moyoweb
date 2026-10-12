@@ -6,7 +6,7 @@ const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours', 'Dès 44,9
 ---
 
 <section class="container hero">
-  <div class="hero__text">
+  <div class="hero__text" data-reveal="left">
     <div class="hero__badge">
       <span class="hero__badge-new">Nouveau</span>
       Ton site en ligne en 3 à 5 jours
@@ -23,13 +23,13 @@ const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours', 'Dès 44,9
       {perks.map((p) => <li><span class="check-dot" aria-hidden="true">✓</span>{p}</li>)}
     </ul>
   </div>
-  <div class="hero__visual">
+  <div class="hero__visual" data-reveal="pop">
     <div class="hero__blob" aria-hidden="true"></div>
     <div class="hero__dot" aria-hidden="true"></div>
     <Image src={IMAGES.transat} alt="Mo’ sur son petit transat" class="hero__img" loading="eager" fetchpriority="high" />
     <div class="hero__quote">
       <span class="display">“C’est le Netflix du site internet.”</span>
-      <span class="hero__rating">★★★★★ 4,9/5 · 127 avis</span>
+      <span class="hero__rating">★★★★★ 4,9/5</span>
     </div>
   </div>
 </section>

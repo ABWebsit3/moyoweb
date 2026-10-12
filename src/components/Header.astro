@@ -9,7 +9,7 @@ import { IMAGES, nav } from '../data/site';
     <nav class="header__nav" aria-label="Navigation principale">
       {nav.map((item) => <a href={item.href}>{item.label}</a>)}
     </nav>
-    <a href="#devis" class="header__cta">Faire mon devis →</a>
+    <a href="/#devis" class="header__cta">Faire mon devis →</a>
   </div>
 </header>
 
@@ -53,4 +53,10 @@ import { IMAGES, nav } from '../data/site';
     transition: background .12s;
   }
   .header__cta:hover { background: var(--violet); color: #fff; }
+
+  /* Mobile : logo + CTA seulement, pour garder un header compact (≈ 70 px). */
+  @media (max-width: 720px) {
+    .header__nav { display: none; }
+    .header__cta { margin-left: auto; }
+  }
 </style>

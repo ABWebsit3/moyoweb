@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Page introuvable · Moyo" description="Cette page n’existe pas ou plus." noindex>
+  <Header />
+  <main class="container notfound">
+    <h1 class="h1">Oups, <span class="hl">page introuvable</span>.</h1>
+    <p>Cette page n’existe pas ou plus. Mo’ est parti la chercher, en attendant :</p>
+    <a href="/" class="btn btn--violet">Retour à l’accueil</a>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .notfound { padding-top: 96px; padding-bottom: 120px; display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
+  .notfound p { margin: 0; font-size: 18px; color: var(--text); }
+</style>

@@ -1,0 +1,129 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import Field from '../components/Field.astro';
+import { company } from '../data/legal';
+import { PLANS, SETUP_FEE } from '../data/devis';
+
+const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
+// Projet de CGV à faire relire par un professionnel du droit avant publication.
+---
+
+<LegalLayout title="Conditions générales de vente" description="Conditions générales de vente des offres de location de site internet Moyo.">
+  <h2>1. Objet</h2>
+  <p>
+    Les présentes conditions générales de vente (CGV) régissent les prestations de location de site internet
+    proposées par <Field v={company.name} label="nom ou raison sociale" /> (ci-après « Moyo ») à ses clients
+    (ci-après « le Client »). Elles prévalent sur tout autre document, sauf accord écrit contraire.
+  </p>
+
+  <h2>2. Clients concernés</h2>
+  <p>
+    Les offres Moyo s’adressent aux professionnels (indépendants, entreprises, associations).
+    <Field label="préciser si les particuliers (consommateurs) peuvent souscrire : dans ce cas, droit de rétractation de 14 jours et médiateur de la consommation obligatoires" />
+  </p>
+
+  <h2>3. Offres et tarifs</h2>
+  <p>Les forfaits mensuels en vigueur sont les suivants :</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Forfait</th><th>Avec engagement 24 mois</th><th>Sans engagement</th></tr>
+      </thead>
+      <tbody>
+        {PLANS.map((p) => (
+          <tr><td>Offre {p.name}</td><td>{eur(p.price)}/mois</td><td>{eur(p.free)}/mois</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Les offres sans engagement comportent en outre des frais de mise en service de {eur(SETUP_FEE)}, payables au
+    démarrage. Les options sont facturées selon le tarif indiqué dans le devis.
+    {company.vatMention}.
+  </p>
+  <p>Le contenu de chaque forfait et des options est celui décrit sur le site et repris dans le devis accepté.</p>
+
+  <h2>4. Commande</h2>
+  <p>
+    Le devis généré sur le site est indicatif. La commande devient ferme après validation d’un devis définitif et
+    signature du contrat par le Client.
+  </p>
+
+  <h2>5. Durée et engagement</h2>
+  <h3>Avec engagement</h3>
+  <p>
+    Le contrat est conclu pour une durée initiale de 24 mois à compter de la mise en ligne du site. À la fin de cette
+    période, le Client peut :
+  </p>
+  <ul>
+    <li>poursuivre avec la formule Gardiennage à 25,99 €/mois (hébergement, maintenance prévue au contrat et 45 minutes d’assistance par mois) ;</li>
+    <li>récupérer son site grâce à une prestation de transfert à 490 €, à la fin des 24 mois ou pendant la formule Gardiennage ;</li>
+    <li>arrêter le service : le site est alors désactivé et les données sont traitées selon les modalités et délais prévus au contrat.</li>
+  </ul>
+  <h3>Sans engagement</h3>
+  <p>
+    Le contrat est conclu pour une durée indéterminée et peut être résilié par le Client
+    <Field label="préavis et modalités de résiliation" />.
+  </p>
+
+  <h2>6. Délai de mise en ligne</h2>
+  <p>
+    Le délai cible de mise en ligne est de 3 à 5 jours ouvrés à compter de la réception de l’ensemble des contenus
+    nécessaires (textes, images, logo…). Un retard dans la transmission des contenus décale d’autant ce délai.
+  </p>
+
+  <h2>7. Prestations incluses</h2>
+  <ul>
+    <li>Création et mise en service du site selon l’offre souscrite ;</li>
+    <li>hébergement pendant toute la durée du service ;</li>
+    <li>maintenance technique : mises à jour, sauvegardes et contrôles de sécurité courants ;</li>
+    <li>nom de domaine enregistré au nom du Client, avec gestion technique par Moyo ;</li>
+    <li>60 minutes par mois de petites modifications de contenu, non reportables d’un mois à l’autre ;</li>
+    <li>assistance technique selon les modalités du contrat.</li>
+  </ul>
+  <p>
+    Les modifications importantes, nouvelles pages, refontes et fonctionnalités supplémentaires font l’objet d’un
+    devis préalable.
+  </p>
+
+  <h2>8. Obligations du Client</h2>
+  <p>
+    Le Client fournit les contenus nécessaires à la création du site et garantit en détenir les droits. Il reste
+    responsable des contenus publiés sur son site.
+  </p>
+
+  <h2>9. Paiement</h2>
+  <p>
+    Les mensualités sont payables d’avance, par prélèvement SEPA ou carte bancaire.
+    <Field label="date de prélèvement / échéance" />
+  </p>
+  <p>
+    Tout retard de paiement entraîne de plein droit des pénalités de retard au taux de
+    <Field label="taux des pénalités (au minimum 3 fois le taux d’intérêt légal)" />, ainsi qu’une indemnité
+    forfaitaire pour frais de recouvrement de 40 € (articles L441-10 et D441-5 du Code de commerce). En cas
+    d’impayé, Moyo peut suspendre le service après mise en demeure restée sans effet.
+  </p>
+
+  <h2>10. Propriété du site</h2>
+  <p>
+    Le nom de domaine est enregistré au nom du Client. <Field label="propriété du site et de ses fichiers pendant et après la location (ex. : propriété de Moyo jusqu’à la prestation de transfert)" />
+  </p>
+
+  <h2>11. Responsabilité</h2>
+  <p>
+    Moyo est tenu d’une obligation de moyens. Sa responsabilité ne saurait être engagée en cas d’interruption due à
+    l’hébergeur, à un cas de force majeure ou à une mauvaise utilisation du site par le Client.
+    <Field label="plafond de responsabilité éventuel" />
+  </p>
+
+  <h2>12. Données personnelles</h2>
+  <p>
+    Les données du Client sont traitées conformément à notre <a href="/confidentialite/">politique de confidentialité</a>.
+  </p>
+
+  <h2>13. Droit applicable et litiges</h2>
+  <p>
+    Les présentes CGV sont soumises au droit français. En cas de litige, les parties recherchent d’abord une solution
+    amiable. À défaut, le litige est porté devant <Field label="tribunal compétent" />.
+  </p>
+</LegalLayout>

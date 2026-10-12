@@ -1,0 +1,21 @@
+---
+// Affiche une donnée légale, ou un repère « À compléter » si elle est vide.
+interface Props {
+  v?: string;
+  label: string;
+}
+const { v, label } = Astro.props;
+---
+
+{v ? <Fragment>{v}</Fragment> : <mark class="todo">[À compléter : {label}]</mark>}
+
+<style>
+  .todo {
+    background: var(--orange-light);
+    color: var(--ink);
+    border: 1px dashed var(--orange);
+    border-radius: 6px;
+    padding: 0 4px;
+    font-weight: 600;
+  }
+</style>

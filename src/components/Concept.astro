@@ -6,15 +6,15 @@ import { IMAGES, compare } from '../data/site';
 <section id="concept" class="band concept">
   <div class="container concept__inner">
     <div class="concept__top">
-      <div class="concept__text">
+      <div class="concept__text" data-reveal="left">
         <h2 class="h2">Chez Moyo, on a eu une idée toute simple !</h2>
         <p class="concept__lead">Pourquoi payer 1 500 € d’un coup pour un site… quand on peut le payer tous les mois, tranquille ?</p>
         <p class="concept__sub">Et surtout… zéro facture massive qui fait mal au portefeuille.</p>
       </div>
-      <Image src={IMAGES.surprised} alt="Mo’ surpris" class="concept__img" widths={[440, 880]} sizes="(min-width: 520px) 440px, 100vw" />
+      <Image src={IMAGES.surprised} alt="Mo’ surpris" class="concept__img" data-reveal="pop" widths={[440, 880]} sizes="(min-width: 520px) 440px, 100vw" />
     </div>
 
-    <div class="compare">
+    <div class="compare" data-reveal>
       <div class="compare__table" role="table" aria-label="Comparatif agence classique et Moyo">
         <div role="row" class="compare__row">
           <div role="columnheader" class="compare__head"></div>

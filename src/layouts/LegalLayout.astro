@@ -1,0 +1,58 @@
+---
+import Layout from './Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { legalUpdatedAt } from '../data/legal';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<Layout title={`${title} · Moyo`} description={description}>
+  <Header />
+  <main class="container legal">
+    <h1 class="h2">{title}</h1>
+    <p class="legal__date">Dernière mise à jour : {legalUpdatedAt}</p>
+    <div class="legal__body">
+      <slot />
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .legal { padding-top: 64px; padding-bottom: 96px; max-width: 860px; }
+  .legal__date { margin: 14px 0 40px; color: var(--muted); font-size: 15px; }
+  .legal__body {
+    background: #fff;
+    border: var(--border);
+    border-radius: 22px;
+    box-shadow: 6px 6px 0 var(--ink);
+    padding: clamp(22px, 4vw, 44px);
+    font-size: 16.5px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .legal__body :global(h2) {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -.02em;
+    color: var(--ink);
+    margin: 36px 0 10px;
+  }
+  .legal__body :global(h2:first-child) { margin-top: 0; }
+  .legal__body :global(h3) { font-size: 17px; color: var(--ink); margin: 22px 0 6px; }
+  .legal__body :global(p) { margin: 0 0 12px; }
+  .legal__body :global(ul) { margin: 0 0 12px; padding-left: 22px; }
+  .legal__body :global(li) { margin-bottom: 6px; }
+  .legal__body :global(table) { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 15px; }
+  .legal__body :global(th),
+  .legal__body :global(td) { border: 1px solid var(--rule); padding: 8px 10px; text-align: left; vertical-align: top; }
+  .legal__body :global(th) { background: var(--lilac); color: var(--ink); }
+  .legal__body :global(.table-wrap) { overflow-x: auto; }
+</style>

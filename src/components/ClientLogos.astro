@@ -1,14 +1,11 @@
 ---
-// ⚠ Wordmarks texte provisoires : à remplacer par les vrais logos clients.
+import { clients } from '../data/site';
+// Wordmarks texte en attendant les vrais logos clients.
 ---
 
-<section class="container logos" aria-label="Ils nous font confiance">
+<section class="container logos" aria-label="Ils nous font confiance" data-reveal-stagger>
   <span class="logos__kicker">Ils ont sauté le pas</span>
-  <span class="logos__item" style="font-family:var(--font-display);font-weight:800">TKL Miami</span>
-  <span class="logos__item" style="font-family:var(--font-display);font-weight:600">Lucas Invest Immo</span>
-  <span class="logos__item" style="font-family:Georgia,serif;font-style:italic">Atelier Brume</span>
-  <span class="logos__item" style="font-family:var(--font-display);font-weight:800;letter-spacing:.1em">KAYA</span>
-  <span class="logos__item" style="font-family:var(--font-mono);font-weight:700;font-size:19px">café.sillon</span>
+  {clients.map((name) => <span class="logos__item">{name}</span>)}
 </section>
 
 <style>
@@ -28,5 +25,5 @@
     text-transform: uppercase;
     color: var(--muted);
   }
-  .logos__item { font-size: 22px; color: var(--logo-grey); }
+  .logos__item { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--logo-grey); }
 </style>

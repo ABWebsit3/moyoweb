@@ -1,0 +1,48 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import Field from '../components/Field.astro';
+import { company, host } from '../data/legal';
+---
+
+<LegalLayout title="Mentions légales" description="Mentions légales du site moyoweb.fr : éditeur, hébergeur, propriété intellectuelle.">
+  <h2>Éditeur du site</h2>
+  <p>
+    Le site <strong>moyoweb.fr</strong> est édité par :<br />
+    <Field v={company.name} label="nom ou raison sociale" /><br />
+    <Field v={company.legalForm} label="forme juridique" /><br />
+    Adresse : <Field v={company.address} label="adresse" /><br />
+    SIREN : <Field v={company.siren} label="SIREN" /> · SIRET : <Field v={company.siret} label="SIRET" /><br />
+    <Field v={company.registry} label="immatriculation (RNE / RCS), si applicable" /><br />
+    Téléphone : <Field v={company.phone} label="téléphone" /><br />
+    E-mail : <a href={`mailto:${company.email}`}>{company.email}</a><br />
+    {company.vatMention}
+  </p>
+  <p>Directeur ou directrice de la publication : <Field v={company.publicationDirector} label="nom" /></p>
+
+  <h2>Hébergeur</h2>
+  <p>
+    <Field v={host.name} label="nom de l’hébergeur" /><br />
+    Adresse : <Field v={host.address} label="adresse de l’hébergeur" /><br />
+    Téléphone : <Field v={host.phone} label="téléphone de l’hébergeur" />
+  </p>
+
+  <h2>Propriété intellectuelle</h2>
+  <p>
+    L’ensemble des contenus du site (textes, illustrations, mascotte Mo’, logo, mise en page) est la propriété de
+    Moyo, sauf mention contraire. Toute reproduction ou réutilisation, totale ou partielle, sans autorisation écrite
+    préalable est interdite.
+  </p>
+  <p>
+    Les captures de sites clients sont présentées avec l’accord de leurs propriétaires, qui en conservent les droits.
+  </p>
+
+  <h2>Données personnelles et cookies</h2>
+  <p>
+    Le traitement de tes données personnelles et l’usage des cookies sont décrits dans notre
+    <a href="/confidentialite/">politique de confidentialité</a>. Tu peux modifier tes choix de cookies à tout moment
+    via le lien « Gestion des cookies » en bas de page.
+  </p>
+
+  <h2>Contact</h2>
+  <p>Pour toute question sur le site : <a href={`mailto:${company.email}`}>{company.email}</a>.</p>
+</LegalLayout>

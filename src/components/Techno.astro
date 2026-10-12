@@ -3,11 +3,11 @@ import { tech, timeline } from '../data/site';
 ---
 
 <section id="techno" class="container techno">
-  <div class="section-head">
+  <div class="section-head" data-reveal>
     <h2 class="h2 h2--sm techno__title">Comment est fait ton site ?</h2>
     <p class="techno__intro">Des outils solides et modernes, pour un site rapide aujourd’hui et facile à faire évoluer demain.</p>
   </div>
-  <div class="grid-auto" style="--min:260px">
+  <div class="grid-auto" style="--min:260px" data-reveal-stagger>
     {tech.map((t) => (
       <div class="card techno__card" style={`background:${t.bg};color:${t.fg}`}>
         <span class="mono techno__kicker">{t.kicker}</span>
@@ -16,7 +16,7 @@ import { tech, timeline } from '../data/site';
       </div>
     ))}
   </div>
-  <ol class="timeline">
+  <ol class="timeline" data-reveal-stagger>
     {timeline.map((tl) => (
       <li class="timeline__step">
         <span class="timeline__day">{tl.day}</span>

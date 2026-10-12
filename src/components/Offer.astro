@@ -16,7 +16,7 @@ const afterTerm = [
 ---
 
 <section class="container offer">
-  <div class="offer__card">
+  <div class="offer__card" data-reveal>
     <div class="offer__intro">
       <h2 class="h2 h2--sm">Un site pro, <span class="hl hl--green">sans le prix d’un site pro</span></h2>
       <p class="offer__lead">Avec Moyo, tu loues un site internet professionnel conçu pour ton activité. On s’occupe de la technique, tu te concentres sur ton métier.</p>
@@ -36,7 +36,7 @@ const afterTerm = [
       <h3 class="offer__h3">Une location de 24 mois, puis tu choisis</h3>
       <p class="offer__term-intro">La location comprend un engagement initial de 24 mois. À la fin de cette période, trois possibilités s’offrent à toi :</p>
     </div>
-    <div class="offer__choices">
+    <div class="offer__choices" data-reveal-stagger>
       {afterTerm.map((c) => (
         <div class="card offer__choice" style={`background:${c.bg}`}>
           <span class="offer__num">{c.n}</span>
@@ -47,7 +47,7 @@ const afterTerm = [
     </div>
   </div>
 
-  <div class="offer__foot">
+  <div class="offer__foot" data-reveal>
     <div class="offer__nosurprise">
       <h3 class="offer__choice-title">Pas de mauvaise surprise</h3>
       <p>Les modifications importantes, nouvelles pages, refontes et fonctionnalités supplémentaires sont proposées sur devis avant intervention.</p>

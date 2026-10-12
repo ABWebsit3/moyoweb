@@ -1,0 +1,12 @@
+# Hostinger (LiteSpeed / Apache)
+ErrorDocument 404 /404.html
+
+# Cache long pour les fichiers versionnés générés par Astro
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|webp|png|jpg|svg|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>

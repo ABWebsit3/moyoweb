@@ -1,31 +1,32 @@
 ---
 import { Image } from 'astro:assets';
 import { IMAGES } from '../data/site';
-// ⚠ Captures Lucas Invest Immo et Atelier Brume à fournir (placeholders rayés en attendant).
+// JD Event & Home Design est mis en avant : seul site client encore en ligne.
+// ⚠ Captures JD Event & Home Design et Lucas Invest Immo à fournir (placeholders rayés en attendant).
 ---
 
 <section id="projets" class="band projects">
   <div class="container projects__inner">
-    <div class="section-head">
+    <div class="section-head" data-reveal>
       <h2 class="h2">Made by Moyo</h2>
       <p class="projects__intro">Ils nous font confiance ! Quelques sites livrés récemment.</p>
     </div>
-    <div class="projects__row">
-      <a href="https://tkllobster.com" class="project project--main" target="_blank" rel="noopener">
-        <Image src={IMAGES.tkl} alt="Site TKL Miami" class="project__shot" widths={[700, 1395]} sizes="(min-width: 1240px) 790px, 100vw" />
+    <div class="projects__row" data-reveal-stagger>
+      <a href="https://jdeventandhomedesign.fr/" class="project project--main" target="_blank" rel="noopener">
+        <div class="project__placeholder project__placeholder--main" style="--a:#EFE6FF;--b:#E2D4FF;color:#5B2DC9">jdeventandhomedesign.fr</div>
         <div class="project__foot">
-          <span class="project__name" style="font-size:22px">TKL Miami</span>
+          <span class="project__name" style="font-size:22px">JD Event &amp; Home Design</span>
           <span class="project__link">Voir le site ↗</span>
         </div>
       </a>
       <div class="projects__side">
         <div class="project">
-          <div class="project__placeholder" style="--a:#EFE6FF;--b:#E2D4FF;color:#5B2DC9">capture du site</div>
-          <div class="project__foot"><span class="project__name">Lucas Invest Immo</span></div>
+          <Image src={IMAGES.tkl} alt="Site TKL Miami" class="project__shot" widths={[400, 800]} sizes="(min-width: 900px) 400px, 100vw" />
+          <div class="project__foot"><span class="project__name">TKL Miami</span></div>
         </div>
         <div class="project">
           <div class="project__placeholder" style="--a:#FFEBD1;--b:#FDDCB0;color:#9A5A0A">capture du site</div>
-          <div class="project__foot"><span class="project__name">Atelier Brume</span></div>
+          <div class="project__foot"><span class="project__name">Lucas Invest Immo</span></div>
         </div>
       </div>
     </div>
@@ -70,5 +71,14 @@ import { IMAGES } from '../data/site';
     font-family: var(--font-mono);
     font-size: 12px;
     border-bottom: var(--border);
+  }
+  .project__placeholder--main { flex: none; aspect-ratio: 16 / 9; font-size: 14px; }
+  /* Dans la colonne latérale, la capture remplit l'espace restant sans pousser le nom hors de la carte. */
+  .projects__side .project :global(.project__shot) {
+    flex: 1 1 0;
+    min-height: 150px;
+    aspect-ratio: auto;
+    object-fit: cover;
+    object-position: top;
   }
 </style>

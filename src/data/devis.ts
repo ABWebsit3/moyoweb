@@ -1,5 +1,5 @@
 // Données du module de devis.
-// ⚠ À valider : prix Premium sans engagement (175,49 € dans la maquette, alors que 144,99 × 1,3 = 188,49 €).
+// Prix sans engagement = prix avec engagement × 1,3 (arrondi au centime).
 // ⚠ La majoration « sans engagement » ne s'applique qu'au forfait, pas aux options (à confirmer).
 
 export type PlanId = 'starter' | 'pro' | 'elite';
@@ -38,7 +38,7 @@ export const PLANS: Plan[] = [
   { id: 'pro', name: 'Standard', tag: 'Site vitrine plus complet', price: 74.99, free: 97.49, color: '#8A4FFF', ink: '#FFFFFF', rule: '#FFFFFF77', popular: true,
     desc: 'Plus complet, plus impactant, plus “wow”. Idéal pour les indépendants qui veulent un site qui convertit.',
     feats: ['1 site 4–6 pages', 'Design premium (animations & style Moyo)', 'Formulaire de contact', 'Nom de domaine + hébergement inclus', 'SEO de base', 'Maintenance + sécurité + optimisation', '60 min/mois de modifications', 'Support Moyo-friendly'] },
-  { id: 'elite', name: 'Premium', tag: 'Site avec besoins avancés', price: 144.99, free: 175.49, color: '#F49B2A', ink: '#17131F', rule: '#17131F55',
+  { id: 'elite', name: 'Premium', tag: 'Site avec besoins avancés', price: 144.99, free: 188.49, color: '#F49B2A', ink: '#17131F', rule: '#17131F55',
     desc: 'La version luxe du leasing. Ton site est une machine de guerre et tu n’as rien à gérer.',
     feats: ['Site complet 6–10 pages', 'Design sur-mesure', 'Formulaire de contact', 'Intégration API / automatisations', 'Nom de domaine + hébergement inclus', 'SEO premium', 'Maintenance + sécurité + optimisation', '60 min/mois de modifications', 'Support Moyo-friendly'] },
 ];

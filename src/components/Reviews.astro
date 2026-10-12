@@ -8,10 +8,10 @@ import { reviews } from '../data/site';
     <h2 class="h2"><span class="hl hl--green">Ils en parlent mieux que nous</span></h2>
     <div class="reviews__score">
       <span class="display" style="font-size:34px">4,9/5</span>
-      <span class="reviews__count">★★★★★ sur 127 avis Google</span>
+      <span class="reviews__count">★★★★★ note moyenne</span>
     </div>
   </div>
-  <div class="grid-auto" style="--min:300px">
+  <div class="grid-auto" style="--min:300px" data-reveal-stagger>
     {reviews.map((r) => (
       <figure class="card review" style={`background:${r.bg};transform:rotate(${r.rot})`}>
         <span class="review__stars" aria-label="5 étoiles sur 5">★★★★★</span>

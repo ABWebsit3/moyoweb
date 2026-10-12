@@ -15,6 +15,7 @@ import Reviews from '../components/Reviews.astro';
 import Faq from '../components/Faq.astro';
 import FinalCta from '../components/FinalCta.astro';
 import Footer from '../components/Footer.astro';
+import { SHOW_REVIEWS } from '../data/site';
 ---
 
 <Layout
@@ -33,7 +34,7 @@ import Footer from '../components/Footer.astro';
     <Devis />
     <Offer />
     <Guarantees />
-    <Reviews />
+    {SHOW_REVIEWS && <Reviews />}
     <Faq />
     <FinalCta />
   </main>

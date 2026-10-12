@@ -4,11 +4,11 @@ import { faq } from '../data/site';
 
 <section id="faq" class="band faq">
   <div class="container faq__inner">
-    <div class="faq__intro">
+    <div class="faq__intro" data-reveal="left">
       <h2 class="h2">Les questions qu’on nous pose</h2>
       <p>Une autre question ? Écris-nous, un humain te répond sous 24 h.</p>
     </div>
-    <div class="faq__list" data-faq>
+    <div class="faq__list" data-faq data-reveal-stagger>
       {faq.map((item, i) => (
         <details class="faq__item" name="faq" open={i === 0}>
           <summary class="faq__q">

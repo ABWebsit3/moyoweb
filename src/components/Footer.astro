@@ -1,20 +1,26 @@
 ---
 import { Image } from 'astro:assets';
 import { IMAGES } from '../data/site';
-// TODO : brancher les pages légales (mentions légales, CGV, confidentialité).
 ---
 
 <footer class="footer">
   <div class="container footer__inner">
-    <Image src={IMAGES.logo} alt="Moyo" width={150} class="footer__logo" />
+    <a href="/"><Image src={IMAGES.logo} alt="Moyo" width={150} class="footer__logo" /></a>
     <nav class="footer__links" aria-label="Liens légaux">
-      <a href="#">Mentions légales</a>
-      <a href="#">CGV</a>
-      <a href="#">Confidentialité</a>
+      <a href="/mentions-legales/">Mentions légales</a>
+      <a href="/cgv/">CGV</a>
+      <a href="/confidentialite/">Confidentialité</a>
+      <button type="button" class="footer__cookies" data-cookie-panel>Gestion des cookies</button>
     </nav>
     <span>© {new Date().getFullYear()} Moyo</span>
   </div>
 </footer>
+
+<script>
+  document.querySelector('[data-cookie-panel]')?.addEventListener('click', () => {
+    (window as any).tarteaucitron?.userInterface?.openPanel();
+  });
+</script>
 
 <style>
   .footer { border-top: var(--border); }
@@ -29,7 +35,16 @@ import { IMAGES } from '../data/site';
     font-size: 14px;
     color: var(--text-2);
   }
-  .footer__inner :global(.footer__logo) { height: 22px; width: auto; }
-  .footer__links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .footer__links a { color: var(--text-2); }
+  .footer__inner :global(.footer__logo) { height: 22px; width: auto; display: block; }
+  .footer__links { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+  .footer__links a, .footer__cookies { color: var(--text-2); }
+  .footer__cookies {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .footer__cookies:hover { color: var(--ink); }
 </style>

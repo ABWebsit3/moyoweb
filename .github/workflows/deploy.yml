@@ -1,0 +1,44 @@
+# Compile le site et publie le dossier dist/ sur la branche « deploy ».
+# Hostinger (Git) déploie cette branche telle quelle dans public_html : il ne lance pas de build.
+name: Build & déploiement
+
+on:
+  push:
+    branches: [main, claude/quirky-gauss-gi2dac]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          # Variables à définir dans Settings → Secrets and variables → Actions → Variables
+          PUBLIC_DEVIS_ENDPOINT: ${{ vars.PUBLIC_DEVIS_ENDPOINT }}
+          PUBLIC_GA4_ID: ${{ vars.PUBLIC_GA4_ID }}
+
+      - name: Publier dist/ sur la branche deploy
+        working-directory: dist
+        run: |
+          git init -q -b deploy
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Déploiement ${GITHUB_SHA::7}"
+          git push -q --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" deploy
