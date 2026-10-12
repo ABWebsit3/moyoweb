@@ -1,7 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import Field from '../components/Field.astro';
-import { company, host, crm } from '../data/legal';
+import { company, host, crm, mail } from '../data/legal';
 ---
 
 <LegalLayout title="Politique de confidentialité" description="Comment Moyo collecte et utilise tes données personnelles, et comment exercer tes droits.">
@@ -53,7 +53,7 @@ import { company, host, crm } from '../data/legal';
   <ul>
     <li>Hébergement du site : <Field v={host.name} label="hébergeur du site" /></li>
     <li>Gestion de la relation client (CRM Dolibarr) : <Field v={crm.host} label="hébergeur du CRM Dolibarr" /></li>
-    <li>Messagerie électronique : <Field label="fournisseur de messagerie" /></li>
+    <li>Messagerie électronique : <Field v={mail.host} label="fournisseur de messagerie" /></li>
     <li>Mesure d’audience, uniquement si tu l’acceptes : Google Analytics (Google Ireland Limited)</li>
   </ul>
 

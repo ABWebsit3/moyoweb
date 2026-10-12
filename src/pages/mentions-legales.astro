@@ -11,20 +11,20 @@ import { company, host } from '../data/legal';
     <strong><Field v={company.name} label="nom ou raison sociale" /></strong>, <Field v={company.owner} label="nom et prénom de l’entrepreneur" /> – EI<br />
     <Field v={company.legalForm} label="forme juridique" /><br />
     Adresse : <Field v={company.address} label="adresse" /><br />
-    SIREN : <Field v={company.siren} label="SIREN" /> · SIRET : <Field v={company.siret} label="SIRET" /><br />
+    SIREN : <Field v={company.siren} label="SIREN" /> · SIRET : <Field v={company.siret} label="SIRET" /> · Code APE : {company.ape}<br />
     <Field v={company.registry} label="immatriculation (RNE / RCS), si applicable" /><br />
     Téléphone : <Field v={company.phone} label="téléphone" /><br />
     E-mail : <a href={`mailto:${company.email}`}>{company.email}</a><br />
     {company.vatMention}
   </p>
   <p>{company.brand} est un service proposé par {company.name}.</p>
-  <p>Directeur ou directrice de la publication : <Field v={company.publicationDirector} label="nom" /></p>
+  <p>Directeur de la publication : <Field v={company.publicationDirector} label="nom" /></p>
 
   <h2>Hébergeur</h2>
   <p>
     <Field v={host.name} label="nom de l’hébergeur" /><br />
-    Adresse : <Field v={host.address} label="adresse de l’hébergeur" /><br />
-    Téléphone : <Field v={host.phone} label="téléphone de l’hébergeur" />
+    Adresse : <Field v={host.address} label="adresse de l’hébergeur" />
+    {host.phone && <Fragment><br />Téléphone : {host.phone}</Fragment>}
   </p>
 
   <h2>Propriété intellectuelle</h2>
