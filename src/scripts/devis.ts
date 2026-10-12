@@ -1,4 +1,5 @@
 import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, type Option, type PlanId } from '../data/devis';
+import { computeQuote, seoQty as sharedSeoQty, type QuoteInput } from '../lib/quote';
 
 type Step = 1 | 2 | 3 | 4;
 type FormKey = 'nom' | 'prenom' | 'societe' | 'email';
@@ -35,7 +36,7 @@ export function initDevis(root: HTMLElement) {
   const stepperEl = root.querySelector<HTMLElement>('[data-stepper]')!;
   const panelEl = root.querySelector<HTMLElement>('[data-panel]')!;
   const ticketEl = root.querySelector<HTMLElement>('[data-ticket]')!;
-  const endpoint = root.dataset.endpoint || '';
+  const endpoint = root.dataset.endpoint || '/api/devis';
 
   const s: State = {
     step: 1,
@@ -55,30 +56,21 @@ export function initDevis(root: HTMLElement) {
   const plan = () => PLANS.find((p) => p.id === s.plan)!;
   const planPrice = (p = plan()) => (s.engage ? p.price : p.free);
   const included = (o: Option) => o.inc?.[s.plan] ?? 0;
-  const seoOpt = OPTS.find((o) => o.id === SEO_OPTION_ID)!;
-  const seoQty = () => {
-    const inc = included(seoOpt);
-    return s.seo == null ? inc : Math.max(inc, s.seo);
-  };
+  const seoQty = () => sharedSeoQty(s.plan, s.seo);
   const isOn = (o: Option) => (o.id === SEO_OPTION_ID ? seoQty() > 0 : included(o) > 0 || !!s.sel[o.id]);
   const isIncluded = (o: Option) => o.id !== SEO_OPTION_ID && included(o) > 0;
 
+  const quoteInput = (): QuoteInput => ({
+    plan: s.plan,
+    engage: s.engage,
+    selected: Object.keys(s.sel).filter((id) => s.sel[id]),
+    seo: s.seo,
+  });
+
   function quote() {
-    const lines: { name: string; price: string }[] = [];
-    let total = planPrice();
-    for (const o of OPTS) {
-      if (o.id === SEO_OPTION_ID) {
-        const q = seoQty();
-        const cost = Math.max(0, q - included(o)) * o.price;
-        if (q > 0) lines.push({ name: `Articles SEO ×${q}`, price: cost ? eur(cost) : 'INCLUS' });
-        total += cost;
-      } else if (isOn(o)) {
-        const incl = isIncluded(o);
-        lines.push({ name: o.name, price: incl ? 'INCLUS' : eur(o.price) });
-        if (!incl) total += o.price;
-      }
-    }
-    return { lines, total };
+    const q = computeQuote(quoteInput());
+    const lines = q.lines.map((l) => ({ name: l.name, price: l.included ? 'INCLUS' : eur(l.total) }));
+    return { lines, total: q.totalMonthly };
   }
 
   const formValid = () =>
@@ -215,6 +207,7 @@ export function initDevis(root: HTMLElement) {
           <p>On t’envoie aussi ton ticket par mail pour le garder sous le coude.</p>
         </div>
         <div class="dv-fields">${fields}</div>
+        <div class="dv-hp" aria-hidden="true"><label>Site web <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <label class="dv-consent">
           <input type="checkbox" data-consent ${s.consent ? 'checked' : ''} required>
           <span>J’accepte que mes informations soient utilisées pour me recontacter dans le cadre de ma demande. <em>(Promis, pas de spam ni de commande pizza à ton insu.)</em></span>
@@ -312,20 +305,13 @@ export function initDevis(root: HTMLElement) {
     if (endpoint) {
       s.sending = true;
       updateSubmit();
-      const { lines, total } = quote();
+      const honeypot = panelEl.querySelector<HTMLInputElement>('[name="website"]')?.value ?? '';
       try {
+        // Le serveur recalcule les montants à partir de ces choix.
         const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ticketNo: s.ticketNo,
-            contact: { ...s.form },
-            plan: { id: s.plan, name: plan().name, price: planPrice() },
-            engagement: s.engage,
-            setupFee: s.engage ? 0 : SETUP_FEE,
-            options: lines,
-            totalMonthly: Math.round(total * 100) / 100,
-          }),
+          body: JSON.stringify({ ticketNo: s.ticketNo, contact: { ...s.form }, consent: s.consent, website: honeypot, ...quoteInput() }),
         });
         if (!res.ok) throw new Error(String(res.status));
       } catch {

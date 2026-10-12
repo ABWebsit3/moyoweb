@@ -26,29 +26,37 @@ Les images sont dans `src/assets/` et passent par `<Image>` (`astro:assets`) : a
 
 Placeholders à remplacer : capture Lucas Invest Immo (`Projects.astro`), logos clients (`ClientLogos.astro`).
 
-## Mise en ligne sur Hostinger
+## Mise en ligne sur Hostinger (application Node.js)
 
-Le déploiement Git de Hostinger copie les fichiers du dépôt **sans lancer de build**. Le build est donc fait par GitHub Actions (`.github/workflows/deploy.yml`) :
+Le site est pré-généré (pages statiques) avec une seule route serveur, `/api/devis`, qui relaie les demandes de devis vers Dolibarr. Il tourne donc comme **application Node.js** Hostinger :
 
-1. À chaque push sur `main` (ou sur la branche de travail), l'action lance `npm ci` puis `npm run build`.
-2. Le contenu de `dist/` est publié sur la branche **`deploy`** (le site compilé, prêt à servir).
-3. Dans hPanel → **Avancé → Git** : dépôt `https://github.com/ABWebsit3/moyoweb.git`, branche **`deploy`**, répertoire vide (= `public_html`). Activer le **déploiement automatique** (webhook GitHub fourni par Hostinger).
-
-Variables optionnelles, dans GitHub → Settings → Secrets and variables → Actions → **Variables** :
-
-| Variable | Rôle |
+| Réglage hPanel | Valeur |
 | --- | --- |
-| `PUBLIC_DEVIS_ENDPOINT` | URL qui reçoit les demandes de devis (POST JSON) |
-| `PUBLIC_GA4_ID` | Identifiant Google Analytics 4 (`G-…`) ; active le bandeau cookies |
+| Version de Node.js | 22 |
+| Commande de build | `npm run build` |
+| Commande de démarrage | `npm run start` (lance `dist/server/entry.mjs`) |
+| Variables d'environnement | `DOLIBARR_API_KEY` (obligatoire), `DOLIBARR_API_URL` (facultatif), `PUBLIC_GA4_ID` (facultatif) |
 
-`public/.htaccess` gère la page 404 et le cache des fichiers statiques.
+`DOLIBARR_API_URL` vaut par défaut `https://doli.agence-abweb.fr/htdocs/api/index.php`. `PUBLIC_GA4_ID` est lu au build : le définir avant de lancer le build.
 
-## Envoi du devis
+La GitHub Action (`.github/workflows/deploy.yml`) vérifie que le site compile et publie la partie statique (`dist/client`) sur la branche `deploy`, utilisable seulement pour un hébergement statique (sans envoi des devis).
 
-Sans configuration, le formulaire affiche le ticket mais **n'envoie rien**.
-Pour brancher un envoi (Dolibarr, mail, webhook…), définir `PUBLIC_DEVIS_ENDPOINT`.
-Le devis est envoyé en `POST` JSON (`ticketNo`, `contact`, `plan`, `engagement`, `setupFee`, `options`, `totalMonthly`) avant d'afficher l'étape 4. En cas d'erreur, un message s'affiche et l'utilisateur reste sur l'étape 3.
-⚠ Ne jamais mettre la clé API Dolibarr côté navigateur : passer par un relais côté serveur.
+## Envoi du devis → Dolibarr
+
+`src/pages/api/devis.ts` (côté serveur, la clé API ne quitte jamais le serveur) :
+
+1. Valide la demande (champs, consentement, e-mail), filtre les robots (champ piège) et limite à 5 demandes / 10 min par IP.
+2. Recalcule le devis côté serveur (`src/lib/quote.ts`, même calcul que dans le navigateur) : les montants envoyés par le navigateur sont ignorés.
+3. Dans Dolibarr : recherche le tiers par e-mail ; sinon le crée en **prospect** (code client automatique) ; ajoute un **contact** si une société est renseignée.
+4. Crée une **proposition commerciale en brouillon** : forfait, mise en service (sans engagement), options (incluses à 0 €), articles SEO supplémentaires. TVA à 0 (art. 293 B du CGI). Le détail et le total mensuel sont dans la note privée.
+
+En cas d'erreur Dolibarr, le visiteur voit un message et reste sur le formulaire ; l'erreur est journalisée côté serveur. L'utilisateur Dolibarr associé à la clé doit avoir les droits de création sur les tiers, contacts et propositions commerciales.
+
+`PUBLIC_DEVIS_ENDPOINT` permet de pointer le formulaire vers une autre URL si besoin.
+
+## Favicons
+
+Générés depuis la mascotte : `node scripts/make-favicons.mjs` (écrit dans `public/`).
 
 ## Cookies (tarteaucitron.js)
 
@@ -72,7 +80,7 @@ Le devis est envoyé en `POST` JSON (`ticketNo`, `contact`, `plan`, `engagement`
 ## Points restant à valider
 
 - Avis clients : fictifs, section masquée (`SHOW_REVIEWS` dans `src/data/site.ts`).
-- Capture à fournir : Lucas Invest Immo.
+- Capture à fournir : Lucas Invest Immo (header du site).
 - Garantie « Livré en 3 à 5 jours… En retard ? Ton premier mois est offert » : reprise de la maquette, à confirmer.
 - Citation « C'est le Netflix du site internet. » du hero : à garder comme slogan ou à retirer.
 - Formule sans engagement : à confirmer (prix = prix avec engagement × 1,3).
