@@ -7,16 +7,17 @@ import { legalUpdatedAt } from '../data/legal';
 interface Props {
   title: string;
   description: string;
+  showDate?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, showDate = true } = Astro.props;
 ---
 
 <Layout title={`${title} · Moyo`} description={description}>
   <Header />
   <main class="container legal">
     <h1 class="h2">{title}</h1>
-    <p class="legal__date">Dernière mise à jour : {legalUpdatedAt}</p>
+    {showDate ? <p class="legal__date">Dernière mise à jour : {legalUpdatedAt}</p> : <div class="legal__date" />}
     <div class="legal__body">
       <slot />
     </div>

@@ -73,8 +73,10 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   </p>
   <h3>Comment résilier</h3>
   <p>
-    La résiliation est notifiée par e-mail à <a href={`mailto:${company.email}`}>{company.email}</a> ou par
-    courrier à {company.address}. Moyo en accuse réception par e-mail en indiquant la date d’effet.
+    La résiliation peut être notifiée en ligne, depuis la page <a href="/resiliation/">Résilier votre contrat</a>
+    accessible en bas de chaque page du site, par e-mail à <a href={`mailto:${company.email}`}>{company.email}</a> ou
+    par courrier à {company.address}. Moyo en accuse réception par e-mail, puis confirme la date de fin du contrat et
+    les effets de la résiliation.
   </p>
 
   <h2>6. Délai de mise en ligne</h2>

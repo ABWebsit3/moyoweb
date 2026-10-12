@@ -37,7 +37,7 @@ Le site est pré-généré (pages statiques) avec une seule route serveur, `/api
 | Commande de build | `npm run build` |
 | Répertoire de sortie | `dist` |
 | Fichier d'entrée | `server.mjs` |
-| Variables d'environnement | `DOLIBARR_API_KEY` (obligatoire), `DOLIBARR_API_URL` (facultatif), `PUBLIC_GA4_ID` (facultatif) |
+| Variables d'environnement | `DOLIBARR_API_KEY` et `SMTP_PASSWORD` (obligatoires), `DOLIBARR_API_URL`, `DOLIBARR_USER_ID`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `PUBLIC_GA4_ID` (facultatifs) |
 
 `server.mjs` existe à la racine du projet et dans `dist/` (créé par `scripts/postbuild.mjs`) : Hostinger résout le fichier d'entrée depuis l'un ou l'autre selon le framework. Les deux démarrent le serveur Astro (`dist/server/entry.mjs`). En local : `npm run start`.
 
@@ -57,6 +57,20 @@ La GitHub Action (`.github/workflows/deploy.yml`) vérifie que le site compile e
 En cas d'erreur Dolibarr, le visiteur voit un message et reste sur le formulaire ; l'erreur est journalisée côté serveur. L'utilisateur Dolibarr associé à la clé doit avoir les droits de création sur les tiers, contacts et propositions commerciales.
 
 `PUBLIC_DEVIS_ENDPOINT` permet de pointer le formulaire vers une autre URL si besoin.
+
+## Résiliation en ligne (« résilier votre contrat »)
+
+Page `/resiliation/` (lien dans le footer de toutes les pages), conforme au principe de la résiliation « en 3 clics » (art. L215-1-1 et D215-1 s. du Code de la consommation) : 1) identification et contrat, 2) récapitulatif et bouton « Je notifie la résiliation », 3) confirmation.
+
+`src/pages/api/resiliation.ts` envoie un **accusé de réception par e-mail** au client (copie cachée à `hello@moyoweb.fr`) puis crée un **événement d'agenda** dans Dolibarr, rattaché au tiers retrouvé par e-mail (au mieux : un échec Dolibarr ne bloque pas l'accusé). La date de fin du contrat et les effets de la résiliation sont ensuite confirmés à la main par e-mail.
+
+E-mails : SMTP Hostinger (`smtp.hostinger.com`, port 465 SSL) avec la boîte `hello@moyoweb.fr` ; définir `SMTP_PASSWORD` (mot de passe de la boîte). Sans lui, la résiliation en ligne renvoie une erreur et invite à écrire par e-mail. Propriétaire de l'événement Dolibarr : `DOLIBARR_USER_ID`, sinon l'utilisateur lié à la clé API (`GET /users/info`).
+
+## SEO et IA
+
+- `/sitemap.xml` : généré au build à partir des pages de `src/pages` (hors 404 et `/api`).
+- `/robots.txt` : autorise tout sauf `/api/`, pointe vers le sitemap.
+- `/llms.txt` : résumé du site au format [llmstxt.org](https://llmstxt.org), généré à partir des données des offres et de la FAQ (toujours à jour).
 
 ## Favicons
 

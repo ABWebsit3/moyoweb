@@ -1,0 +1,243 @@
+---
+// Fonctionnalité de résiliation en ligne (« résilier votre contrat », art. L215-1-1 et D215-1 s. C. conso) :
+// 1) identification et contrat, 2) récapitulatif et notification, 3) confirmation + accusé de réception par e-mail.
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { company } from '../data/legal';
+---
+
+<LegalLayout title="Résilier votre contrat" description="Résilie ton contrat Moyo en ligne, en quelques clics." showDate={false}>
+  <div class="rs" data-resiliation>
+    <ol class="rs__steps" aria-label="Étapes">
+      <li data-step-label="1" class="is-current">Tes informations</li>
+      <li data-step-label="2">Récapitulatif</li>
+      <li data-step-label="3">Confirmation</li>
+    </ol>
+
+    <section data-step="1">
+      <p>
+        Renseigne les informations qui nous permettent de t’identifier et de retrouver ton contrat. Les conditions de
+        résiliation (préavis, fin de la période d’engagement, transfert du site) sont détaillées dans nos
+        <a href="/cgv/">conditions générales de vente</a>.
+      </p>
+      <form class="rs__form" data-form novalidate>
+        <div class="rs__fields">
+          <label>Nom *<input name="nom" required autocomplete="family-name" maxlength="100" /></label>
+          <label>Prénom *<input name="prenom" required autocomplete="given-name" maxlength="100" /></label>
+          <label>Entreprise ou association *<input name="structure" required autocomplete="organization" maxlength="150" /></label>
+          <label>E-mail *<input name="email" type="email" required autocomplete="email" maxlength="254" /></label>
+          <label>Site concerné (adresse) *<input name="site" required placeholder="ex. mon-site.fr" maxlength="200" /></label>
+          <label>
+            Formule
+            <select name="formule">
+              <option value="inconnue">Je ne sais pas</option>
+              <option value="engagement">Avec engagement (24 mois)</option>
+              <option value="sans-engagement">Sans engagement</option>
+              <option value="gardiennage">Gardiennage</option>
+            </select>
+          </label>
+        </div>
+        <label class="rs__full">
+          Motif de résiliation (facultatif)
+          <textarea name="motif" rows="3" maxlength="2000" placeholder="Précise ici un éventuel motif légitime de résiliation anticipée."></textarea>
+        </label>
+        <p class="rs__hint">Aucune pièce justificative n’est demandée. Si tu invoques un motif légitime, nous pourrons te demander un justificatif par e-mail.</p>
+        <div class="rs__hp" aria-hidden="true"><label>Site web <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+        <p class="rs__error" data-error hidden role="alert"></p>
+        <div class="rs__actions">
+          <button type="submit" class="btn-dark">Continuer vers le récapitulatif →</button>
+        </div>
+      </form>
+    </section>
+
+    <section data-step="2" hidden>
+      <p>Vérifie tes informations avant de notifier ta résiliation.</p>
+      <dl class="rs__recap" data-recap></dl>
+      <p class="rs__error" data-error-2 hidden role="alert"></p>
+      <div class="rs__actions">
+        <button type="button" class="btn-ghost" data-back>← Modifier</button>
+        <button type="button" class="rs__notify" data-notify>Je notifie la résiliation</button>
+      </div>
+    </section>
+
+    <section data-step="3" hidden>
+      <div class="rs__done">
+        <span class="rs__badge">✓ Résiliation notifiée</span>
+        <p>Ta demande de résiliation a bien été notifiée le <strong data-notified-at></strong>.</p>
+        <p>
+          Un accusé de réception reprenant ces informations vient de t’être envoyé à <strong data-email></strong>.
+          Nous te confirmerons par e-mail la date de fin de ton contrat et les effets de la résiliation.
+        </p>
+        <p>Pas reçu l’e-mail ? Vérifie tes indésirables ou écris-nous à <a href={`mailto:${company.email}`}>{company.email}</a>.</p>
+      </div>
+    </section>
+
+    <noscript>
+      <p>Cette page nécessite JavaScript. Tu peux aussi résilier par e-mail à <a href={`mailto:${company.email}`}>{company.email}</a>.</p>
+    </noscript>
+  </div>
+</LegalLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-resiliation]')!;
+  const form = root.querySelector<HTMLFormElement>('[data-form]')!;
+  const steps = root.querySelectorAll<HTMLElement>('[data-step]');
+  const labels = root.querySelectorAll<HTMLElement>('[data-step-label]');
+  const FIELDS: [string, string][] = [
+    ['nom', 'Nom'],
+    ['prenom', 'Prénom'],
+    ['structure', 'Entreprise ou association'],
+    ['email', 'E-mail'],
+    ['site', 'Site concerné'],
+    ['formule', 'Formule'],
+    ['motif', 'Motif'],
+  ];
+  const EMAIL_RE = /^[^\s@'"()\\<>]+@[^\s@'"()\\<>]+\.[^\s@'"()\\<>]+$/;
+  let data: Record<string, string> = {};
+
+  function show(n: number) {
+    steps.forEach((s) => (s.hidden = s.dataset.step !== String(n)));
+    labels.forEach((l) => {
+      const i = Number(l.dataset.stepLabel);
+      l.classList.toggle('is-current', i === n);
+      l.classList.toggle('is-done', i < n);
+    });
+    (window as any).moyoLenis?.scrollTo(root, { offset: -100 }) ?? root.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function setError(sel: string, msg: string) {
+    const el = root.querySelector<HTMLElement>(sel)!;
+    el.textContent = msg;
+    el.hidden = !msg;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    data = Object.fromEntries([...fd.entries()].map(([k, v]) => [k, String(v).trim()]));
+    if (!data.nom || !data.prenom || !data.structure || !data.site || !EMAIL_RE.test(data.email)) {
+      setError('[data-error]', 'Merci de remplir les champs obligatoires (*) avec une adresse e-mail valide.');
+      return;
+    }
+    setError('[data-error]', '');
+    const formuleLabel = form.querySelector<HTMLSelectElement>('[name="formule"]')!.selectedOptions[0].text;
+    const recap = root.querySelector<HTMLElement>('[data-recap]')!;
+    recap.replaceChildren(
+      ...FIELDS.flatMap(([k, label]) => {
+        const dt = document.createElement('dt');
+        dt.textContent = label;
+        const dd = document.createElement('dd');
+        dd.textContent = (k === 'formule' ? formuleLabel : data[k]) || '—';
+        return [dt, dd];
+      }),
+    );
+    show(2);
+  });
+
+  root.querySelector('[data-back]')!.addEventListener('click', () => show(1));
+
+  const notify = root.querySelector<HTMLButtonElement>('[data-notify]')!;
+  notify.addEventListener('click', async () => {
+    notify.disabled = true;
+    setError('[data-error-2]', '');
+    try {
+      const res = await fetch('/api/resiliation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body.ok) throw new Error(String(res.status));
+      root.querySelector('[data-notified-at]')!.textContent = body.notifiedAt;
+      root.querySelector('[data-email]')!.textContent = data.email;
+      show(3);
+    } catch {
+      setError('[data-error-2]', 'La notification n’a pas pu être envoyée. Réessaie dans un instant ou écris-nous à hello@moyoweb.fr.');
+      notify.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .rs { display: flex; flex-direction: column; gap: 22px; }
+  .rs p { margin: 0; }
+  .rs__steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; counter-reset: s; }
+  .rs__steps li {
+    counter-increment: s;
+    border: var(--border);
+    border-radius: 999px;
+    padding: 6px 14px 6px 6px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    opacity: .5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rs__steps li::before {
+    content: counter(s);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    background: #fff;
+  }
+  .rs__steps li.is-current { opacity: 1; background: var(--ink); color: #fff; }
+  .rs__steps li.is-current::before { background: var(--violet); color: #fff; }
+  .rs__steps li.is-done { opacity: 1; }
+  .rs__steps li.is-done::before { content: '✓'; background: var(--green); }
+  .rs section { display: flex; flex-direction: column; gap: 18px; }
+  .rs section[hidden] { display: none; }
+  .rs__form { display: flex; flex-direction: column; gap: 16px; }
+  .rs__fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 14px; }
+  .rs label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700; color: var(--ink); }
+  .rs input, .rs select, .rs textarea {
+    font: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 14px;
+    border: var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .rs input:focus, .rs select:focus, .rs textarea:focus { outline: none; background: #fff; box-shadow: 0 0 0 4px var(--lilac-2); }
+  .rs__hint { font-size: 14px; color: var(--muted); }
+  .rs__hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .rs__error { font-weight: 600; color: #b42318; }
+  .rs__actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .rs__actions:has(> :only-child) { justify-content: flex-end; }
+  .rs__recap { display: grid; grid-template-columns: minmax(140px, max-content) 1fr; gap: 8px 18px; margin: 0; }
+  .rs__recap :global(dt) { font-weight: 700; color: var(--ink); }
+  .rs__recap :global(dd) { margin: 0; overflow-wrap: anywhere; }
+  .rs__notify {
+    background: var(--orange);
+    color: var(--ink);
+    border: var(--border);
+    border-radius: 14px;
+    padding: 15px 24px;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+  .rs__notify[disabled] { opacity: .6; cursor: wait; }
+  .rs__done { display: flex; flex-direction: column; gap: 12px; }
+  .rs__badge {
+    align-self: flex-start;
+    background: var(--green);
+    border: var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  @media (max-width: 520px) {
+    .rs__recap { grid-template-columns: 1fr; gap: 2px; }
+    .rs__recap :global(dd) { margin-bottom: 10px; }
+  }
+</style>

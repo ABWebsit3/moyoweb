@@ -6,43 +6,14 @@
 import type { APIRoute } from 'astro';
 import { OPTS, SEO_OPTION_ID, type PlanId } from '../../data/devis';
 import { computeQuote, findPlan, type Quote } from '../../lib/quote';
+import { json, str, EMAIL_RE, rateLimiter, dolibarr, dolibarrKey, findThirdpartyByEmail } from '../../lib/server';
 
 export const prerender = false;
 
-const API_URL = (process.env.DOLIBARR_API_URL || 'https://doli.agence-abweb.fr/htdocs/api/index.php').replace(/\/+$/, '');
-const EMAIL_RE = /^[^\s@'"()\\]+@[^\s@'"()\\]+\.[^\s@'"()\\]+$/;
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
 
-// --- Anti-abus : 5 demandes max par IP sur 10 minutes (mémoire du processus). ---
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_PER_WINDOW = 5;
-const hits = new Map<string, number[]>();
-function rateLimited(ip: string) {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  return recent.length > MAX_PER_WINDOW;
-}
-
-const json = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
-
-const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
-
-// --- Client Dolibarr ---------------------------------------------------------
-async function dolibarr<T>(key: string, method: 'GET' | 'POST', path: string, body?: unknown): Promise<T | null> {
-  const res = await fetch(API_URL + path, {
-    method,
-    headers: { DOLAPIKEY: key, Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: body === undefined ? undefined : JSON.stringify(body),
-    signal: AbortSignal.timeout(15000),
-  });
-  // Dolibarr répond 404 quand une recherche ne trouve rien.
-  if (method === 'GET' && res.status === 404) return null;
-  if (!res.ok) throw new Error(`Dolibarr ${method} ${path} → ${res.status} ${(await res.text()).slice(0, 300)}`);
-  return (await res.json()) as T;
-}
+// 5 demandes max par IP sur 10 minutes.
+const rateLimited = rateLimiter(5, 10 * 60 * 1000);
 
 interface Contact {
   nom: string;
@@ -51,12 +22,11 @@ interface Contact {
   email: string;
 }
 
-async function findOrCreateThirdparty(key: string, c: Contact): Promise<{ id: number; created: boolean }> {
-  const filter = encodeURIComponent(`(t.email:=:'${c.email}')`);
-  const found = await dolibarr<{ id: string }[]>(key, 'GET', `/thirdparties?limit=1&sqlfilters=${filter}`);
-  if (found?.length) return { id: Number(found[0].id), created: false };
+async function findOrCreateThirdparty(c: Contact): Promise<{ id: number; created: boolean }> {
+  const existing = await findThirdpartyByEmail(c.email);
+  if (existing) return { id: existing, created: false };
 
-  const id = await dolibarr<number>(key, 'POST', '/thirdparties', {
+  const id = await dolibarr<number>('POST', '/thirdparties', {
     name: c.societe || `${c.prenom} ${c.nom}`,
     email: c.email,
     client: '2', // prospect
@@ -93,8 +63,7 @@ function proposalLines(q: Quote) {
 
 // --- Route -------------------------------------------------------------------
 export const POST: APIRoute = async ({ request, clientAddress }) => {
-  const key = process.env.DOLIBARR_API_KEY;
-  if (!key) {
+  if (!dolibarrKey()) {
     console.error('[devis] DOLIBARR_API_KEY manquante');
     return json(500, { ok: false, error: 'config' });
   }
@@ -132,10 +101,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const ticketNo = str(data.ticketNo, 40);
 
   try {
-    const thirdparty = await findOrCreateThirdparty(key, contact);
+    const thirdparty = await findOrCreateThirdparty(contact);
 
     if (thirdparty.created && contact.societe) {
-      await dolibarr(key, 'POST', '/contacts', {
+      await dolibarr('POST', '/contacts', {
         socid: thirdparty.id,
         lastname: contact.nom,
         firstname: contact.prenom,
@@ -151,14 +120,14 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       'Attention : le total de la proposition additionne mensualités et frais uniques.',
     ].join('\n');
 
-    const proposalId = await dolibarr<number>(key, 'POST', '/proposals', {
+    const proposalId = await dolibarr<number>('POST', '/proposals', {
       socid: thirdparty.id,
       date: Math.floor(Date.now() / 1000),
       note_private: notes,
     });
 
     for (const line of proposalLines(quote)) {
-      await dolibarr(key, 'POST', `/proposals/${proposalId}/line`, line);
+      await dolibarr('POST', `/proposals/${proposalId}/line`, line);
     }
 
     return json(200, { ok: true });
