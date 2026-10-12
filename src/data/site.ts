@@ -6,9 +6,10 @@ import transat from '../assets/moyo_transat.png';
 import surprised from '../assets/moyo_surprised.png';
 import tkl from '../assets/tkllobster.webp';
 import jd from '../assets/jdeventandhomedesign.webp';
+import lucas from '../assets/lucasinvestimmo.webp';
 
 // Images optimisées au build via <Image> (astro:assets).
-export const IMAGES = { logo, transat, surprised, tkl, jd };
+export const IMAGES = { logo, transat, surprised, tkl, jd, lucas };
 
 export const CONTACT_EMAIL = 'hello@moyoweb.fr';
 

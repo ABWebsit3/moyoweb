@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets';
 import { IMAGES } from '../data/site';
 // Jessica Da Veiga (jdeventandhomedesign.fr) est mise en avant : seul site client encore en ligne.
-// ⚠ Capture Lucas Invest Immo à fournir (placeholder rayé en attendant).
 ---
 
 <section id="projets" class="band projects">
@@ -28,7 +27,7 @@ import { IMAGES } from '../data/site';
           <div class="project__foot"><span class="project__name">TKL Miami</span></div>
         </div>
         <div class="project">
-          <div class="project__placeholder" style="--a:#FFEBD1;--b:#FDDCB0;color:#9A5A0A">capture du site</div>
+          <Image src={IMAGES.lucas} alt="Site Lucas Invest Immo" class="project__shot" />
           <div class="project__foot"><span class="project__name">Lucas Invest Immo</span></div>
         </div>
       </div>
@@ -65,16 +64,6 @@ import { IMAGES } from '../data/site';
   .project--main .project__foot { padding: 18px 22px; }
   .project__name { font-family: var(--font-display); font-weight: 800; font-size: 19px; }
   .project__link { font-weight: 700; font-size: 15px; }
-  .project__placeholder {
-    flex: 1;
-    min-height: 150px;
-    background: repeating-linear-gradient(135deg, var(--a) 0 10px, var(--b) 10px 20px);
-    display: grid;
-    place-items: center;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    border-bottom: var(--border);
-  }
   .project__sub { font-size: 14px; font-weight: 600; color: var(--muted); }
   /* Dans la colonne latérale, la capture remplit l'espace restant sans pousser le nom hors de la carte. */
   .projects__side .project :global(.project__shot) {

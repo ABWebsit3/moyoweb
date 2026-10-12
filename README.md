@@ -24,7 +24,7 @@ npx astro check  # vérification des types
 
 Les images sont dans `src/assets/` et passent par `<Image>` (`astro:assets`) : au build, Astro les convertit en WebP et génère les tailles utiles. Elles sont déclarées dans `IMAGES` (`src/data/site.ts`). `moyo_eating.png` est disponible mais pas encore utilisée.
 
-Placeholders à remplacer : capture Lucas Invest Immo (`Projects.astro`), logos clients (`ClientLogos.astro`).
+Placeholders à remplacer : logos clients (`ClientLogos.astro`, wordmarks texte pour l'instant).
 
 ## Mise en ligne sur Hostinger (application Node.js)
 
@@ -80,7 +80,6 @@ Générés depuis la mascotte : `node scripts/make-favicons.mjs` (écrit dans `p
 ## Points restant à valider
 
 - Avis clients : fictifs, section masquée (`SHOW_REVIEWS` dans `src/data/site.ts`).
-- Capture à fournir : Lucas Invest Immo (header du site).
 - Garantie « Livré en 3 à 5 jours… En retard ? Ton premier mois est offert » : reprise de la maquette, à confirmer.
 - Citation « C'est le Netflix du site internet. » du hero : à garder comme slogan ou à retirer.
 - Formule sans engagement : à confirmer (prix = prix avec engagement × 1,3).
