@@ -8,7 +8,7 @@ import { company, host } from '../data/legal';
   <h2>Éditeur du site</h2>
   <p>
     Le site <strong>moyoweb.fr</strong> est édité par :<br />
-    <Field v={company.name} label="nom ou raison sociale" /><br />
+    <strong><Field v={company.name} label="nom ou raison sociale" /></strong><br />
     <Field v={company.legalForm} label="forme juridique" /><br />
     Adresse : <Field v={company.address} label="adresse" /><br />
     SIREN : <Field v={company.siren} label="SIREN" /> · SIRET : <Field v={company.siret} label="SIRET" /><br />
@@ -17,6 +17,7 @@ import { company, host } from '../data/legal';
     E-mail : <a href={`mailto:${company.email}`}>{company.email}</a><br />
     {company.vatMention}
   </p>
+  <p>{company.brand} est un service proposé par {company.name}.</p>
   <p>Directeur ou directrice de la publication : <Field v={company.publicationDirector} label="nom" /></p>
 
   <h2>Hébergeur</h2>
@@ -29,7 +30,7 @@ import { company, host } from '../data/legal';
   <h2>Propriété intellectuelle</h2>
   <p>
     L’ensemble des contenus du site (textes, illustrations, mascotte Mo’, logo, mise en page) est la propriété de
-    Moyo, sauf mention contraire. Toute reproduction ou réutilisation, totale ou partielle, sans autorisation écrite
+    {company.name}, sauf mention contraire. Toute reproduction ou réutilisation, totale ou partielle, sans autorisation écrite
     préalable est interdite.
   </p>
   <p>

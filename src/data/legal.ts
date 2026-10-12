@@ -2,7 +2,8 @@
 // Tout champ laissé vide s'affiche « À compléter » (surligné) sur les pages.
 
 export const company = {
-  name: '', // Nom commercial / raison sociale, ou nom et prénom de l'entrepreneur
+  name: 'ABweb', // Entreprise qui édite le site et vend les offres
+  brand: 'Moyo', // Nom du service proposé par ABweb
   legalForm: '', // ex. Entrepreneur individuel (micro-entreprise), SASU, EURL…
   address: '', // Adresse du siège / domicile professionnel
   siren: '',

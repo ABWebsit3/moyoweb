@@ -7,7 +7,7 @@ import { company, host, crm } from '../data/legal';
 <LegalLayout title="Politique de confidentialité" description="Comment Moyo collecte et utilise tes données personnelles, et comment exercer tes droits.">
   <h2>Qui est responsable de tes données ?</h2>
   <p>
-    Le responsable du traitement est <Field v={company.name} label="nom ou raison sociale" />,
+    Le responsable du traitement est <Field v={company.name} label="nom ou raison sociale" /> (service {company.brand}),
     <Field v={company.address} label="adresse" />. Contact :
     <a href={`mailto:${company.email}`}>{company.email}</a>.
   </p>
@@ -49,7 +49,7 @@ import { company, host, crm } from '../data/legal';
   <p>Nous ne vendons pas tes données et ne les utilisons pas pour de la publicité ciblée.</p>
 
   <h2>Qui y a accès ?</h2>
-  <p>Tes données sont destinées à Moyo uniquement. Elles sont traitées par nos prestataires techniques :</p>
+  <p>Tes données sont destinées à {company.name} ({company.brand}) uniquement. Elles sont traitées par nos prestataires techniques :</p>
   <ul>
     <li>Hébergement du site : <Field v={host.name} label="hébergeur du site" /></li>
     <li>Gestion de la relation client (CRM Dolibarr) : <Field v={crm.host} label="hébergeur du CRM Dolibarr" /></li>
