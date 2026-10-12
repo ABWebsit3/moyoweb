@@ -8,7 +8,7 @@ import { company, host } from '../data/legal';
   <h2>Éditeur du site</h2>
   <p>
     Le site <strong>moyoweb.fr</strong> est édité par :<br />
-    <strong><Field v={company.name} label="nom ou raison sociale" /></strong><br />
+    <strong><Field v={company.name} label="nom ou raison sociale" /></strong>, <Field v={company.owner} label="nom et prénom de l’entrepreneur" /> – EI<br />
     <Field v={company.legalForm} label="forme juridique" /><br />
     Adresse : <Field v={company.address} label="adresse" /><br />
     SIREN : <Field v={company.siren} label="SIREN" /> · SIRET : <Field v={company.siret} label="SIRET" /><br />
