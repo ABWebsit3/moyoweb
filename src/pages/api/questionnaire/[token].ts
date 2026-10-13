@@ -1,9 +1,9 @@
 // Réception du questionnaire pré-RDV : valide les réponses, crée un événement Agenda lié au tiers (avec les réponses)
-// et y joint un récapitulatif HTML, passe le statut à « rempli » et notifie Moyo par e-mail.
+// et y joint un récapitulatif PDF, passe le statut à « rempli » et notifie Moyo par e-mail.
 // Une seule soumission : si le statut est déjà « rempli », la demande est refusée (409).
 import type { APIRoute } from 'astro';
 import { json, str, rateLimiter, dolibarr, dolibarrKey, smtpConfigured, sendMail, MAIL_FROM, addAgendaEvent } from '../../../lib/server';
-import { thirdpartyFromToken, updateQuestionnaireFields, validateAnswers, answersHtml, answersText } from '../../../lib/questionnaire';
+import { thirdpartyFromToken, updateQuestionnaireFields, validateAnswers, answersPdf, answersText } from '../../../lib/questionnaire';
 
 export const prerender = false;
 
@@ -48,14 +48,14 @@ export const POST: APIRoute = async ({ params, request, clientAddress }) => {
     return json(502, { ok: false, error: 'crm' });
   }
 
-  // 2) Récapitulatif HTML joint à cet événement (modulepart « agenda » : pris en charge par toutes les versions
+  // 2) Récapitulatif PDF joint à cet événement (pas de HTML : Dolibarr le renommerait en .noexe) (modulepart « agenda » : pris en charge par toutes les versions
   //    récentes de Dolibarr, contrairement à « societe » qui n'existe que dans la version de développement).
   try {
     await dolibarr('POST', '/documents/upload', {
-      filename: `questionnaire-pre-rdv-${stamp}.html`,
+      filename: `questionnaire-pre-rdv-${stamp}.pdf`,
       modulepart: 'agenda',
       ref: String(eventId),
-      filecontent: Buffer.from(answersHtml(answers, { name: t.name, email: t.email }, dateFr)).toString('base64'),
+      filecontent: (await answersPdf(answers, { name: t.name, email: t.email }, dateFr)).toString('base64'),
       fileencoding: 'base64',
       overwriteifexists: 1,
     });

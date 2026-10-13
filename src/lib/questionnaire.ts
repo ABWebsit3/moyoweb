@@ -1,8 +1,10 @@
 // Questionnaire pré-RDV, côté serveur. Dolibarr est l'unique stockage :
 // - attributs supplémentaires du tiers : questionnaire_token, questionnaire_url, questionnaire_statut, questionnaire_date ;
-// - réponses : document HTML joint au tiers + événement Agenda.
+// - réponses : événement Agenda lié au tiers + récapitulatif PDF joint à cet événement.
+//   (Pas de HTML : Dolibarr renomme les .html en .html.noexe, illisibles.)
 // Token : « <id du tiers>.<32 caractères aléatoires> », comparé en temps constant à la valeur stockée sur le tiers.
 import { randomBytes, timingSafeEqual } from 'node:crypto';
+import { PDFDocument, StandardFonts, rgb, type PDFFont } from 'pdf-lib';
 import { dolibarr } from './server';
 import { QUESTIONS, DETAIL_MAX, type Question } from '../data/questionnaire';
 
@@ -114,23 +116,90 @@ export function validateAnswers(data: Record<string, unknown>): Answer[] | null 
   return answers;
 }
 
-const esc = (s: string) =>
-  s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
-
 export function answersText(answers: Answer[]) {
   return answers.map((a) => `${a.question.label}\n→ ${a.display || '—'}`).join('\n\n');
 }
 
-export function answersHtml(answers: Answer[], who: { name: string; email: string }, date: string) {
-  const rows = answers
-    .map((a) => `<tr><th>${esc(a.question.label)}</th><td>${esc(a.display || '—').replace(/\n/g, '<br>')}</td></tr>`)
-    .join('\n');
-  return `<!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><title>Questionnaire pré-RDV – ${esc(who.name)}</title>
-<style>body{font-family:system-ui,sans-serif;max-width:820px;margin:32px auto;padding:0 16px;color:#17131f}
-table{border-collapse:collapse;width:100%}th,td{border:1px solid #e4dcee;padding:10px;text-align:left;vertical-align:top}
-th{background:#efe6ff;width:40%}</style></head>
-<body><h1>Questionnaire pré-rendez-vous</h1>
-<p><strong>${esc(who.name)}</strong> &lt;${esc(who.email)}&gt;<br>Rempli le ${esc(date)} sur moyoweb.fr</p>
-<table>${rows}</table></body></html>`;
+// --- Récapitulatif PDF ---------------------------------------------------------
+const INK = rgb(0.09, 0.075, 0.12);
+const MUTED = rgb(0.42, 0.39, 0.47);
+const VIOLET = rgb(0.54, 0.31, 1);
+
+/** Remplace les caractères que la police standard (WinAnsi) ne sait pas encoder. */
+function pdfSafe(font: PDFFont, text: string) {
+  const replaced = text.replace(/→/g, '->').replace(/…/g, '...').replace(/\r/g, '');
+  let out = '';
+  for (const ch of replaced) {
+    if (ch === '\n') {
+      out += ch;
+      continue;
+    }
+    try {
+      font.encodeText(ch);
+      out += ch;
+    } catch {
+      // Caractère non encodable (emoji…) : ignoré.
+    }
+  }
+  return out;
+}
+
+function wrap(font: PDFFont, text: string, size: number, maxWidth: number) {
+  const lines: string[] = [];
+  for (const para of text.split('\n')) {
+    let line = '';
+    for (const word of para.split(/\s+/)) {
+      const test = line ? `${line} ${word}` : word;
+      if (font.widthOfTextAtSize(test, size) <= maxWidth) {
+        line = test;
+        continue;
+      }
+      if (line) lines.push(line);
+      // Mot plus long que la ligne (ex. URL) : on le coupe.
+      let rest = word;
+      while (font.widthOfTextAtSize(rest, size) > maxWidth) {
+        let i = rest.length;
+        while (i > 1 && font.widthOfTextAtSize(rest.slice(0, i), size) > maxWidth) i--;
+        lines.push(rest.slice(0, i));
+        rest = rest.slice(i);
+      }
+      line = rest;
+    }
+    lines.push(line);
+  }
+  return lines;
+}
+
+export async function answersPdf(answers: Answer[], who: { name: string; email: string }, date: string) {
+  const doc = await PDFDocument.create();
+  doc.setTitle(`Questionnaire pré-RDV – ${who.name}`);
+  doc.setAuthor('Moyo (moyoweb.fr)');
+  const regular = await doc.embedFont(StandardFonts.Helvetica);
+  const bold = await doc.embedFont(StandardFonts.HelveticaBold);
+  const [W, H, M] = [595.28, 841.89, 50];
+  const width = W - 2 * M;
+  let page = doc.addPage([W, H]);
+  let y = H - M;
+
+  const draw = (text: string, font: PDFFont, size: number, color = INK, gap = 4) => {
+    for (const line of wrap(font, pdfSafe(font, text), size, width)) {
+      if (y - size < M) {
+        page = doc.addPage([W, H]);
+        y = H - M;
+      }
+      page.drawText(line, { x: M, y: y - size, size, font, color });
+      y -= size + gap;
+    }
+  };
+
+  draw('Questionnaire pré-rendez-vous', bold, 20, VIOLET, 8);
+  draw(`${who.name}${who.email ? ` <${who.email}>` : ''}`, bold, 12);
+  draw(`Rempli le ${date} sur moyoweb.fr`, regular, 10, MUTED);
+  y -= 14;
+  for (const a of answers) {
+    draw(a.question.label, bold, 11, INK, 3);
+    draw(a.display || '—', regular, 11, a.display ? INK : MUTED, 3);
+    y -= 12;
+  }
+  return Buffer.from(await doc.save());
 }
