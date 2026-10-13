@@ -74,12 +74,12 @@ export async function sendMail(opts: { to: string; subject: string; text: string
 }
 
 // --- Agenda Dolibarr ---
-/** Crée un événement Agenda (lié au tiers si socid). Propriétaire : DOLIBARR_USER_ID, sinon l'utilisateur de la clé API. */
-export async function addAgendaEvent(label: string, note: string, socid?: number | null) {
+/** Crée un événement Agenda (lié au tiers si socid) et renvoie son id. Propriétaire : DOLIBARR_USER_ID, sinon l'utilisateur de la clé API. */
+export async function addAgendaEvent(label: string, note: string, socid?: number | null): Promise<number> {
   const owner =
     Number(process.env.DOLIBARR_USER_ID) || Number((await dolibarr<{ id: string }>('GET', '/users/info'))?.id);
   const now = Math.floor(Date.now() / 1000);
-  await dolibarr('POST', '/agendaevents', {
+  const id = await dolibarr<number>('POST', '/agendaevents', {
     userownerid: owner,
     type_code: 'AC_OTH',
     label,
@@ -89,4 +89,5 @@ export async function addAgendaEvent(label: string, note: string, socid?: number
     percentage: -1,
     ...(socid ? { socid } : {}),
   });
+  return Number(id);
 }
