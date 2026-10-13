@@ -279,6 +279,32 @@ const endpoint = import.meta.env.PUBLIC_DEVIS_ENDPOINT ?? '';
   .dv-result-text { display: flex; flex-direction: column; gap: 12px; font-size: 16.5px; line-height: 1.55; color: var(--text); max-width: 620px; }
   .dv-result-text p { margin: 0; }
   .dv-restart { background: transparent; border: none; font-weight: 700; font-size: 15px; text-decoration: underline; cursor: pointer; color: var(--ink); }
+  .dv-rdv { display: flex; flex-direction: column; gap: 12px; }
+  .dv-rdv__intro { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+  .dv-rdv__intro[hidden], .dv-rdv__cal[hidden], .dv-rdv__done[hidden] { display: none; }
+  .dv-rdv__legal { margin: 0; font-size: 13.5px; color: var(--muted); max-width: 560px; }
+  .dv-rdv__cal {
+    min-height: 680px;
+    border: var(--border);
+    border-radius: 18px;
+    background: #fff;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+  }
+  .dv-rdv__cal :global(.calendly-inline-widget), .dv-rdv__cal > div { width: 100%; height: 680px; }
+  .dv-rdv__done {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--green-light);
+    border: var(--border);
+    border-radius: 18px;
+    padding: 18px 20px;
+  }
+  .dv-rdv__done p { margin: 0; }
   .dv-reassure { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; font-weight: 600; color: var(--text); }
 
   /* Ticket de caisse */

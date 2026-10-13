@@ -1,0 +1,234 @@
+---
+// Questionnaire pré-RDV (rendu serveur) : retrouve le tiers Dolibarr à partir du token, côté serveur uniquement.
+import { Image } from 'astro:assets';
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { thirdpartyFromToken } from '../../lib/questionnaire';
+import { QUESTIONS, QUESTIONNAIRE_TITLE, QUESTIONNAIRE_INTRO, QUESTIONNAIRE_NOTE, DETAIL_MAX } from '../../data/questionnaire';
+import { IMAGES, CONTACT_EMAIL } from '../../data/site';
+
+export const prerender = false;
+
+const token = Astro.params.token ?? '';
+let t = null;
+try {
+  t = await thirdpartyFromToken(token);
+} catch (err) {
+  console.error('[questionnaire] lecture Dolibarr impossible :', err);
+}
+// Token invalide ou inconnu : 404 neutre, sans indiquer si le lien a existé.
+const notFound = !t;
+if (notFound) Astro.response.status = 404;
+
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex');
+const done = t?.statut === 'rempli';
+const total = QUESTIONS.length;
+---
+
+<LegalLayout title={notFound ? 'Page introuvable' : done ? 'Questionnaire reçu' : QUESTIONNAIRE_TITLE} description="Questionnaire de préparation du rendez-vous Moyo." showDate={false} noindex>
+  {notFound ? (
+    <div class="qz-done">
+      <p>Cette page n’existe pas ou plus.</p>
+      <a href="/" class="btn btn--violet">Retour à l’accueil</a>
+    </div>
+  ) : done ? (
+    <div class="qz-done">
+      <Image src={IMAGES.surprised} alt="" width={200} class="qz-mascot" />
+      <p><strong>Déjà reçu, merci !</strong> On a bien tes réponses et on s’en sert pour préparer notre rendez-vous.</p>
+      <p>Tu veux ajouter ou corriger quelque chose ? Écris-nous à <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    </div>
+  ) : (
+    <form class="qz" data-qz data-token={token} data-total={total} novalidate>
+      <p class="qz__intro">{QUESTIONNAIRE_INTRO}</p>
+      <div class="qz__progress" aria-hidden="true"><span data-progress-bar></span></div>
+      <p class="qz__count" aria-live="polite"><span data-progress-count>0</span> / {total} réponses</p>
+
+      {QUESTIONS.map((q, i) => (
+        <div class="qz__q" data-q={q.id}>
+          {q.type === 'radio' ? (
+            <fieldset>
+              <legend>{i + 1}. {q.label}{q.required && <span class="qz__req" aria-label="obligatoire"> *</span>}</legend>
+              <div class="qz__choices">
+                {q.choices!.map((c) => (
+                  <label class="qz__choice">
+                    <input type="radio" name={q.id} value={c.value} required={q.required} data-detail={c.detail ? `${q.id}__detail` : undefined} data-detail-text={c.detail} />
+                    <span>{c.label}</span>
+                  </label>
+                ))}
+              </div>
+              {q.choices!.some((c) => c.detail) && (
+                <label class="qz__detail" data-detail-for={`${q.id}__detail`} hidden>
+                  <span data-detail-label>Précise</span>
+                  <input type="text" name={`${q.id}__detail`} maxlength={DETAIL_MAX} />
+                </label>
+              )}
+            </fieldset>
+          ) : (
+            <label class="qz__field">
+              <span class="qz__label">{i + 1}. {q.label}{q.required && <span class="qz__req" aria-label="obligatoire"> *</span>}</span>
+              {q.type === 'textarea' ? (
+                <textarea name={q.id} rows="3" maxlength={q.maxLength} placeholder={q.placeholder} required={q.required} />
+              ) : (
+                <input type="text" name={q.id} maxlength={q.maxLength} placeholder={q.placeholder} required={q.required} value={q.prefill === 'company' ? t!.name : undefined} />
+              )}
+            </label>
+          )}
+        </div>
+      ))}
+
+      <div class="qz__hp" aria-hidden="true"><label>Site web <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+      <p class="qz__note">* Champs prioritaires. {QUESTIONNAIRE_NOTE}</p>
+      <p class="qz__rgpd">
+        Tes réponses sont transmises à Moyo et enregistrées dans notre outil de gestion client pour préparer le rendez-vous.
+        Voir notre <a href="/confidentialite/">politique de confidentialité</a>.
+      </p>
+      <p class="qz__error" data-error hidden role="alert"></p>
+      <div class="qz__actions">
+        <button type="submit" class="btn btn--violet" data-submit>Envoyer mes réponses</button>
+      </div>
+    </form>
+  )}
+</LegalLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-qz]');
+  if (form) {
+    const token = form.dataset.token!;
+    const total = Number(form.dataset.total);
+    const KEY = `moyo-questionnaire-${token}`;
+    const bar = form.querySelector<HTMLElement>('[data-progress-bar]')!;
+    const count = form.querySelector<HTMLElement>('[data-progress-count]')!;
+    const errorEl = form.querySelector<HTMLElement>('[data-error]')!;
+
+    const values = () => Object.fromEntries([...new FormData(form).entries()].map(([k, v]) => [k, String(v)]));
+
+    function syncDetails() {
+      form!.querySelectorAll<HTMLElement>('[data-detail-for]').forEach((box) => {
+        const name = box.dataset.detailFor!;
+        const checked = form!.querySelector<HTMLInputElement>(`input[type=radio][data-detail="${name}"]:checked`);
+        box.hidden = !checked;
+        if (checked) box.querySelector('[data-detail-label]')!.textContent = checked.dataset.detailText || 'Précise';
+      });
+    }
+
+    function progress() {
+      const v = values();
+      const answered = [...form!.querySelectorAll<HTMLElement>('[data-q]')].filter((q) => (v[q.dataset.q!] ?? '').trim()).length;
+      count.textContent = String(answered);
+      bar.style.width = `${Math.round((answered / total) * 100)}%`;
+    }
+
+    // Brouillon local (facultatif : le navigateur peut refuser le stockage).
+    try {
+      const draft = JSON.parse(localStorage.getItem(KEY) || 'null') as Record<string, string> | null;
+      if (draft) {
+        for (const [k, v] of Object.entries(draft)) {
+          const fields = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(`[name="${CSS.escape(k)}"]`);
+          fields.forEach((f) => {
+            if (f instanceof HTMLInputElement && f.type === 'radio') f.checked = f.value === v;
+            else f.value = v;
+          });
+        }
+      }
+    } catch {}
+
+    const save = () => {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(values()));
+      } catch {}
+    };
+
+    form.addEventListener('input', () => {
+      syncDetails();
+      progress();
+      save();
+    });
+    syncDetails();
+    progress();
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.hidden = true;
+      const missing = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]')].find((f) =>
+        f instanceof HTMLInputElement && f.type === 'radio'
+          ? !form.querySelector(`input[name="${f.name}"]:checked`)
+          : !f.value.trim(),
+      );
+      if (missing) {
+        errorEl.textContent = 'Merci de répondre aux questions marquées d’un astérisque (*).';
+        errorEl.hidden = false;
+        (missing as HTMLElement).focus();
+        return;
+      }
+      const btn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+      btn.disabled = true;
+      try {
+        const res = await fetch(`/api/questionnaire/${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values()),
+        });
+        if (res.status === 409) {
+          location.reload();
+          return;
+        }
+        if (!res.ok) throw new Error(String(res.status));
+        try {
+          localStorage.removeItem(KEY);
+        } catch {}
+        location.href = '/questionnaire/merci/';
+      } catch {
+        errorEl.textContent = 'L’envoi n’a pas fonctionné. Réessaie dans un instant ou écris-nous à hello@moyoweb.fr.';
+        errorEl.hidden = false;
+        btn.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .qz { display: flex; flex-direction: column; gap: 22px; }
+  .qz__intro { margin: 0; font-size: 17px; }
+  .qz__progress { height: 10px; border: var(--border); border-radius: 999px; background: var(--bg); overflow: hidden; }
+  .qz__progress span { display: block; height: 100%; width: 0; background: var(--green); transition: width .25s; }
+  .qz__count { margin: -12px 0 0; font-size: 14px; color: var(--muted); }
+  .qz__q fieldset { border: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .qz__q legend, .qz__label { font-weight: 700; color: var(--ink); font-size: 17px; margin-bottom: 10px; padding: 0; }
+  .qz__field { display: flex; flex-direction: column; }
+  .qz__req { color: var(--violet-dark); }
+  .qz__choices { display: flex; flex-direction: column; gap: 8px; }
+  .qz__choice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .qz__choice:has(input:checked) { background: var(--lilac); box-shadow: 3px 3px 0 var(--ink); }
+  .qz__choice:has(input:focus-visible) { outline: 3px solid var(--violet); outline-offset: 2px; }
+  .qz__choice input { accent-color: var(--violet); width: 18px; height: 18px; margin: 0; flex: none; }
+  .qz__detail { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700; color: var(--ink); }
+  .qz__detail[hidden] { display: none; }
+  .qz input[type='text'], .qz textarea {
+    font: inherit;
+    font-size: 16px;
+    padding: 12px 14px;
+    border: var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .qz input[type='text']:focus, .qz textarea:focus { outline: none; background: #fff; box-shadow: 0 0 0 4px var(--lilac-2); }
+  .qz__note, .qz__rgpd { margin: 0; font-size: 14px; color: var(--muted); }
+  .qz__hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .qz__error { margin: 0; font-weight: 600; color: #b42318; }
+  .qz__actions { display: flex; justify-content: flex-end; }
+  .qz-done { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .qz-done p { margin: 0; }
+  .qz-done :global(.qz-mascot) { width: 160px; height: auto; }
+</style>

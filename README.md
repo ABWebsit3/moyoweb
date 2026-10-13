@@ -68,6 +68,28 @@ Page `/resiliation/` (lien dans le footer de toutes les pages), conforme au prin
 
 E-mails : SMTP Hostinger (`smtp.hostinger.com`, port 465 SSL) avec la boîte `hello@moyoweb.fr` ; définir `SMTP_PASSWORD` (mot de passe de la boîte). Sans lui, la résiliation en ligne renvoie une erreur et invite à écrire par e-mail. Propriétaire de l'événement Dolibarr : `DOLIBARR_USER_ID`, sinon l'utilisateur lié à la clé API (`GET /users/info`).
 
+## Questionnaire pré-RDV
+
+Envoyé au prospect **une fois son rendez-vous pris** depuis la fin du devis. Questions : `src/data/questionnaire.ts` (modifiables sans toucher au code).
+
+1. **Devis** (`/api/devis`) : le tiers est créé ou retrouvé dans Dolibarr, puis un token est écrit sur sa fiche (`questionnaire_token`, `questionnaire_url`). Un token existant n'est jamais régénéré.
+2. **Prise de RDV** : à l'étape 4, « Choisir mon créneau » charge le calendrier **Calendly intégré** (au clic seulement : Calendly dépose ses cookies), pré-rempli avec le nom et l'e-mail. La réservation est détectée via l'événement navigateur `calendly.event_scheduled` (disponible sur tous les plans Calendly, y compris gratuit) → `/api/questionnaire/rdv` : e-mail avec le lien du questionnaire, statut `envoye`, événement Agenda « RDV pris via Calendly ». Idempotent : rien n'est renvoyé si le statut est déjà renseigné. Le lien est aussi affiché à l'écran.
+3. **Remplissage** : `/questionnaire/<token>` (rendu serveur, `noindex`, pré-rempli avec le nom de l'entreprise, brouillon local, progression). `/api/questionnaire/<token>` joint un récapitulatif HTML aux **Documents du tiers**, passe le statut à `rempli` (+ `questionnaire_date`), ajoute un événement Agenda et notifie `hello@moyoweb.fr`. Une seule soumission : ensuite « Déjà reçu, merci ».
+4. Token : `<id du tiers>.<32 caractères aléatoires>`, comparé en temps constant à la valeur stockée sur le tiers ; token invalide → 404 neutre.
+
+**Limites (Calendly gratuit)** : pas de webhooks ni de redirection après réservation. Si le visiteur ouvre Calendly dans un nouvel onglet au lieu du calendrier intégré, ou réserve sans passer par le devis, la réservation n'est pas détectée. La date du RDV n'est pas connue du site (elle reste dans Calendly).
+
+**Configuration Dolibarr (manuelle)** : modules API REST, Agenda et Documents activés ; attributs supplémentaires des tiers :
+
+| Code | Libellé | Type |
+| --- | --- | --- |
+| `questionnaire_token` | Token questionnaire | Chaîne (64), non visible |
+| `questionnaire_url` | Questionnaire pré-RDV | Lien (URL) |
+| `questionnaire_statut` | Statut questionnaire | Liste : `envoye`, `rempli` |
+| `questionnaire_date` | Questionnaire rempli le | Date et heure |
+
+Sans ces attributs, le devis fonctionne normalement mais le calendrier n'est pas proposé en version intégrée (lien Calendly classique) et aucun questionnaire n'est envoyé ; l'erreur est journalisée (`[devis] token questionnaire impossible`).
+
 ## Événements Google Analytics 4
 
 Envoyés depuis `src/scripts/devis.ts` via `src/lib/analytics.ts`, **uniquement après consentement** (tarteaucitron) et sans donnée personnelle :
@@ -76,7 +98,8 @@ Envoyés depuis `src/scripts/devis.ts` via `src/lib/analytics.ts`, **uniquement 
 | --- | --- | --- |
 | `devis_start` | première interaction avec le module de devis | `plan`, `engagement` |
 | `generate_lead` | renseignements envoyés avec succès | `value` (total mensuel), `currency`, `plan`, `engagement` |
-| `calendly_click` | clic vers Calendly | `location` (`devis_besoin_specifique` ou `devis_resultat`), `plan` |
+| `calendly_click` | clic vers Calendly | `location` (`devis_besoin_specifique`, `devis_resultat` ou `devis_calendrier_integre`), `plan` |
+| `rdv_scheduled` | rendez-vous réservé dans le calendrier intégré | `plan` |
 
 Pour en faire des conversions : GA4 → Administration → Événements → marquer `generate_lead` (et `calendly_click`) comme événements clés.
 

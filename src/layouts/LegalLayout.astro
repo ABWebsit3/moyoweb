@@ -8,12 +8,13 @@ interface Props {
   title: string;
   description: string;
   showDate?: boolean;
+  noindex?: boolean;
 }
 
-const { title, description, showDate = true } = Astro.props;
+const { title, description, showDate = true, noindex = false } = Astro.props;
 ---
 
-<Layout title={`${title} · Moyo`} description={description}>
+<Layout title={`${title} · Moyo`} description={description} noindex={noindex}>
   <Header />
   <main class="container legal">
     <h1 class="h2">{title}</h1>

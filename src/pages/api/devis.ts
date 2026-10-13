@@ -9,6 +9,7 @@ import { OPTS, SEO_OPTION_ID, type PlanId } from '../../data/devis';
 import { computeQuote, findPlan, type Quote } from '../../lib/quote';
 import { json, str, EMAIL_RE, rateLimiter, dolibarr, dolibarrKey, findThirdpartyByEmail, smtpConfigured, sendMail, MAIL_FROM } from '../../lib/server';
 import { CALENDLY_URL } from '../../data/site';
+import { ensureToken } from '../../lib/questionnaire';
 
 export const prerender = false;
 
@@ -64,7 +65,7 @@ function proposalLines(q: Quote) {
 }
 
 // --- Enregistrement Dolibarr --------------------------------------------------
-async function saveInDolibarr(contact: Contact, quote: Quote, ticketNo: string) {
+async function saveInDolibarr(contact: Contact, quote: Quote, ticketNo: string): Promise<number> {
   const thirdparty = await findOrCreateThirdparty(contact);
 
   if (thirdparty.created && contact.societe) {
@@ -93,6 +94,7 @@ async function saveInDolibarr(contact: Contact, quote: Quote, ticketNo: string) 
   for (const line of proposalLines(quote)) {
     await dolibarr('POST', `/proposals/${proposalId}/line`, line);
   }
+  return thirdparty.id;
 }
 
 // --- E-mails -----------------------------------------------------------------
@@ -219,17 +221,28 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   // Rien ne doit se perdre : Dolibarr et e-mails sont tentés indépendamment.
   let crmOk = false;
+  let socid = 0;
   if (dolibarrKey()) {
     try {
-      await saveInDolibarr(contact, quote, ticketNo);
+      socid = await saveInDolibarr(contact, quote, ticketNo);
       crmOk = true;
     } catch (err) {
       console.error('[devis] échec de l’envoi vers Dolibarr :', err);
     }
   }
 
+  // Lien du questionnaire pré-RDV (envoyé seulement une fois le rendez-vous pris, voir /api/questionnaire/rdv).
+  let qt = '';
+  if (socid) {
+    try {
+      qt = await ensureToken(socid);
+    } catch (err) {
+      console.error('[devis] token questionnaire impossible (attributs supplémentaires créés dans Dolibarr ?) :', err);
+    }
+  }
+
   const mails = smtpConfigured() ? await sendQuoteEmails(contact, quote, ticketNo, crmOk) : { ownerOk: false, clientOk: false };
 
   if (!crmOk && !mails.ownerOk) return json(502, { ok: false, error: 'crm' });
-  return json(200, { ok: true, mailed: mails.clientOk });
+  return json(200, { ok: true, mailed: mails.clientOk, qt });
 };

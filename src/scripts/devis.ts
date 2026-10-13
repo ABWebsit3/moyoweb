@@ -16,6 +16,7 @@ interface State {
   consent: boolean;
   sending: boolean;
   mailed: boolean; // le ticket a bien été envoyé par e-mail au client
+  qt: string; // token du questionnaire pré-RDV (vide si Dolibarr indisponible)
   error: string;
   ticketNo: string;
   barcode: string;
@@ -51,6 +52,7 @@ export function initDevis(root: HTMLElement) {
     consent: false,
     sending: false,
     mailed: false,
+    qt: '',
     error: '',
     ticketNo: 'DEVIS#' + rand(14),
     barcode: [rand(4), rand(4), rand(4), rand(4), rand(2)].join(' '),
@@ -236,15 +238,92 @@ export function initDevis(root: HTMLElement) {
           <p>Après ton premier café (ou thé !) avec notre équipe, on pourra peaufiner les chiffres, ajouter ou retirer des options, et faire en sorte que tout colle parfaitement à tes besoins.</p>
           <p>Donc, pas de panique : les montants et les services indiqués aujourd’hui ne sont pas gravés dans le marbre.</p>
         </div>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-          <a href="${CALENDLY_URL}" class="btn btn--violet" target="_blank" rel="noopener">Prendre rendez-vous (30 min)</a>
-          <button type="button" class="dv-restart" data-restart>Refaire un devis</button>
-        </div>
+        ${renderRdv()}
+        <div><button type="button" class="dv-restart" data-restart>Refaire un devis</button></div>
         <div class="dv-reassure">
           <span>✓ Réponse sous 24 h</span><span>✓ Contrat clair, sans surprise</span><span>✓ Rien à payer avant validation</span>
         </div>
       </div>`;
   }
+
+  // Prise de RDV : calendrier Calendly intégré (chargé au clic seulement : Calendly peut déposer des cookies).
+  // La réservation est détectée via l'événement « calendly.event_scheduled » pour envoyer le questionnaire.
+  function renderRdv() {
+    if (!s.qt) {
+      return `<div><a href="${CALENDLY_URL}" class="btn btn--violet" target="_blank" rel="noopener">Prendre rendez-vous (30 min)</a></div>`;
+    }
+    return `
+      <div class="dv-rdv" data-rdv>
+        <div class="dv-rdv__intro" data-rdv-intro>
+          <button type="button" class="btn btn--violet" data-calendly-load>Choisir mon créneau (30 min)</button>
+          <p class="dv-rdv__legal">Le calendrier est fourni par Calendly, qui peut déposer des cookies : il ne se charge qu’après ton clic.
+            Tu préfères ? <a href="${CALENDLY_URL}" target="_blank" rel="noopener">Ouvrir Calendly dans un nouvel onglet</a>.</p>
+        </div>
+        <div class="dv-rdv__cal" data-calendly-box hidden></div>
+        <div class="dv-rdv__done" data-rdv-done hidden role="status"></div>
+      </div>`;
+  }
+
+  function loadCalendly() {
+    const box = panelEl.querySelector<HTMLElement>('[data-calendly-box]');
+    const intro = panelEl.querySelector<HTMLElement>('[data-rdv-intro]');
+    if (!box || !intro) return;
+    intro.hidden = true;
+    box.hidden = false;
+    box.textContent = 'Chargement du calendrier…';
+    const init = () => {
+      box.textContent = '';
+      (window as any).Calendly.initInlineWidget({
+        url: `${CALENDLY_URL}?hide_gdpr_banner=1`,
+        parentElement: box,
+        prefill: { name: `${s.form.prenom.trim()} ${s.form.nom.trim()}`.trim(), email: s.form.email.trim() },
+      });
+    };
+    if ((window as any).Calendly) return init();
+    const script = document.createElement('script');
+    script.src = 'https://assets.calendly.com/assets/external/widget.js';
+    script.async = true;
+    script.onload = init;
+    script.onerror = () => {
+      box.innerHTML = `Le calendrier n’a pas pu se charger. <a href="${CALENDLY_URL}" target="_blank" rel="noopener">Ouvre Calendly dans un nouvel onglet</a>.`;
+    };
+    document.head.appendChild(script);
+  }
+
+  let rdvNotified = false;
+  async function onScheduled(inviteeUri: string) {
+    if (rdvNotified || !s.qt) return;
+    rdvNotified = true;
+    track('rdv_scheduled', { plan: s.plan });
+    const done = panelEl.querySelector<HTMLElement>('[data-rdv-done]');
+    let url = '';
+    let mailed = false;
+    try {
+      const res = await fetch('/api/questionnaire/rdv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ qt: s.qt, invitee: inviteeUri }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok && typeof body.url === 'string') {
+        url = body.url;
+        mailed = body.mailed === true;
+      }
+    } catch {}
+    if (!done) return;
+    done.hidden = false;
+    done.innerHTML = url
+      ? `<strong>✓ Rendez-vous réservé !</strong>
+         <p>Pour qu’on le prépare au mieux, prends 3 à 5 minutes pour répondre à quelques questions${mailed ? ' (on t’a aussi envoyé le lien par e-mail)' : ''}.</p>
+         <a href="${esc(url)}" class="btn btn--green">Remplir le questionnaire</a>`
+      : `<strong>✓ Rendez-vous réservé !</strong><p>Tu vas recevoir la confirmation de Calendly par e-mail.</p>`;
+  }
+
+  window.addEventListener('message', (e) => {
+    if (e.origin !== 'https://calendly.com' || e.data?.event !== 'calendly.event_scheduled') return;
+    const uri = e.data?.payload?.invitee?.uri;
+    void onScheduled(typeof uri === 'string' ? uri : '');
+  });
 
   function renderTicket() {
     const show = s.step === 4;
@@ -321,6 +400,7 @@ export function initDevis(root: HTMLElement) {
         if (!res.ok) throw new Error(String(res.status));
         const body = await res.json().catch(() => ({}));
         s.mailed = body.mailed === true;
+        s.qt = typeof body.qt === 'string' ? body.qt : '';
         const q = computeQuote(quoteInput());
         // GA4 : renseignements envoyés (événement recommandé « generate_lead »).
         track('generate_lead', { value: q.totalMonthly, currency: 'EUR', plan: q.plan.name, engagement: q.engage });
@@ -362,13 +442,16 @@ export function initDevis(root: HTMLElement) {
     const cal = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href*="calendly.com"]');
     if (cal) track('calendly_click', { location: s.step === 4 ? 'devis_resultat' : 'devis_besoin_specifique', plan: s.plan });
     const t = (e.target as HTMLElement).closest<HTMLElement>(
-      '[data-go],[data-engage],[data-plan],[data-next],[data-prev],[data-restart],[data-seo],[data-opt]',
+      '[data-go],[data-engage],[data-plan],[data-next],[data-prev],[data-restart],[data-seo],[data-opt],[data-calendly-load]',
     );
     if (!t || !root.contains(t)) return;
     markStarted();
     const d = t.dataset;
 
-    if (d.go) {
+    if ('calendlyLoad' in d) {
+      track('calendly_click', { location: 'devis_calendrier_integre', plan: s.plan });
+      loadCalendly();
+    } else if (d.go) {
       if (s.step !== 4) go(Number(d.go) as Step);
     } else if (d.engage) {
       s.engage = d.engage === '1';

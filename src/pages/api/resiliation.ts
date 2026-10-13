@@ -2,7 +2,7 @@
 // Reçoit la notification, envoie un accusé de réception par e-mail (support durable) au client avec copie à Moyo,
 // puis trace la demande dans l'agenda Dolibarr du tiers (au mieux : un échec Dolibarr ne bloque pas l'accusé).
 import type { APIRoute } from 'astro';
-import { json, str, EMAIL_RE, rateLimiter, dolibarr, dolibarrKey, findThirdpartyByEmail, smtpConfigured, sendMail, MAIL_FROM } from '../../lib/server';
+import { json, str, EMAIL_RE, rateLimiter, dolibarrKey, findThirdpartyByEmail, smtpConfigured, sendMail, MAIL_FROM, addAgendaEvent } from '../../lib/server';
 
 export const prerender = false;
 
@@ -21,20 +21,7 @@ const dateFr = (d: Date) =>
 async function logInDolibarr(email: string, label: string, note: string) {
   if (!dolibarrKey()) return;
   try {
-    const socid = await findThirdpartyByEmail(email);
-    // Propriétaire de l'événement : DOLIBARR_USER_ID, sinon l'utilisateur lié à la clé API.
-    const owner = Number(process.env.DOLIBARR_USER_ID) || Number((await dolibarr<{ id: string }>('GET', '/users/info'))?.id);
-    const now = Math.floor(Date.now() / 1000);
-    await dolibarr('POST', '/agendaevents', {
-      userownerid: owner,
-      type_code: 'AC_OTH',
-      label,
-      note_private: note,
-      datep: now,
-      datef: now,
-      percentage: -1,
-      ...(socid ? { socid } : {}),
-    });
+    await addAgendaEvent(label, note, await findThirdpartyByEmail(email));
   } catch (err) {
     console.error('[resiliation] trace Dolibarr impossible :', err);
   }

@@ -26,6 +26,18 @@ import { company, host, crm, mail } from '../data/legal';
           <td>Mesures précontractuelles prises à ta demande (art. 6.1.b RGPD)</td>
         </tr>
         <tr>
+          <td>Prise de rendez-vous (calendrier Calendly)</td>
+          <td>Nom, e-mail, créneau choisi</td>
+          <td>Organiser le rendez-vous de découverte</td>
+          <td>Mesures précontractuelles prises à ta demande (art. 6.1.b RGPD)</td>
+        </tr>
+        <tr>
+          <td>Questionnaire pré-rendez-vous</td>
+          <td>Réponses au questionnaire (activité, objectifs, style, délais…)</td>
+          <td>Préparer le rendez-vous et ton projet</td>
+          <td>Mesures précontractuelles prises à ta demande (art. 6.1.b RGPD)</td>
+        </tr>
+        <tr>
           <td>Échanges par e-mail ou téléphone</td>
           <td>Coordonnées et contenu des échanges</td>
           <td>Répondre à tes questions</td>
@@ -54,6 +66,7 @@ import { company, host, crm, mail } from '../data/legal';
     <li>Hébergement du site : <Field v={host.name} label="hébergeur du site" /></li>
     <li>Gestion de la relation client (CRM Dolibarr) : <Field v={crm.host} label="hébergeur du CRM Dolibarr" /></li>
     <li>Messagerie électronique : <Field v={mail.host} label="fournisseur de messagerie" /></li>
+    <li>Prise de rendez-vous : Calendly (Calendly LLC, États-Unis), uniquement si tu affiches le calendrier ou ouvres Calendly</li>
     <li>Mesure d’audience, uniquement si tu l’acceptes : Google Analytics (Google Ireland Limited)</li>
   </ul>
 
@@ -70,6 +83,11 @@ import { company, host, crm, mail } from '../data/legal';
     Le site utilise un cookie technique (« tarteaucitron ») qui mémorise tes choix de consentement : il est
     nécessaire et ne requiert pas ton accord. Les cookies de mesure d’audience ne sont déposés qu’après ton
     accord. Tu peux modifier tes choix à tout moment via le lien « Gestion des cookies » en bas de page.
+  </p>
+  <p>
+    Le calendrier de prise de rendez-vous est fourni par Calendly, qui peut déposer ses propres cookies : il ne se
+    charge qu’après un clic de ta part sur « Choisir mon créneau ». Voir la
+    <a href="https://calendly.com/privacy" target="_blank" rel="noopener">politique de confidentialité de Calendly</a>.
   </p>
   <p>Les polices de caractères sont hébergées sur notre serveur : aucune donnée n’est transmise à un service tiers pour les afficher.</p>
 

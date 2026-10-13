@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { IMAGES, CONTACT_EMAIL } from '../../data/site';
+---
+
+<LegalLayout title="Merci pour tes réponses !" description="Questionnaire reçu." showDate={false} noindex>
+  <div class="merci">
+    <Image src={IMAGES.surprised} alt="Mo’ tout content" width={220} class="merci__mascot" />
+    <p><strong>C’est reçu !</strong> On prépare notre rendez-vous à partir de tes réponses.</p>
+    <p>Tu retrouveras la date et le lien de la visio dans l’e-mail de confirmation de Calendly.</p>
+    <p>Une question d’ici là ? Écris-nous à <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <a href="/" class="btn btn--violet">Retour à l’accueil</a>
+  </div>
+</LegalLayout>
+
+<style>
+  .merci { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+  .merci p { margin: 0; }
+  .merci :global(.merci__mascot) { width: 180px; height: auto; }
+</style>

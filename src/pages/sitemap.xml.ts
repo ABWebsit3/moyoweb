@@ -1,9 +1,9 @@
-// sitemap.xml généré au build à partir des pages du site (hors 404 et routes /api).
+// sitemap.xml généré au build à partir des pages du site (hors 404, routes /api et questionnaires privés).
 import type { APIRoute } from 'astro';
 
 const pages = Object.keys(import.meta.glob('./**/*.astro'))
   .map((f) => f.replace(/^\.\//, '').replace(/\.astro$/, ''))
-  .filter((p) => p !== '404' && !p.startsWith('api/'))
+  .filter((p) => p !== '404' && !p.startsWith('api/') && !p.startsWith('questionnaire/'))
   .map((p) => (p === 'index' ? '/' : `/${p.replace(/\/index$/, '')}/`))
   .sort();
 

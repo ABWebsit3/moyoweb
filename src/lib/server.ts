@@ -29,7 +29,7 @@ export function dolibarrKey() {
   return process.env.DOLIBARR_API_KEY || '';
 }
 
-export async function dolibarr<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<T | null> {
+export async function dolibarr<T>(method: 'GET' | 'POST' | 'PUT', path: string, body?: unknown): Promise<T | null> {
   const res = await fetch(DOLIBARR_URL + path, {
     method,
     headers: { DOLAPIKEY: dolibarrKey(), Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -71,4 +71,22 @@ export const MAIL_FROM = () => process.env.SMTP_USER || 'hello@moyoweb.fr';
 
 export async function sendMail(opts: { to: string; subject: string; text: string; bcc?: string; replyTo?: string }) {
   await mailer().sendMail({ from: `Moyo <${MAIL_FROM()}>`, ...opts });
+}
+
+// --- Agenda Dolibarr ---
+/** Crée un événement Agenda (lié au tiers si socid). Propriétaire : DOLIBARR_USER_ID, sinon l'utilisateur de la clé API. */
+export async function addAgendaEvent(label: string, note: string, socid?: number | null) {
+  const owner =
+    Number(process.env.DOLIBARR_USER_ID) || Number((await dolibarr<{ id: string }>('GET', '/users/info'))?.id);
+  const now = Math.floor(Date.now() / 1000);
+  await dolibarr('POST', '/agendaevents', {
+    userownerid: owner,
+    type_code: 'AC_OTH',
+    label,
+    note_private: note,
+    datep: now,
+    datef: now,
+    percentage: -1,
+    ...(socid ? { socid } : {}),
+  });
 }
