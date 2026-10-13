@@ -42,7 +42,8 @@ a:hover { color: var(--ink); }
 input, button { font-family: inherit; }
 img { max-width: 100%; height: auto; }
 
-.page { min-height: 100vh; overflow-x: hidden; }
+/* overflow-x: clip (et non hidden) : hidden ferait de .page un conteneur de défilement et casserait le header sticky. */
+.page { min-height: 100vh; overflow-x: hidden; overflow-x: clip; }
 
 .container {
   max-width: var(--max);
