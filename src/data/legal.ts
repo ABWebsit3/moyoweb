@@ -36,7 +36,7 @@ export const mail = {
 };
 
 // Prestataire de paiement des abonnements (confidentialité).
-// TODO [À COMPLÉTER : nom et pays du prestataire, ex. Stripe Payments Europe Ltd, Irlande]
-export const paymentProvider = '';
+// Entité contractante européenne de Stripe d'après son Privacy Center ; à confirmer dans le contrat Stripe du compte.
+export const paymentProvider = 'Stripe (Stripe Payments Europe, Limited, Irlande)';
 
 export const legalUpdatedAt = '14 octobre 2026';
