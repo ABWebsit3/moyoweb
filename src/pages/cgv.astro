@@ -1,6 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
-import { company } from '../data/legal';
+import Field from '../components/Field.astro';
+import { company, backupRetention } from '../data/legal';
 import { PLANS, SETUP_FEE } from '../data/devis';
 
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
@@ -39,11 +40,28 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
     </table>
   </div>
   <p>
-    Les offres sans engagement comportent en outre des frais de mise en service de {eur(SETUP_FEE)}, payables au
-    démarrage. Les options sont facturées selon le tarif indiqué dans le devis. Les prix sont exprimés en euros.
+    Les offres sans engagement comportent en outre des frais de mise en service de {eur(SETUP_FEE)}, payables à la
+    commande. Les options sont facturées selon le tarif indiqué dans le devis. Les prix sont exprimés en euros.{' '}
     {company.vatMention}.
   </p>
-  <p>Le contenu de chaque forfait et des options est celui décrit sur le site et repris dans le devis accepté.</p>
+  <p>Contenu de chaque forfait :</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>{PLANS.map((p) => <th>Offre {p.name}<br /><small>{p.tag}</small></th>)}</tr>
+      </thead>
+      <tbody>
+        <tr>
+          {PLANS.map((p) => (
+            <td>
+              <ul>{p.feats.map((f) => <li>{f}</li>)}</ul>
+            </td>
+          ))}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Le devis accepté précise le forfait et les options retenus.</p>
 
   <h2>4. Commande</h2>
   <p>
@@ -58,12 +76,31 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
     résiliation anticipée à l’initiative du Client, hors manquement de Moyo ou motif légitime, les mensualités
     restant à courir jusqu’au terme des 24 mois restent dues.
   </p>
+  <p>
+    Constitue notamment un motif légitime : la cessation définitive d’activité du Client (radiation, liquidation
+    judiciaire), la dissolution de l’association, ou le décès ou l’incapacité durable de l’entrepreneur individuel.
+    Un justificatif peut être demandé.
+  </p>
   <p>À la fin de cette période, le Client peut :</p>
   <ul>
     <li>poursuivre avec la formule Gardiennage à 25,99 €/mois (hébergement, maintenance prévue au contrat et 45 minutes d’assistance par mois) ;</li>
     <li>récupérer son site grâce à une prestation de transfert à 490 €, à la fin des 24 mois ou pendant la formule Gardiennage (voir article 10) ;</li>
-    <li>arrêter le service : le site est alors désactivé et les données sont traitées selon les modalités et délais prévus au contrat.</li>
+    <li>arrêter le service : le site est désactivé dans les conditions de l’article 5 bis.</li>
   </ul>
+  <p>
+    Moyo informe le Client par e-mail, entre trois mois et un mois avant le terme de la période d’engagement, des
+    options ci-dessus et de la date limite pour faire son choix. Sans choix exprimé par le Client avant le terme, le
+    contrat se poursuit automatiquement sous la formule Gardiennage, dans les conditions prévues ci-dessous.
+  </p>
+  <h3>Formule Gardiennage</h3>
+  <p>
+    La formule Gardiennage est proposée à 25,99 €/mois. Elle comprend l’hébergement, la maintenance technique, la
+    gestion technique du nom de domaine et 45 minutes d’assistance par mois, non reportables d’un mois à l’autre.
+    Elle est conclue pour une durée indéterminée et peut être résiliée à tout moment, sans frais ni justification,
+    moyennant un préavis d’un mois. La résiliation prend effet à la fin de la période mensuelle en cours à
+    l’expiration de ce préavis. Le Client peut à tout moment demander la prestation de transfert prévue à
+    l’article 10.
+  </p>
   <h3>Sans engagement</h3>
   <p>
     Le contrat est conclu pour une durée indéterminée. Le Client peut le résilier à tout moment, sans frais ni
@@ -73,26 +110,43 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   </p>
   <h3>Comment résilier</h3>
   <p>
-    La résiliation peut être notifiée en ligne, depuis la page <a href="/resiliation/">Résilier votre contrat</a>
+    La résiliation peut être notifiée en ligne, depuis la page <a href="/resiliation/">Résilier ton contrat</a>
     accessible en bas de chaque page du site, par e-mail à <a href={`mailto:${company.email}`}>{company.email}</a> ou
     par courrier à {company.address}. Moyo en accuse réception par e-mail, puis confirme la date de fin du contrat et
     les effets de la résiliation.
   </p>
 
+  <h2>5 bis. Fin du service et données</h2>
+  <p>
+    À la date d’effet de la résiliation, sauf demande de transfert (article 10), le site est désactivé. Moyo conserve
+    une sauvegarde du site pendant <Field v={backupRetention} label="durée de conservation des sauvegardes, ex. 30 jours" /> à
+    compter de cette date. Pendant ce délai, le Client peut obtenir gratuitement, sur simple demande à{' '}
+    <a href={`mailto:${company.email}`}>{company.email}</a>, la restitution des contenus qu’il a fournis (textes,
+    images, logo, données). Passé ce délai, les données du site sont définitivement supprimées, sous réserve des
+    données que Moyo doit conserver au titre de ses obligations légales (notamment comptables). Le nom de domaine,
+    enregistré au nom du Client, reste sa propriété : Moyo lui communique le code de transfert sur demande.
+  </p>
+
   <h2>6. Délai de mise en ligne</h2>
   <p>
-    Le délai cible de mise en ligne est de 3 à 5 jours ouvrés à compter de la réception de l’ensemble des contenus
-    nécessaires (textes, images, logo…). Un retard dans la transmission des contenus décale d’autant ce délai.
+    Moyo s’engage à mettre le site en ligne dans un délai de 3 à 5 jours ouvrés à compter de la réception de
+    l’ensemble des contenus nécessaires (textes, images, logo…). Un retard dans la transmission des contenus ou dans
+    les validations demandées au Client décale d’autant ce délai.
+  </p>
+  <p>
+    Si le site n’est pas en ligne dans un délai de 5 jours ouvrés, pour une cause imputable exclusivement à Moyo, la
+    première mensualité est offerte au Client. Cette compensation ne s’applique pas aux frais de mise en service des
+    offres sans engagement. Elle est exclusive de toute autre indemnisation au titre du retard.
   </p>
 
   <h2>7. Prestations incluses</h2>
   <ul>
     <li>Création et mise en service du site selon l’offre souscrite ;</li>
     <li>hébergement pendant toute la durée du service ;</li>
-    <li>maintenance technique : mises à jour, sauvegardes et contrôles de sécurité courants ;</li>
+    <li>maintenance technique du site et de l’espace d’édition (WordPress ou TinaCMS) : mises à jour, sauvegardes et contrôles de sécurité courants ;</li>
     <li>nom de domaine enregistré au nom du Client, avec gestion technique par Moyo ;</li>
     <li>60 minutes par mois de petites modifications de contenu, non reportables d’un mois à l’autre ;</li>
-    <li>assistance technique selon les modalités du contrat.</li>
+    <li>assistance technique par e-mail à {company.email}, avec une première réponse sous 24 heures ouvrées.</li>
   </ul>
   <p>
     Les modifications importantes, nouvelles pages, refontes et fonctionnalités supplémentaires font l’objet d’un
@@ -107,8 +161,9 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
 
   <h2>9. Paiement</h2>
   <p>
-    Les mensualités sont payables d’avance, par prélèvement SEPA ou carte bancaire. Elles sont prélevées chaque mois
-    à la date anniversaire du premier paiement.
+    Les mensualités sont payables d’avance, par prélèvement SEPA ou carte bancaire. La première mensualité est prélevée à la
+    date de mise en ligne du site, puis chaque mois à la même date. La période d’engagement de 24 mois correspond
+    donc à 24 mensualités. Pour les offres sans engagement, les frais de mise en service sont payables à la commande.
   </p>
   <p>
     <strong>Client professionnel :</strong> tout retard de paiement entraîne de plein droit des pénalités de retard
@@ -126,6 +181,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
     Pendant toute la durée de la location, le site (code, design, développements, configuration) reste la propriété
     de {company.name}. Le Client dispose d’un droit d’utilisation pour la durée du contrat. Les contenus fournis par
     le Client (textes, images, logo, données) restent sa propriété, et le nom de domaine est enregistré à son nom.
+    Le Client peut à tout moment demander à Moyo le code de transfert de son nom de domaine.
   </p>
   <p>
     À l’issue de la période d’engagement, pendant la formule Gardiennage ou lors de la résiliation d’une formule sans
@@ -158,7 +214,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   <h2>13. Droit applicable et litiges</h2>
   <p>
     Les présentes CGV sont soumises au droit français. En cas de litige, les parties recherchent d’abord une solution
-    amiable. Toute réclamation est adressée en premier lieu à
+    amiable. Toute réclamation est adressée en premier lieu à{' '}
     <a href={`mailto:${company.email}`}>{company.email}</a>. À défaut d’accord, le litige est porté devant la
     juridiction compétente selon les règles de droit commun.
   </p>

@@ -134,7 +134,7 @@ Générés depuis la mascotte : `node scripts/make-favicons.mjs` (écrit dans `p
 
 ## Points restant à valider
 
+- Valeurs `[À COMPLÉTER]` / `[À VÉRIFIER]` : rechercher `TODO [À` dans `src/` (durée des sauvegardes et prestataire de paiement dans `src/data/legal.ts`, note 4,9/5 et citation du hero, certification DPF de Calendly et Google).
+
 - Avis clients : fictifs, section masquée (`SHOW_REVIEWS` dans `src/data/site.ts`).
-- Garantie « Livré en 3 à 5 jours… En retard ? Ton premier mois est offert » : reprise de la maquette, à confirmer.
-- Citation « C'est le Netflix du site internet. » du hero : à garder comme slogan ou à retirer.
 - Formule sans engagement : à confirmer (prix = prix avec engagement × 1,3).

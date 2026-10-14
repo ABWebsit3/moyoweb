@@ -1,4 +1,5 @@
 ---
+import { backupRetention } from '../data/legal';
 // Texte client : à conserver verbatim.
 const included = [
   ['Ton site sur mesure', ', selon l’offre choisie.'],
@@ -9,9 +10,9 @@ const included = [
 ];
 
 const afterTerm = [
-  { n: 1, bg: '#7EE08F', title: 'Tu continues avec Moyo', html: 'grâce à notre formule Gardiennage à <strong>25,99 €/mois</strong>, incluant l’hébergement, la maintenance prévue au contrat et 45 minutes d’assistance par mois.' },
+  { n: 1, bg: '#7EE08F', title: 'Tu continues avec Moyo', html: 'grâce à notre formule Gardiennage à <strong>25,99 €/mois</strong>, incluant l’hébergement, la maintenance prévue au contrat, 45 minutes d’assistance par mois et la gestion de ton nom de domaine.' },
   { n: 2, bg: '#F49B2A', title: 'Tu récupères ton site', html: 'nous proposons une prestation de transfert à <strong>490 €</strong>, à la fin des 24 mois ou pendant la formule Gardiennage.' },
-  { n: 3, bg: '#EFE6FF', title: 'Tu arrêtes le service', html: 'ton site est désactivé et les données sont traitées selon les modalités et délais prévus au contrat.' },
+  { n: 3, bg: '#EFE6FF', title: 'Tu arrêtes le service', html: `ton site est désactivé. On garde une sauvegarde pendant ${backupRetention || '<mark class="todo">[À compléter : durée de conservation]</mark>'} et on te restitue tes contenus (textes, images, logo) sur simple demande pendant ce délai.` },
 ];
 ---
 
@@ -45,6 +46,7 @@ const afterTerm = [
         </div>
       ))}
     </div>
+    <p class="offer__default">Sans choix de ta part à la fin des 24 mois, ton site passe automatiquement en Gardiennage, sans engagement et résiliable à tout moment. On te prévient par e-mail avant l’échéance.</p>
   </div>
 
   <div class="offer__foot" data-reveal>
@@ -85,6 +87,7 @@ const afterTerm = [
     margin: 0;
   }
   .offer__term-intro { margin: 0; font-size: 16px; line-height: 1.5; color: var(--text); max-width: 460px; }
+  .offer__default { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--text); }
   .offer__choices { display: flex; flex-wrap: wrap; gap: 18px; }
   .offer__choice { flex: 1 1 260px; min-width: 0; padding: 24px; display: flex; flex-direction: column; gap: 12px; color: var(--ink); }
   .offer__num {

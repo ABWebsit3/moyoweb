@@ -44,7 +44,7 @@ function proposalLines(q: Quote) {
   const lines = [
     { ...service, desc: `Offre ${q.plan.name} – abonnement mensuel (${engagement})`, qty: 1, subprice: q.planPrice },
   ];
-  if (q.setupFee) lines.push({ ...service, desc: 'Mise en service (paiement unique au démarrage)', qty: 1, subprice: q.setupFee });
+  if (q.setupFee) lines.push({ ...service, desc: 'Mise en service (paiement unique à la commande)', qty: 1, subprice: q.setupFee });
 
   for (const l of q.lines) {
     if (l.id === SEO_OPTION_ID) {
@@ -81,7 +81,7 @@ async function saveInDolibarr(contact: Contact, quote: Quote, ticketNo: string):
     `Demande de devis en ligne (moyoweb.fr) ${ticketNo}`.trim(),
     `Contact : ${contact.prenom} ${contact.nom}${contact.societe ? ` – ${contact.societe}` : ''} <${contact.email}>`,
     `Formule : ${quote.plan.name}, ${quote.engage ? 'engagement 24 mois' : 'sans engagement'}`,
-    `Total mensuel : ${eur(quote.totalMonthly)}/mois${quote.setupFee ? ` + ${eur(quote.setupFee)} de mise en service au démarrage` : ''}`,
+    `Total mensuel : ${eur(quote.totalMonthly)}/mois${quote.setupFee ? ` + ${eur(quote.setupFee)} de mise en service à la commande` : ''}`,
     'Attention : le total de la proposition additionne mensualités et frais uniques.',
   ].join('\n');
 
@@ -104,12 +104,12 @@ function ticketText(quote: Quote, ticketNo: string) {
     '',
     `Forfait : Offre ${quote.plan.name} (${quote.engage ? 'engagement 24 mois' : 'sans engagement'}) – ${eur(quote.planPrice)}/mois`,
   ];
-  if (quote.setupFee) rows.push(`Mise en service (une fois, au démarrage) : ${eur(quote.setupFee)}`);
+  if (quote.setupFee) rows.push(`Mise en service (une fois, à la commande) : ${eur(quote.setupFee)}`);
   rows.push('', 'Options :');
   if (!quote.lines.length) rows.push('  – aucune option –');
   for (const l of quote.lines) rows.push(`  • ${l.name} : ${l.included ? 'inclus' : `${eur(l.total)}/mois`}`);
   rows.push('', `TOTAL : ${eur(quote.totalMonthly)}/mois`);
-  if (quote.setupFee) rows.push(`À payer au démarrage : ${eur(quote.setupFee)}`);
+  if (quote.setupFee) rows.push(`À payer à la commande : ${eur(quote.setupFee)}`);
   rows.push(
     'TVA non applicable, art. 293 B du CGI.',
     quote.engage

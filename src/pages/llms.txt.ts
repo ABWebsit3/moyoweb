@@ -11,7 +11,7 @@ export const GET: APIRoute = ({ site }) => {
   const url = (p: string) => new URL(p, site).toString();
   const text = `# Moyo
 
-> Moyo crée des sites internet professionnels en location mensuelle pour les professionnels et les associations : site livré clé en main en 3 à 5 jours, hébergé, sécurisé et maintenu, dès ${eur(PLANS[0].price)}/mois avec engagement de 24 mois, ou sans engagement. Moyo est un service d'${company.name} (France).
+> Moyo crée des sites internet professionnels en location mensuelle pour les professionnels et les associations : site livré clé en main en 3 à 5 jours ouvrés, hébergé, sécurisé et maintenu, dès ${eur(PLANS[0].price)}/mois avec engagement de 24 mois, ou sans engagement. Moyo est un service d'${company.name} (France).
 
 - Clientèle : professionnels (indépendants, entreprises) et associations uniquement, pas les particuliers.
 - Inclus dans tous les forfaits : hébergement, nom de domaine au nom du client, maintenance et sécurité, 60 minutes de petites modifications par mois.
@@ -42,7 +42,7 @@ ${faq.map((q) => `- ${q.q} ${q.a}`).join('\n')}
 
 ## Optional
 
-- [Résilier votre contrat](${url('/resiliation/')}): résiliation en ligne.
+- [Résilier ton contrat](${url('/resiliation/')}): résiliation en ligne.
 `;
   return new Response(text, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

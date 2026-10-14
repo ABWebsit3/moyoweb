@@ -153,6 +153,15 @@ section[id] { scroll-margin-top: 70px; }
   flex-wrap: wrap;
 }
 
+.todo {
+  background: var(--orange-light);
+  color: var(--ink);
+  border: 1px dashed var(--orange);
+  border-radius: 6px;
+  padding: 0 4px;
+  font-weight: 600;
+}
+
 .band {
   border-top: var(--border);
   border-bottom: var(--border);

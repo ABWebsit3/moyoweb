@@ -2,14 +2,14 @@
 import { Image } from 'astro:assets';
 import { IMAGES } from '../data/site';
 
-const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours', 'Dès 44,99 €/mois'];
+const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours ouvrés', 'Dès 44,99 €/mois'];
 ---
 
 <section class="container hero">
   <div class="hero__text" data-reveal="left">
     <div class="hero__badge">
       <span class="hero__badge-new">Nouveau</span>
-      Ton site en ligne en 3 à 5 jours
+      Ton site en ligne en 3 à 5 jours ouvrés
     </div>
     <h1 class="h1">L’agence qui te crée un site… <span class="hl">sans te ruiner</span> d’un coup !</h1>
     <p class="hero__lead">
@@ -27,10 +27,9 @@ const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours', 'Dès 44,9
     <div class="hero__blob" aria-hidden="true"></div>
     <div class="hero__dot" aria-hidden="true"></div>
     <Image src={IMAGES.transat} alt="Mo’ sur son petit transat" class="hero__img" loading="eager" fetchpriority="high" />
-    <div class="hero__quote">
-      <span class="display">“C’est le Netflix du site internet.”</span>
-      <span class="hero__rating">★★★★★ 4,9/5</span>
-    </div>
+    {/* TODO [À COMPLÉTER : source de la note 4,9/5 et auteur réel de la citation] — carte retirée faute de source.
+        Pour la remettre : <div class="hero__quote"><span class="display">“C’est le Netflix du site internet.”</span>
+        <span class="hero__rating">Prénom, activité du client · ★★★★★ 4,9/5 (source)</span></div> */}
   </div>
 </section>
 

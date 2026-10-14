@@ -141,7 +141,7 @@ export function initDevis(root: HTMLElement) {
         <p class="dv-note">${
           s.engage
             ? 'Engagement initial de 24 mois, tarif préférentiel et 0 € au départ.'
-            : `Abonnement majoré de 30 % + ${SETUP_FEE} € de mise en service payés au démarrage. Résiliable selon le contrat.`
+            : `Abonnement majoré de 30 % + ${SETUP_FEE} € de mise en service payés à la commande. Résiliable à tout moment avec un préavis d’un mois.`
         }</p>
       </div>
       <div class="dv-plans">${plans}</div>
@@ -241,7 +241,7 @@ export function initDevis(root: HTMLElement) {
         ${renderRdv()}
         <div><button type="button" class="dv-restart" data-restart>Refaire un devis</button></div>
         <div class="dv-reassure">
-          <span>✓ Réponse sous 24 h</span><span>✓ Contrat clair, sans surprise</span><span>✓ Rien à payer avant validation</span>
+          <span>✓ Réponse sous 24 h ouvrées</span><span>✓ Contrat clair, sans surprise</span><span>✓ Rien à payer avant validation</span>
         </div>
       </div>`;
   }
@@ -337,7 +337,7 @@ export function initDevis(root: HTMLElement) {
     const setup = !s.engage;
     const terms = s.engage
       ? 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.'
-      : 'Sans engagement · résiliable selon le contrat.';
+      : 'Sans engagement · résiliable à tout moment, préavis d’un mois.';
     const line = (a: string, b: string, cls = '') =>
       `<div class="dv-ticket__line"><span class="${cls}">${a}</span><span>${b}</span></div>`;
 
@@ -360,7 +360,7 @@ export function initDevis(root: HTMLElement) {
           ${line('SOUS-TOTAL', eur(total))}
           <span style="font-size:11.5px">TVA non applicable, art. 293 B du CGI</span>
           <div class="dv-ticket__total"><span>TOTAL</span><span>${eur(total)}/mois</span></div>
-          ${setup ? `<div class="dv-ticket__line" style="font-weight:700"><span>À PAYER AU DÉMARRAGE</span><span>${eur(SETUP_FEE)}</span></div>` : ''}
+          ${setup ? `<div class="dv-ticket__line" style="font-weight:700"><span>À PAYER À LA COMMANDE</span><span>${eur(SETUP_FEE)}</span></div>` : ''}
           <div class="dv-ticket__barcode" aria-hidden="true"></div>
           <span class="dv-center" style="letter-spacing:.12em">${s.barcode}</span>
           <span class="dv-center" style="font-size:11.5px;line-height:1.5">${terms}<br>Hébergement, domaine, maintenance inclus.</span>

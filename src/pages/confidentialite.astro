@@ -1,14 +1,14 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import Field from '../components/Field.astro';
-import { company, host, crm, mail } from '../data/legal';
+import { company, host, crm, mail, backupRetention, paymentProvider } from '../data/legal';
 ---
 
 <LegalLayout title="Politique de confidentialité" description="Comment Moyo collecte et utilise tes données personnelles, et comment exercer tes droits.">
   <h2>Qui est responsable de tes données ?</h2>
   <p>
-    Le responsable du traitement est <Field v={company.name} label="nom ou raison sociale" /> (service {company.brand}),
-    <Field v={company.address} label="adresse" />. Contact :
+    Le responsable du traitement est <Field v={company.name} label="nom ou raison sociale" /> (service {company.brand}),{' '}
+    <Field v={company.address} label="adresse" />. Contact :{' '}
     <a href={`mailto:${company.email}`}>{company.email}</a>.
   </p>
 
@@ -67,13 +67,28 @@ import { company, host, crm, mail } from '../data/legal';
     <li>Gestion de la relation client (CRM Dolibarr) : <Field v={crm.host} label="hébergeur du CRM Dolibarr" /></li>
     <li>Messagerie électronique : <Field v={mail.host} label="fournisseur de messagerie" /></li>
     <li>Prise de rendez-vous : Calendly (Calendly LLC, États-Unis), uniquement si tu affiches le calendrier ou ouvres Calendly</li>
-    <li>Mesure d’audience, uniquement si tu l’acceptes : Google Analytics (Google Ireland Limited)</li>
+    <li>
+      Paiement des abonnements (carte bancaire et prélèvement SEPA) :{' '}
+      <Field v={paymentProvider} label="nom et pays du prestataire de paiement" />. Moyo n’a pas accès à tes numéros de carte.
+    </li>
+    <li>Mesure d’audience, uniquement si tu l’acceptes : Google Analytics (Google Ireland Limited, avec des transferts possibles vers Google LLC, États-Unis)</li>
   </ul>
+
+  <h2>Tes données quittent-elles l’Union européenne ?</h2>
+  {/* TODO [À VÉRIFIER : certification Data Privacy Framework de Calendly LLC et de Google LLC sur dataprivacyframework.gov avant mise en ligne]
+      (les deux sociétés déclarent être certifiées dans leurs propres documents ; liste officielle non consultée). */}
+  <p>
+    Certains prestataires peuvent traiter tes données aux États-Unis : Calendly (Calendly LLC) et, si tu l’acceptes,
+    Google Analytics (Google LLC). Ces transferts sont encadrés par la certification de ces prestataires au Data
+    Privacy Framework UE–États-Unis et/ou par les clauses contractuelles types de la Commission européenne. Tu peux
+    nous demander une copie de ces garanties à <a href={`mailto:${company.email}`}>{company.email}</a>.
+  </p>
 
   <h2>Combien de temps les conservons-nous ?</h2>
   <ul>
     <li>Demandes de devis sans suite : 3 ans à compter du dernier contact.</li>
     <li>Clients : pendant la durée du contrat, puis archivage le temps des prescriptions légales (10 ans pour les pièces comptables).</li>
+    <li>Sauvegardes du site d’un client après la fin du service : <Field v={backupRetention} label="durée, ex. 30 jours" />, puis suppression.</li>
     <li>Choix concernant les cookies : 6 mois.</li>
     <li>Cookies de mesure d’audience : 13 mois maximum.</li>
   </ul>
@@ -86,7 +101,7 @@ import { company, host, crm, mail } from '../data/legal';
   </p>
   <p>
     Le calendrier de prise de rendez-vous est fourni par Calendly, qui peut déposer ses propres cookies : il ne se
-    charge qu’après un clic de ta part sur « Choisir mon créneau ». Voir la
+    charge qu’après un clic de ta part sur « Choisir mon créneau ». Voir la{' '}
     <a href="https://calendly.com/privacy" target="_blank" rel="noopener">politique de confidentialité de Calendly</a>.
   </p>
   <p>Les polices de caractères sont hébergées sur notre serveur : aucune donnée n’est transmise à un service tiers pour les afficher.</p>
@@ -95,7 +110,7 @@ import { company, host, crm, mail } from '../data/legal';
   <p>
     Tu disposes d’un droit d’accès, de rectification, d’effacement, de limitation, d’opposition et de portabilité de
     tes données, ainsi que du droit de retirer ton consentement à tout moment et de définir des directives sur le
-    sort de tes données après ton décès. Pour les exercer, écris-nous à
+    sort de tes données après ton décès. Pour les exercer, écris-nous à{' '}
     <a href={`mailto:${company.email}`}>{company.email}</a>. Nous te répondons dans un délai d’un mois.
   </p>
   <p>

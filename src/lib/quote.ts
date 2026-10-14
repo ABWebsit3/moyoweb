@@ -23,7 +23,7 @@ export interface Quote {
   plan: Plan;
   planPrice: number;
   engage: boolean;
-  setupFee: number; // à payer au démarrage (0 avec engagement)
+  setupFee: number; // à payer à la commande (0 avec engagement)
   lines: QuoteLine[];
   totalMonthly: number;
 }

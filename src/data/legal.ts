@@ -22,7 +22,9 @@ export const company = {
 export const host = {
   name: 'Hostinger International Ltd',
   address: '61 Lordou Vironos Street, 6023 Larnaca, Chypre',
-  phone: '', // Hostinger ne communique pas de numéro de téléphone : la ligne n'est pas affichée
+  // TODO [À COMPLÉTER : numéro de téléphone de l'hébergeur] — Hostinger ne publie pas de numéro (vérifié) :
+  // la ligne Téléphone n'est affichée que si ce champ est renseigné.
+  phone: '',
 };
 
 // Prestataires techniques cités dans la politique de confidentialité.
@@ -33,4 +35,12 @@ export const mail = {
   host: 'Hostinger International Ltd', // Messagerie hello@moyoweb.fr
 };
 
-export const legalUpdatedAt = '12 octobre 2026';
+// Durée de conservation des sauvegardes après la fin du service (accueil, CGV art. 5 bis, confidentialité).
+// TODO [À COMPLÉTER : 30 jours ?] — tant que vide, un repère « À compléter » s'affiche sur le site.
+export const backupRetention = '';
+
+// Prestataire de paiement des abonnements (confidentialité).
+// TODO [À COMPLÉTER : nom et pays du prestataire, ex. Stripe Payments Europe Ltd, Irlande]
+export const paymentProvider = '';
+
+export const legalUpdatedAt = '14 octobre 2026';
