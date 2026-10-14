@@ -36,8 +36,7 @@ export const mail = {
 };
 
 // Durée de conservation des sauvegardes après la fin du service (accueil, CGV art. 5 bis, confidentialité).
-// TODO [À COMPLÉTER : 30 jours ?] — tant que vide, un repère « À compléter » s'affiche sur le site.
-export const backupRetention = '';
+export const backupRetention = '1 mois';
 
 // Prestataire de paiement des abonnements (confidentialité).
 // TODO [À COMPLÉTER : nom et pays du prestataire, ex. Stripe Payments Europe Ltd, Irlande]
