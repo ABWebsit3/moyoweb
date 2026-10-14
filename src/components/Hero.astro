@@ -27,9 +27,11 @@ const perks = ['Avec ou sans engagement', 'En ligne en 3 à 5 jours ouvrés', 'D
     <div class="hero__blob" aria-hidden="true"></div>
     <div class="hero__dot" aria-hidden="true"></div>
     <Image src={IMAGES.transat} alt="Mo’ sur son petit transat" class="hero__img" loading="eager" fetchpriority="high" />
-    {/* TODO [À COMPLÉTER : source de la note 4,9/5 et auteur réel de la citation] — carte retirée faute de source.
-        Pour la remettre : <div class="hero__quote"><span class="display">“C’est le Netflix du site internet.”</span>
-        <span class="hero__rating">Prénom, activité du client · ★★★★★ 4,9/5 (source)</span></div> */}
+    <div class="hero__quote">
+      <span class="display">C’est le Netflix du site internet.</span>
+      {/* Slogan Moyo (pas un témoignage) : pas de guillemets ni d'étoiles.
+          TODO [À COMPLÉTER : source de la note 4,9/5] avant de réafficher « ★★★★★ 4,9/5 ». */}
+    </div>
   </div>
 </section>
 

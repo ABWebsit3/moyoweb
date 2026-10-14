@@ -134,7 +134,7 @@ Générés depuis la mascotte : `node scripts/make-favicons.mjs` (écrit dans `p
 
 ## Points restant à valider
 
-- Valeurs `[À COMPLÉTER]` / `[À VÉRIFIER]` : rechercher `TODO [À` dans `src/` (durée des sauvegardes et prestataire de paiement dans `src/data/legal.ts`, note 4,9/5 et citation du hero, certification DPF de Calendly et Google).
+- Valeurs `[À COMPLÉTER]` / `[À VÉRIFIER]` : rechercher `TODO [À` dans `src/` (durée des sauvegardes et prestataire de paiement dans `src/data/legal.ts`, note 4,9/5 (le slogan « C’est le Netflix du site internet. » reste affiché, sans étoiles), certification DPF de Calendly et Google).
 
 - Avis clients : fictifs, section masquée (`SHOW_REVIEWS` dans `src/data/site.ts`).
 - Formule sans engagement : à confirmer (prix = prix avec engagement × 1,3).
