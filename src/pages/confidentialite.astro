@@ -1,7 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import Field from '../components/Field.astro';
-import { company, host, crm, mail, backupRetention, paymentProvider } from '../data/legal';
+import { company, host, crm, mail, paymentProvider } from '../data/legal';
 ---
 
 <LegalLayout title="Politique de confidentialité" description="Comment Moyo collecte et utilise tes données personnelles, et comment exercer tes droits.">
@@ -88,7 +88,7 @@ import { company, host, crm, mail, backupRetention, paymentProvider } from '../d
   <ul>
     <li>Demandes de devis sans suite : 3 ans à compter du dernier contact.</li>
     <li>Clients : pendant la durée du contrat, puis archivage le temps des prescriptions légales (10 ans pour les pièces comptables).</li>
-    <li>Sauvegardes du site d’un client après la fin du service : <Field v={backupRetention} label="durée, ex. 30 jours" />, puis suppression.</li>
+    <li>Fichiers du site d’un client : supprimés à la fin du service, sauf transfert demandé avant cette date.</li>
     <li>Choix concernant les cookies : 6 mois.</li>
     <li>Cookies de mesure d’audience : 13 mois maximum.</li>
   </ul>

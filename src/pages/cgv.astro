@@ -1,7 +1,6 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
-import Field from '../components/Field.astro';
-import { company, backupRetention } from '../data/legal';
+import { company } from '../data/legal';
 import { PLANS, SETUP_FEE } from '../data/devis';
 
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
@@ -118,13 +117,12 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
 
   <h2>5 bis. Fin du service et données</h2>
   <p>
-    À la date d’effet de la résiliation, sauf demande de transfert (article 10), le site est désactivé. Moyo conserve
-    une sauvegarde du site pendant <Field v={backupRetention} label="durée de conservation des sauvegardes, ex. 30 jours" /> à
-    compter de cette date. Pendant ce délai, le Client peut obtenir gratuitement, sur simple demande à{' '}
-    <a href={`mailto:${company.email}`}>{company.email}</a>, la restitution des contenus qu’il a fournis (textes,
-    images, logo, données). Passé ce délai, les données du site sont définitivement supprimées, sous réserve des
-    données que Moyo doit conserver au titre de ses obligations légales (notamment comptables). Le nom de domaine,
-    enregistré au nom du Client, reste sa propriété : Moyo lui communique le code de transfert sur demande.
+    À la date d’effet de la résiliation, sauf demande de transfert (article 10), le service est interrompu : le site
+    est désactivé et ses fichiers sont supprimés. Aucune sauvegarde n’est conservée au-delà de cette date. Le Client
+    qui souhaite récupérer son site doit demander la prestation de transfert avant la date d’effet de la résiliation.
+    Moyo conserve uniquement les données qu’il doit garder au titre de ses obligations légales (notamment
+    comptables). Le nom de domaine, enregistré au nom du Client, reste sa propriété : Moyo lui communique le code de
+    transfert sur demande.
   </p>
 
   <h2>6. Délai de mise en ligne</h2>
@@ -186,7 +184,8 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   <p>
     À l’issue de la période d’engagement, pendant la formule Gardiennage ou lors de la résiliation d’une formule sans
     engagement, le Client peut acquérir son site moyennant la prestation de transfert à 490 €. Après paiement complet,
-    Moyo lui remet les fichiers et contenus du site pour un hébergement de son choix et lui cède les droits
+    Moyo remet les fichiers du site, ses contenus et les informations utiles à sa reprise au Client ou au prestataire
+    qu’il désigne, pour un hébergement de son choix, et cède au Client les droits
     patrimoniaux d’auteur sur le site (reproduction, représentation et adaptation), pour le monde entier et pour
     toute la durée légale de protection. Les éléments sous licence de tiers (thèmes, extensions, polices, photos de
     banque d’images) restent soumis à leurs propres licences.

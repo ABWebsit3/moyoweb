@@ -1,5 +1,4 @@
 ---
-import { backupRetention } from '../data/legal';
 // Texte client : à conserver verbatim.
 const included = [
   ['Ton site sur mesure', ', selon l’offre choisie.'],
@@ -11,8 +10,8 @@ const included = [
 
 const afterTerm = [
   { n: 1, bg: '#7EE08F', title: 'Tu continues avec Moyo', html: 'grâce à notre formule Gardiennage à <strong>25,99 €/mois</strong>, incluant l’hébergement, la maintenance prévue au contrat, 45 minutes d’assistance par mois et la gestion de ton nom de domaine.' },
-  { n: 2, bg: '#F49B2A', title: 'Tu récupères ton site', html: 'nous proposons une prestation de transfert à <strong>490 €</strong>, à la fin des 24 mois ou pendant la formule Gardiennage.' },
-  { n: 3, bg: '#EFE6FF', title: 'Tu arrêtes le service', html: `ton site est désactivé. On garde une sauvegarde pendant ${backupRetention || '<mark class="todo">[À compléter : durée de conservation]</mark>'} et on te restitue tes contenus (textes, images, logo) sur simple demande pendant ce délai.` },
+  { n: 2, bg: '#F49B2A', title: 'Tu récupères ton site', html: 'on envoie les fichiers du site et ses informations utiles à toi ou à ton nouveau prestataire, pour un forfait de <strong>490 €</strong>, à la fin des 24 mois ou pendant la formule Gardiennage.' },
+  { n: 3, bg: '#EFE6FF', title: 'Tu arrêtes le service', html: 'le service est simplement coupé : ton site est désactivé et ses fichiers sont supprimés. Pour le garder, choisis le transfert avant l’échéance.' },
 ];
 ---
 

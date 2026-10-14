@@ -35,9 +35,6 @@ export const mail = {
   host: 'Hostinger International Ltd', // Messagerie hello@moyoweb.fr
 };
 
-// Durée de conservation des sauvegardes après la fin du service (accueil, CGV art. 5 bis, confidentialité).
-export const backupRetention = '1 mois';
-
 // Prestataire de paiement des abonnements (confidentialité).
 // TODO [À COMPLÉTER : nom et pays du prestataire, ex. Stripe Payments Europe Ltd, Irlande]
 export const paymentProvider = '';
