@@ -1,7 +1,7 @@
 // llms.txt (format https://llmstxt.org) : résumé du site pour les assistants IA, généré au build
 // à partir des mêmes données que les pages (offres, options, FAQ).
 import type { APIRoute } from 'astro';
-import { PLANS, OPTS, SETUP_FEE } from '../data/devis';
+import { PLANS, OPTS, SETUP_FEE, planFeats } from '../data/devis';
 import { faq, clients, CONTACT_EMAIL } from '../data/site';
 import { company } from '../data/legal';
 
@@ -21,7 +21,7 @@ export const GET: APIRoute = ({ site }) => {
 
 ## Forfaits
 
-${PLANS.map((p) => `- Offre ${p.name} (${p.tag}) : ${eur(p.price)}/mois avec engagement 24 mois, ${eur(p.free)}/mois sans engagement (+ ${eur(SETUP_FEE)} de mise en service). Inclus : ${p.feats.join(', ')}.`).join('\n')}
+${PLANS.map((p) => `- Offre ${p.name} (${p.tag}) : ${eur(p.price)}/mois avec engagement 24 mois, ${eur(p.free)}/mois sans engagement (+ ${eur(SETUP_FEE)} de mise en service). Inclus : ${planFeats(p).map((f) => f.replace(/ inclus$/, '')).join(', ')}.`).join('\n')}
 
 Après 24 mois : formule Gardiennage à 25,99 €/mois, transfert du site à 490 € ou arrêt du service.
 

@@ -1,4 +1,4 @@
-import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, type Option, type PlanId } from '../data/devis';
+import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, planFeats, type Option, type PlanId } from '../data/devis';
 import { computeQuote, seoQty as sharedSeoQty, type QuoteInput } from '../lib/quote';
 import { CALENDLY_URL } from '../data/site';
 import { track } from '../lib/analytics';
@@ -128,7 +128,7 @@ export function initDevis(root: HTMLElement) {
           <span class="dv-plan__setup">${s.engage ? '' : `+ ${SETUP_FEE} € de mise en service`}</span>
         </div>
         <p class="dv-plan__desc">${p.desc}</p>
-        <ul class="dv-plan__feats">${p.feats.map((f) => `<li>${f}</li>`).join('')}</ul>
+        <ul class="dv-plan__feats">${planFeats(p).map((f) => `<li>${f}</li>`).join('')}</ul>
       </button>`;
     }).join('');
 

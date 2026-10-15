@@ -1,7 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { company } from '../data/legal';
-import { PLANS, SETUP_FEE } from '../data/devis';
+import { PLANS, SETUP_FEE, planFeats } from '../data/devis';
 
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
 // Projet de CGV à faire relire par un professionnel du droit avant de le considérer comme définitif.
@@ -53,7 +53,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
         <tr>
           {PLANS.map((p) => (
             <td>
-              <ul>{p.feats.map((f) => <li>{f}</li>)}</ul>
+              <ul>{planFeats(p).map((f) => <li>{f}</li>)}</ul>
             </td>
           ))}
         </tr>

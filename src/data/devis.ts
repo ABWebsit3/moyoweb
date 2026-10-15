@@ -57,3 +57,14 @@ export const OPTS: Option[] = [
   { id: 'seaf', name: 'SEA (Facebook)', desc: 'Mise en place de ta visibilité payante sur Facebook.', price: 11.99, color: '#8A4FFF' },
   { id: 'ana', name: 'Rapport Analytics', desc: 'Suis le nombre de visites sur ton site, et plus encore.', price: 3.99, color: '#F49B2A', inc: { pro: 1, elite: 1 } },
 ];
+
+// Contenu affiché d'un forfait : ses caractéristiques + les options incluses (dérivées de OPTS[].inc).
+export function planFeats(plan: Plan): string[] {
+  const extra = OPTS.flatMap((o) => {
+    const n = o.inc?.[plan.id] ?? 0;
+    if (n <= 0) return [];
+    if (o.id === SEO_OPTION_ID) return [`${n} article${n > 1 ? 's' : ''} SEO inclus`];
+    return [`${o.name} inclus`];
+  });
+  return [...plan.feats, ...extra];
+}
