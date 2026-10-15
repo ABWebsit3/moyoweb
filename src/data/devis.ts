@@ -53,8 +53,8 @@ export const OPTS: Option[] = [
   { id: 'logo', name: 'Création de logo', desc: 'Un logo tout beau tout neuf !', price: 39.99, color: '#F49B2A' },
   { id: 'gmb', name: 'Google My Business', desc: 'Une fiche établissement visible directement dans les recherches Google.', price: 4.99, color: '#7EE08F' },
   { id: 'news', name: 'Newsletter / Emailing', desc: 'Un envoi par mois pour tenir tes clients au courant de tes promos.', price: 34.99, color: '#8A4FFF' },
-  { id: 'seag', name: 'SEA (Google)', desc: 'Mise en place de ta visibilité payante sur Google.', price: 11.99, color: '#7EE08F' },
-  { id: 'seaf', name: 'SEA (Facebook)', desc: 'Mise en place de ta visibilité payante sur Facebook.', price: 11.99, color: '#8A4FFF' },
+  { id: 'seag', name: 'SEA (Google)', desc: 'Mise en place de ta visibilité payante sur Google (hors budget publicité).', price: 11.99, color: '#7EE08F' },
+  { id: 'seaf', name: 'SEA (Facebook)', desc: 'Mise en place de ta visibilité payante sur Facebook (hors budget publicité).', price: 11.99, color: '#8A4FFF' },
   { id: 'ana', name: 'Rapport Analytics', desc: 'Suis le nombre de visites sur ton site, et plus encore.', price: 3.99, color: '#F49B2A', inc: { pro: 1, elite: 1 } },
 ];
 
