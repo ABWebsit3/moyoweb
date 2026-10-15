@@ -25,9 +25,9 @@ ${PLANS.map((p) => `- Offre ${p.name} (${p.tag}) : ${eur(p.price)}/mois avec eng
 
 Après 24 mois : formule Gardiennage à 25,99 €/mois, transfert du site à 490 € ou arrêt du service.
 
-## Options (prix mensuels)
+## Options (prix mensuels, sauf articles SEO)
 
-${OPTS.map((o) => `- ${o.name} : ${eur(o.price)}${o.unit ? ' par article' : ''}. ${o.desc}`).join('\n')}
+${OPTS.map((o) => `- ${o.name} : ${eur(o.price)}${o.unit ? ' par article (paiement unique)' : '/mois'}. ${o.desc}`).join('\n')}
 
 ## Questions fréquentes
 

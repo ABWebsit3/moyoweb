@@ -75,8 +75,8 @@ export function initDevis(root: HTMLElement) {
 
   function quote() {
     const q = computeQuote(quoteInput());
-    const lines = q.lines.map((l) => ({ name: l.name, price: l.included ? 'INCLUS' : eur(l.total) }));
-    return { lines, total: q.totalMonthly };
+    const lines = q.lines.map((l) => ({ name: l.name, price: l.included ? 'INCLUS' : eur(l.total) + (l.oneTime ? ' (1 FOIS)' : '') }));
+    return { lines, total: q.totalMonthly, oneTime: q.oneTimeTotal };
   }
 
   const formValid = () =>
@@ -163,7 +163,7 @@ export function initDevis(root: HTMLElement) {
       if (isSeo) {
         const q = seoQty();
         const i = included(o);
-        priceLabel = (i ? i + ' inclus · ' : '') + eur(o.price) + '/article';
+        priceLabel = (i ? i + ' inclus · ' : '') + eur(o.price) + '/article, 1 fois';
         qty = `<div class="dv-qty">
           <button type="button" data-seo="-1" aria-label="Retirer un article">−</button>
           <span class="dv-qty__label" aria-live="polite">${q} article${q > 1 ? 's' : ''}</span>
@@ -333,7 +333,7 @@ export function initDevis(root: HTMLElement) {
       return;
     }
     const p = plan();
-    const { lines, total } = quote();
+    const { lines, total, oneTime } = quote();
     const setup = !s.engage;
     const terms = s.engage
       ? 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.'
@@ -361,6 +361,7 @@ export function initDevis(root: HTMLElement) {
           <span style="font-size:11.5px">TVA non applicable, art. 293 B du CGI</span>
           <div class="dv-ticket__total"><span>TOTAL</span><span>${eur(total)}/mois</span></div>
           ${setup ? `<div class="dv-ticket__line" style="font-weight:700"><span>À PAYER À LA COMMANDE</span><span>${eur(SETUP_FEE)}</span></div>` : ''}
+          ${oneTime ? `<div class="dv-ticket__line" style="font-weight:700"><span>+ 1 FOIS, AVEC LA 1RE MENSUALITÉ</span><span>${eur(oneTime)}</span></div>` : ''}
           <div class="dv-ticket__barcode" aria-hidden="true"></div>
           <span class="dv-center" style="letter-spacing:.12em">${s.barcode}</span>
           <span class="dv-center" style="font-size:11.5px;line-height:1.5">${terms}<br>Hébergement, domaine, maintenance inclus.</span>

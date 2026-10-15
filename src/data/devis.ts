@@ -24,7 +24,7 @@ export interface Option {
   desc: string;
   price: number;
   color: string;
-  unit?: boolean;
+  unit?: boolean; // prix à l'article, payé une fois (pas mensuel)
   inc?: Partial<Record<PlanId, number>>;
 }
 
@@ -45,7 +45,7 @@ export const PLANS: Plan[] = [
 
 export const OPTS: Option[] = [
   { id: 'ecom', name: 'E-commerce', desc: 'Un module pour vendre tes produits. Création des produits et configuration avec la banque incluses.', price: 66.99, color: '#F49B2A' },
-  { id: 'seo', name: 'Articles SEO', desc: 'Articles de blog optimisés pour le référencement naturel.', price: 6.99, unit: true, color: '#7EE08F', inc: { starter: 0, pro: 3, elite: 6 } },
+  { id: 'seo', name: 'Articles SEO', desc: 'Articles de blog optimisés pour le référencement naturel. Paiement unique par article.', price: 9.99, unit: true, color: '#7EE08F', inc: { starter: 0, pro: 3, elite: 6 } },
   { id: 'multi', name: 'Site multilingue', desc: 'Ton site en plusieurs langues (une langue incluse, frais possibles par langue en plus).', price: 16.99, color: '#8A4FFF', inc: { pro: 1, elite: 1 } },
   { id: 'resa', name: 'Système de réservation', desc: 'Calendrier de réservation en ligne pour tes rendez-vous.', price: 20.99, color: '#8A4FFF' },
   { id: 'chat', name: 'Chat Messenger / WhatsApp', desc: 'Tes visiteurs te contactent en un clic via Messenger ou WhatsApp.', price: 5.99, color: '#7EE08F' },

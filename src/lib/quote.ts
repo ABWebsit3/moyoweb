@@ -14,7 +14,8 @@ export interface QuoteLine {
   name: string;
   qty: number; // quantité affichée (ex. nombre total d'articles SEO)
   billedQty: number; // quantité facturée
-  unitPrice: number; // prix mensuel unitaire facturé (0 si inclus)
+  unitPrice: number; // prix unitaire facturé (0 si inclus) : mensuel, sauf ligne oneTime
+  oneTime: boolean; // paiement unique (articles SEO), hors total mensuel
   total: number;
   included: boolean;
 }
@@ -26,6 +27,7 @@ export interface Quote {
   setupFee: number; // à payer à la commande (0 avec engagement)
   lines: QuoteLine[];
   totalMonthly: number;
+  oneTimeTotal: number; // paiements uniques (articles SEO), avec la première mensualité
 }
 
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -43,6 +45,7 @@ export function computeQuote(input: QuoteInput): Quote {
   const planPrice = input.engage ? plan.price : plan.free;
   const lines: QuoteLine[] = [];
   let total = planPrice;
+  let oneTimeTotal = 0;
 
   for (const o of OPTS) {
     const inc = includedQty(o, plan.id);
@@ -51,12 +54,12 @@ export function computeQuote(input: QuoteInput): Quote {
       if (q <= 0) continue;
       const billed = Math.max(0, q - inc);
       const cost = round(billed * o.price);
-      lines.push({ id: o.id, name: `Articles SEO ×${q}`, qty: q, billedQty: billed, unitPrice: billed ? o.price : 0, total: cost, included: cost === 0 });
-      total += cost;
+      lines.push({ id: o.id, name: `Articles SEO ×${q}`, qty: q, billedQty: billed, unitPrice: billed ? o.price : 0, total: cost, included: cost === 0, oneTime: true });
+      oneTimeTotal += cost;
     } else if (inc > 0) {
-      lines.push({ id: o.id, name: o.name, qty: 1, billedQty: 0, unitPrice: 0, total: 0, included: true });
+      lines.push({ id: o.id, name: o.name, qty: 1, billedQty: 0, unitPrice: 0, total: 0, included: true, oneTime: false });
     } else if (input.selected.includes(o.id)) {
-      lines.push({ id: o.id, name: o.name, qty: 1, billedQty: 1, unitPrice: o.price, total: o.price, included: false });
+      lines.push({ id: o.id, name: o.name, qty: 1, billedQty: 1, unitPrice: o.price, total: o.price, included: false, oneTime: false });
       total += o.price;
     }
   }
@@ -68,5 +71,6 @@ export function computeQuote(input: QuoteInput): Quote {
     setupFee: input.engage ? 0 : SETUP_FEE,
     lines,
     totalMonthly: round(total),
+    oneTimeTotal: round(oneTimeTotal),
   };
 }
