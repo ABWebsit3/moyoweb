@@ -1,7 +1,7 @@
 ---
 // Tarifs en texte statique (HTML généré au build) : lisibles par les moteurs de recherche et les IA,
 // et sans JavaScript. Mêmes données que le calculateur (src/data/devis.ts).
-import { PLANS, OPTS, FORMULES, FORMULE_IDS, SETUP_FEE, PRICE_SUFFIX, VAT_MENTION, planFeats, planPrice } from '../data/devis';
+import { PLANS, OPTS, FORMULES, FORMULE_IDS, PRICE_SUFFIX, VAT_MENTION, planFeats, planPrice } from '../data/devis';
 
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
 const options = OPTS.filter((o) => !o.unit);
@@ -29,7 +29,7 @@ const seo = OPTS.find((o) => o.unit);
           ))}
           <tr>
             <th scope="row">Frais de mise en service</th>
-            {FORMULE_IDS.map((f) => <td>{FORMULES[f].setup ? `${eur(SETUP_FEE)} ${PRICE_SUFFIX}, à la commande` : '0 €'}</td>)}
+            {FORMULE_IDS.map(() => <td>0 €</td>)}
           </tr>
         </tbody>
       </table>

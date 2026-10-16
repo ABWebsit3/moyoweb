@@ -1,7 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { company } from '../data/legal';
-import { PLANS, SETUP_FEE, PRICE_SUFFIX, planFeats } from '../data/devis';
+import { PLANS, PRICE_SUFFIX, planFeats } from '../data/devis';
 
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
 // Projet de CGV à faire relire par un professionnel du droit avant de le considérer comme définitif.
@@ -39,9 +39,8 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
     </table>
   </div>
   <p>
-    Les offres avec engagement (24 ou 12 mois) ne comportent aucuns frais de mise en service. Les offres sans
-    engagement comportent des frais de mise en service de {eur(SETUP_FEE)} {PRICE_SUFFIX}, payables à la commande. Les
-    options sont facturées selon le tarif indiqué dans le devis. Les prix sont exprimés en euros, toutes taxes
+    Aucune offre ne comporte de frais de mise en service : la création et la mise en ligne du site sont comprises dans
+    les mensualités. Les options sont facturées selon le tarif indiqué dans le devis. Les prix sont exprimés en euros, toutes taxes
     comprises : {company.vatMention}, le prix indiqué est donc le prix payé.
   </p>
   <p>Contenu de chaque forfait :</p>
@@ -123,7 +122,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   <p>
     Le contrat est conclu pour une durée indéterminée. Le Client peut le résilier à tout moment, sans frais ni
     justification, moyennant un préavis d’un mois : la résiliation prend effet à la fin de la période mensuelle en
-    cours à l’expiration de ce préavis. Les frais de mise en service restent acquis à Moyo. À la date d’effet, le site est désactivé, sauf si le Client a demandé son transfert (voir
+    cours à l’expiration de ce préavis. À la date d’effet, le site est désactivé, sauf si le Client a demandé son transfert (voir
     article 10).
   </p>
   <h3>Comment résilier</h3>
@@ -152,8 +151,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   </p>
   <p>
     Si le site n’est pas en ligne dans un délai de 5 jours ouvrés, pour une cause imputable exclusivement à Moyo, la
-    première mensualité est offerte au Client. Cette compensation ne s’applique pas aux frais de mise en service des
-    offres sans engagement. Elle est exclusive de toute autre indemnisation au titre du retard.
+    première mensualité est offerte au Client. Cette compensation est exclusive de toute autre indemnisation au titre du retard.
   </p>
 
   <h2>7. Prestations incluses</h2>
@@ -180,7 +178,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   <p>
     Les mensualités sont payables d’avance, par prélèvement SEPA ou carte bancaire. La première mensualité est prélevée à la
     date de mise en ligne du site, puis chaque mois à la même date. La période d’engagement de 24 mois correspond
-    donc à 24 mensualités, et celle de 12 mois à 12 mensualités. Pour les offres sans engagement, les frais de mise en service sont payables à la commande. Les articles SEO
+    donc à 24 mensualités, et celle de 12 mois à 12 mensualités. Les articles SEO
     commandés en plus de ceux inclus dans le forfait sont payables une seule fois, avec la première mensualité.
   </p>
   <p>

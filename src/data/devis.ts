@@ -1,16 +1,16 @@
 // Données du module de devis.
 // Trois formules : engagement 24 mois (meilleur prix), engagement 12 mois (≈ +12 %, prix arrondis en ,99)
-// et sans engagement (prix 24 mois × 1,25, arrondi au centime, + frais de mise en service).
+// et sans engagement (prix 24 mois × 1,25, arrondi au centime). Aucuns frais de mise en service.
 // Prix TTC : TVA non applicable (art. 293 B du CGI), le prix affiché est le prix payé.
 // ⚠ La majoration « sans engagement » ne s'applique qu'au forfait, pas aux options (à confirmer).
 
 export type PlanId = 'starter' | 'pro' | 'elite';
 export type Formule = 'e24' | 'e12' | 'libre';
 
-export const FORMULES: Record<Formule, { label: string; short: string; months: number; setup: boolean }> = {
-  e24: { label: 'Engagement 24 mois', short: '24 mois', months: 24, setup: false },
-  e12: { label: 'Engagement 12 mois', short: '12 mois', months: 12, setup: false },
-  libre: { label: 'Sans engagement', short: 'sans engagement', months: 0, setup: true },
+export const FORMULES: Record<Formule, { label: string; short: string; months: number }> = {
+  e24: { label: 'Engagement 24 mois', short: '24 mois', months: 24 },
+  e12: { label: 'Engagement 12 mois', short: '12 mois', months: 12 },
+  libre: { label: 'Sans engagement', short: 'sans engagement', months: 0 },
 };
 export const FORMULE_IDS = Object.keys(FORMULES) as Formule[];
 export const isFormule = (v: unknown): v is Formule => typeof v === 'string' && v in FORMULES;
@@ -43,7 +43,6 @@ export interface Option {
   inc?: Partial<Record<PlanId, number>>;
 }
 
-export const SETUP_FEE = 600;
 export const SEO_OPTION_ID = 'seo';
 
 export const PLANS: Plan[] = [
@@ -75,7 +74,6 @@ export const OPTS: Option[] = [
 
 export const planPrice = (plan: Plan, formule: Formule) =>
   formule === 'e24' ? plan.price : formule === 'e12' ? plan.p12 : plan.free;
-export const setupFee = (formule: Formule) => (FORMULES[formule].setup ? SETUP_FEE : 0);
 
 // Contenu affiché d'un forfait : ses caractéristiques + les options incluses (dérivées de OPTS[].inc).
 export function planFeats(plan: Plan): string[] {

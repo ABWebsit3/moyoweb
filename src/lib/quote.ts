@@ -1,6 +1,6 @@
 // Calcul du devis, partagé entre le navigateur (affichage) et le serveur (/api/devis).
 // Le serveur recalcule toujours à partir des identifiants : les montants envoyés par le navigateur sont ignorés.
-import { PLANS, OPTS, SEO_OPTION_ID, planPrice as priceFor, setupFee as setupFor, type Formule, type Option, type Plan, type PlanId } from '../data/devis';
+import { PLANS, OPTS, SEO_OPTION_ID, planPrice as priceFor, type Formule, type Option, type Plan, type PlanId } from '../data/devis';
 
 export interface QuoteInput {
   plan: PlanId;
@@ -24,7 +24,6 @@ export interface Quote {
   plan: Plan;
   planPrice: number;
   formule: Formule;
-  setupFee: number; // à payer à la commande (sans engagement uniquement)
   lines: QuoteLine[];
   totalMonthly: number;
   oneTimeTotal: number; // paiements uniques (articles SEO), avec la première mensualité
@@ -68,7 +67,6 @@ export function computeQuote(input: QuoteInput): Quote {
     plan,
     planPrice,
     formule: input.formule,
-    setupFee: setupFor(input.formule),
     lines,
     totalMonthly: round(total),
     oneTimeTotal: round(oneTimeTotal),

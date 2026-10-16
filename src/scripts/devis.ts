@@ -1,4 +1,4 @@
-import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, FORMULES, PRICE_SUFFIX, VAT_MENTION, planFeats, planPrice as priceFor, isFormule, type Formule, type Option, type PlanId } from '../data/devis';
+import { PLANS, OPTS, SEO_OPTION_ID, FORMULES, PRICE_SUFFIX, VAT_MENTION, planFeats, planPrice as priceFor, isFormule, type Formule, type Option, type PlanId } from '../data/devis';
 import { computeQuote, seoQty as sharedSeoQty, type QuoteInput } from '../lib/quote';
 import { CALENDLY_URL } from '../data/site';
 import { track } from '../lib/analytics';
@@ -61,7 +61,6 @@ export function initDevis(root: HTMLElement) {
   // --- Calculs ---------------------------------------------------------------
   const plan = () => PLANS.find((p) => p.id === s.plan)!;
   const planPrice = (p = plan()) => priceFor(p, s.formule);
-  const setupDue = () => FORMULES[s.formule].setup;
   const included = (o: Option) => o.inc?.[s.plan] ?? 0;
   const seoQty = () => sharedSeoQty(s.plan, s.seo);
   const isOn = (o: Option) => (o.id === SEO_OPTION_ID ? seoQty() > 0 : included(o) > 0 || !!s.sel[o.id]);
@@ -126,7 +125,7 @@ export function initDevis(root: HTMLElement) {
         <div style="display:flex;flex-direction:column">
           <span class="dv-plan__from">À partir de</span>
           <span class="dv-plan__price"><span class="dv-plan__int">${int}</span><span class="dv-plan__dec">,${dec} € ${PRICE_SUFFIX}/mois</span></span>
-          <span class="dv-plan__setup">${setupDue() ? `+ ${SETUP_FEE} € de mise en service` : '0 € de frais'}</span>
+          <span class="dv-plan__setup">0 € de frais</span>
         </div>
         <p class="dv-plan__desc">${p.desc}</p>
         <ul class="dv-plan__feats">${planFeats(p).map((f) => `<li>${f}</li>`).join('')}</ul>
@@ -144,7 +143,7 @@ export function initDevis(root: HTMLElement) {
           {
             e24: 'Engagement initial de 24 mois : le meilleur tarif et 0 € au départ.',
             e12: 'Engagement initial de 12 mois, 0 € au départ. Ensuite, ton abonnement continue au mois, résiliable avec un préavis d’un mois.',
-            libre: `Abonnement majoré de 25 % + ${SETUP_FEE} € de mise en service payés à la commande. Résiliable à tout moment avec un préavis d’un mois.`,
+            libre: 'Abonnement majoré de 25 %, 0 € au départ. Résiliable à tout moment avec un préavis d’un mois.',
           }[s.formule]
         } Prix ${PRICE_SUFFIX} : ${VAT_MENTION}.</p>
       </div>
@@ -338,7 +337,6 @@ export function initDevis(root: HTMLElement) {
     }
     const p = plan();
     const { lines, total, oneTime } = quote();
-    const setup = setupDue();
     const terms = {
       e24: 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.',
       e12: 'Engagement initial de 12 mois, puis au mois (préavis d’un mois).',
@@ -358,7 +356,6 @@ export function initDevis(root: HTMLElement) {
           <div class="dv-ticket__rule"></div>
           <strong>&gt;&gt;&gt; FORFAIT</strong>
           ${line(`FORFAIT ${p.name.toUpperCase()} · ${FORMULES[s.formule].short.toUpperCase()}`, eur(planPrice()))}
-          ${setup ? line('MISE EN SERVICE (1 FOIS)', eur(SETUP_FEE)) : ''}
           <strong>&gt;&gt;&gt; OPTIONS</strong>
           ${lines.map((l) => line(l.name, l.price, 'dv-ticket__upper')).join('')}
           ${lines.length ? '' : '<span class="dv-ticket__muted">— aucune option —</span>'}
@@ -366,7 +363,6 @@ export function initDevis(root: HTMLElement) {
           ${line('SOUS-TOTAL', eur(total))}
           <span style="font-size:11.5px">TVA non applicable, art. 293 B du CGI</span>
           <div class="dv-ticket__total"><span>TOTAL ${PRICE_SUFFIX}</span><span>${eur(total)}/mois</span></div>
-          ${setup ? `<div class="dv-ticket__line" style="font-weight:700"><span>À PAYER À LA COMMANDE</span><span>${eur(SETUP_FEE)}</span></div>` : ''}
           ${oneTime ? `<div class="dv-ticket__line" style="font-weight:700"><span>+ 1 FOIS, AVEC LA 1RE MENSUALITÉ</span><span>${eur(oneTime)}</span></div>` : ''}
           <div class="dv-ticket__barcode" aria-hidden="true"></div>
           <span class="dv-center" style="letter-spacing:.12em">${s.barcode}</span>

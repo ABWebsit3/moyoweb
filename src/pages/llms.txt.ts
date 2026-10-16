@@ -1,7 +1,7 @@
 // llms.txt (format https://llmstxt.org) : résumé du site pour les assistants IA, généré au build
 // à partir des mêmes données que les pages (offres, options, FAQ).
 import type { APIRoute } from 'astro';
-import { PLANS, OPTS, SETUP_FEE, PRICE_SUFFIX, VAT_MENTION, planFeats } from '../data/devis';
+import { PLANS, OPTS, PRICE_SUFFIX, VAT_MENTION, planFeats } from '../data/devis';
 import { faq, clients, CONTACT_EMAIL } from '../data/site';
 import { company } from '../data/legal';
 
@@ -21,7 +21,7 @@ export const GET: APIRoute = ({ site }) => {
 
 ## Forfaits
 
-${PLANS.map((p) => `- Offre ${p.name} (${p.tag}) : ${eur(p.price)} ${PRICE_SUFFIX}/mois avec engagement 24 mois (0 € de frais), ${eur(p.p12)} ${PRICE_SUFFIX}/mois avec engagement 12 mois (0 € de frais), ${eur(p.free)} ${PRICE_SUFFIX}/mois sans engagement (+ ${eur(SETUP_FEE)} de mise en service à la commande). Inclus : ${planFeats(p).map((f) => f.replace(/ inclus$/, '')).join(', ')}.`).join('\n')}
+${PLANS.map((p) => `- Offre ${p.name} (${p.tag}) : ${eur(p.price)} ${PRICE_SUFFIX}/mois avec engagement 24 mois (0 € de frais), ${eur(p.p12)} ${PRICE_SUFFIX}/mois avec engagement 12 mois (0 € de frais), ${eur(p.free)} ${PRICE_SUFFIX}/mois sans engagement (0 € de frais). Inclus : ${planFeats(p).map((f) => f.replace(/ inclus$/, '')).join(', ')}.`).join('\n')}
 
 - Après l'engagement de 24 mois : formule Gardiennage à 25,99 € ${PRICE_SUFFIX}/mois, transfert du site à 490 € ou arrêt du service.
 - Après l'engagement de 12 mois : l'abonnement continue au mois au même tarif, résiliable avec un préavis d'un mois (transfert du site possible à 490 €).

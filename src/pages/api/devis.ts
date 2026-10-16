@@ -44,7 +44,6 @@ function proposalLines(q: Quote) {
   const lines = [
     { ...service, desc: `Offre ${q.plan.name} – abonnement mensuel (${engagement})`, qty: 1, subprice: q.planPrice },
   ];
-  if (q.setupFee) lines.push({ ...service, desc: 'Mise en service (paiement unique à la commande)', qty: 1, subprice: q.setupFee });
 
   for (const l of q.lines) {
     if (l.id === SEO_OPTION_ID) {
@@ -81,7 +80,7 @@ async function saveInDolibarr(contact: Contact, quote: Quote, ticketNo: string):
     `Demande de devis en ligne (moyoweb.fr) ${ticketNo}`.trim(),
     `Contact : ${contact.prenom} ${contact.nom}${contact.societe ? ` – ${contact.societe}` : ''} <${contact.email}>`,
     `Formule : ${quote.plan.name}, ${FORMULES[quote.formule].label.toLowerCase()}`,
-    `Total mensuel : ${eur(quote.totalMonthly)}/mois${quote.setupFee ? ` + ${eur(quote.setupFee)} de mise en service à la commande` : ''}${quote.oneTimeTotal ? ` + ${eur(quote.oneTimeTotal)} d’articles SEO (une fois, avec la première mensualité)` : ''}`,
+    `Total mensuel : ${eur(quote.totalMonthly)}/mois${quote.oneTimeTotal ? ` + ${eur(quote.oneTimeTotal)} d’articles SEO (une fois, avec la première mensualité)` : ''}`,
     'Attention : le total de la proposition additionne mensualités et frais uniques.',
   ].join('\n');
 
@@ -104,12 +103,10 @@ function ticketText(quote: Quote, ticketNo: string) {
     '',
     `Forfait : Offre ${quote.plan.name} (${FORMULES[quote.formule].label.toLowerCase()}) – ${eur(quote.planPrice)} ${PRICE_SUFFIX}/mois`,
   ];
-  if (quote.setupFee) rows.push(`Mise en service (une fois, à la commande) : ${eur(quote.setupFee)}`);
   rows.push('', 'Options :');
   if (!quote.lines.length) rows.push('  – aucune option –');
   for (const l of quote.lines) rows.push(`  • ${l.name} : ${l.included ? 'inclus' : l.oneTime ? `${eur(l.total)} (une fois)` : `${eur(l.total)}/mois`}`);
   rows.push('', `TOTAL : ${eur(quote.totalMonthly)} ${PRICE_SUFFIX}/mois`);
-  if (quote.setupFee) rows.push(`À payer à la commande : ${eur(quote.setupFee)}`);
   if (quote.oneTimeTotal) rows.push(`À payer une fois, avec la première mensualité : ${eur(quote.oneTimeTotal)}`);
   rows.push(
     'TVA non applicable, art. 293 B du CGI.',
