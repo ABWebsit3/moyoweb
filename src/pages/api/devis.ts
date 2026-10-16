@@ -5,7 +5,7 @@
 // Dans Dolibarr : retrouve le tiers par e-mail (ou le crée en prospect), ajoute un contact si une société
 // est renseignée, puis crée une proposition commerciale en brouillon avec les lignes du devis.
 import type { APIRoute } from 'astro';
-import { OPTS, SEO_OPTION_ID, type PlanId } from '../../data/devis';
+import { OPTS, SEO_OPTION_ID, FORMULES, PRICE_SUFFIX, isFormule, type Formule, type PlanId } from '../../data/devis';
 import { computeQuote, findPlan, type Quote } from '../../lib/quote';
 import { json, str, EMAIL_RE, rateLimiter, dolibarr, dolibarrKey, findThirdpartyByEmail, smtpConfigured, sendMail, MAIL_FROM } from '../../lib/server';
 import { CALENDLY_URL } from '../../data/site';
@@ -39,7 +39,7 @@ async function findOrCreateThirdparty(c: Contact): Promise<{ id: number; created
 }
 
 function proposalLines(q: Quote) {
-  const engagement = q.engage ? 'engagement 24 mois' : 'sans engagement';
+  const engagement = FORMULES[q.formule].label.toLowerCase();
   const service = { product_type: 1, tva_tx: 0 }; // service, TVA non applicable (art. 293 B du CGI)
   const lines = [
     { ...service, desc: `Offre ${q.plan.name} – abonnement mensuel (${engagement})`, qty: 1, subprice: q.planPrice },
@@ -80,7 +80,7 @@ async function saveInDolibarr(contact: Contact, quote: Quote, ticketNo: string):
   const notes = [
     `Demande de devis en ligne (moyoweb.fr) ${ticketNo}`.trim(),
     `Contact : ${contact.prenom} ${contact.nom}${contact.societe ? ` – ${contact.societe}` : ''} <${contact.email}>`,
-    `Formule : ${quote.plan.name}, ${quote.engage ? 'engagement 24 mois' : 'sans engagement'}`,
+    `Formule : ${quote.plan.name}, ${FORMULES[quote.formule].label.toLowerCase()}`,
     `Total mensuel : ${eur(quote.totalMonthly)}/mois${quote.setupFee ? ` + ${eur(quote.setupFee)} de mise en service à la commande` : ''}${quote.oneTimeTotal ? ` + ${eur(quote.oneTimeTotal)} d’articles SEO (une fois, avec la première mensualité)` : ''}`,
     'Attention : le total de la proposition additionne mensualités et frais uniques.',
   ].join('\n');
@@ -102,20 +102,22 @@ function ticketText(quote: Quote, ticketNo: string) {
   const rows = [
     `Devis ${ticketNo} – ${new Date().toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris' })}`,
     '',
-    `Forfait : Offre ${quote.plan.name} (${quote.engage ? 'engagement 24 mois' : 'sans engagement'}) – ${eur(quote.planPrice)}/mois`,
+    `Forfait : Offre ${quote.plan.name} (${FORMULES[quote.formule].label.toLowerCase()}) – ${eur(quote.planPrice)} ${PRICE_SUFFIX}/mois`,
   ];
   if (quote.setupFee) rows.push(`Mise en service (une fois, à la commande) : ${eur(quote.setupFee)}`);
   rows.push('', 'Options :');
   if (!quote.lines.length) rows.push('  – aucune option –');
   for (const l of quote.lines) rows.push(`  • ${l.name} : ${l.included ? 'inclus' : l.oneTime ? `${eur(l.total)} (une fois)` : `${eur(l.total)}/mois`}`);
-  rows.push('', `TOTAL : ${eur(quote.totalMonthly)}/mois`);
+  rows.push('', `TOTAL : ${eur(quote.totalMonthly)} ${PRICE_SUFFIX}/mois`);
   if (quote.setupFee) rows.push(`À payer à la commande : ${eur(quote.setupFee)}`);
   if (quote.oneTimeTotal) rows.push(`À payer une fois, avec la première mensualité : ${eur(quote.oneTimeTotal)}`);
   rows.push(
     'TVA non applicable, art. 293 B du CGI.',
-    quote.engage
-      ? 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.'
-      : 'Sans engagement, résiliable selon les conditions générales de vente.',
+    {
+      e24: 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.',
+      e12: 'Engagement initial de 12 mois, puis reconduction au mois (préavis d’un mois).',
+      libre: 'Sans engagement, résiliable selon les conditions générales de vente.',
+    }[quote.formule],
     'Hébergement, nom de domaine et maintenance inclus.',
   );
   return rows.join('\n');
@@ -217,7 +219,9 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return json(400, { ok: false, error: 'invalid' });
   }
 
-  const quote = computeQuote({ plan: plan as PlanId, engage: data.engage !== false, selected, seo });
+  // `engage` (booléen) : ancien format, conservé pour les pages restées en cache.
+  const formule: Formule = isFormule(data.formule) ? data.formule : data.engage === false ? 'libre' : 'e24';
+  const quote = computeQuote({ plan: plan as PlanId, formule, selected, seo });
   const ticketNo = str(data.ticketNo, 40);
 
   // Rien ne doit se perdre : Dolibarr et e-mails sont tentés indépendamment.

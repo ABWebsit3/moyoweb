@@ -21,7 +21,7 @@ import { company } from '../data/legal';
       </p>
       <ul class="rs__terms">
         <li><strong>Sans engagement et Gardiennage</strong> : résiliation à tout moment, avec un préavis d’un mois.</li>
-        <li><strong>Avec engagement (24 mois)</strong> : avant le terme, les mensualités restantes sont dues, sauf motif légitime (cessation d’activité, dissolution de l’association…).</li>
+        <li><strong>Avec engagement (24 ou 12 mois)</strong> : avant le terme, les mensualités restantes sont dues, sauf motif légitime (cessation d’activité, dissolution de l’association…). Après les 12 premiers mois, la formule 12 mois se résilie avec un préavis d’un mois.</li>
         <li>À la date d’effet, le service est coupé : ton site est désactivé et ses fichiers sont supprimés, sauf si tu demandes son transfert (490 €) avant cette date.</li>
       </ul>
       <form class="rs__form" data-form novalidate>
@@ -36,6 +36,7 @@ import { company } from '../data/legal';
             <select name="formule">
               <option value="inconnue">Je ne sais pas</option>
               <option value="engagement">Avec engagement (24 mois)</option>
+              <option value="engagement-12">Avec engagement (12 mois)</option>
               <option value="sans-engagement">Sans engagement</option>
               <option value="gardiennage">Gardiennage</option>
             </select>

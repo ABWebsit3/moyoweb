@@ -1,7 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { company } from '../data/legal';
-import { PLANS, SETUP_FEE, planFeats } from '../data/devis';
+import { PLANS, SETUP_FEE, PRICE_SUFFIX, planFeats } from '../data/devis';
 
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
 // Projet de CGV à faire relire par un professionnel du droit avant de le considérer comme définitif.
@@ -29,19 +29,20 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Forfait</th><th>Avec engagement 24 mois</th><th>Sans engagement</th></tr>
+        <tr><th>Forfait</th><th>Engagement 24 mois</th><th>Engagement 12 mois</th><th>Sans engagement</th></tr>
       </thead>
       <tbody>
         {PLANS.map((p) => (
-          <tr><td>Offre {p.name}</td><td>{eur(p.price)}/mois</td><td>{eur(p.free)}/mois</td></tr>
+          <tr><td>Offre {p.name}</td><td>{eur(p.price)} {PRICE_SUFFIX}/mois</td><td>{eur(p.p12)} {PRICE_SUFFIX}/mois</td><td>{eur(p.free)} {PRICE_SUFFIX}/mois</td></tr>
         ))}
       </tbody>
     </table>
   </div>
   <p>
-    Les offres sans engagement comportent en outre des frais de mise en service de {eur(SETUP_FEE)}, payables à la
-    commande. Les options sont facturées selon le tarif indiqué dans le devis. Les prix sont exprimés en euros.{' '}
-    {company.vatMention}.
+    Les offres avec engagement (24 ou 12 mois) ne comportent aucuns frais de mise en service. Les offres sans
+    engagement comportent des frais de mise en service de {eur(SETUP_FEE)} {PRICE_SUFFIX}, payables à la commande. Les
+    options sont facturées selon le tarif indiqué dans le devis. Les prix sont exprimés en euros, toutes taxes
+    comprises : {company.vatMention}, le prix indiqué est donc le prix payé.
   </p>
   <p>Contenu de chaque forfait :</p>
   <div class="table-wrap">
@@ -69,7 +70,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   </p>
 
   <h2>5. Durée, engagement et résiliation</h2>
-  <h3>Avec engagement</h3>
+  <h3>Engagement 24 mois</h3>
   <p>
     Le contrat est conclu pour une durée initiale de 24 mois à compter de la mise en ligne du site. En cas de
     résiliation anticipée à l’initiative du Client, hors manquement de Moyo ou motif légitime, les mensualités
@@ -90,6 +91,24 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
     Moyo informe le Client par e-mail, entre trois mois et un mois avant le terme de la période d’engagement, des
     options ci-dessus et de la date limite pour faire son choix. Sans choix exprimé par le Client avant le terme, le
     contrat se poursuit automatiquement sous la formule Gardiennage, dans les conditions prévues ci-dessous.
+  </p>
+  <h3>Engagement 12 mois</h3>
+  <p>
+    Le contrat est conclu pour une durée initiale de 12 mois à compter de la mise en ligne du site. En cas de
+    résiliation anticipée à l’initiative du Client, hors manquement de Moyo ou motif légitime (tel que défini
+    ci-dessus), les mensualités restant à courir jusqu’au terme des 12 mois restent dues.
+  </p>
+  <p>
+    À l’issue de cette durée initiale, le contrat se poursuit au même tarif pour une durée indéterminée, mois par mois.
+    Le Client peut alors le résilier à tout moment, sans frais ni justification, moyennant un préavis d’un mois : la
+    résiliation prend effet à la fin de la période mensuelle en cours à l’expiration de ce préavis. Moyo informe le
+    Client par e-mail, entre trois mois et un mois avant le terme de la durée initiale, de cette poursuite et de ses
+    conditions. À la date d’effet de la résiliation, le site est désactivé dans les conditions de l’article 5 bis,
+    sauf si le Client a demandé son transfert (article 10).
+  </p>
+  <p>
+    Lorsque la durée totale du contrat atteint 24 mois, le Client peut en outre choisir la formule Gardiennage décrite
+    ci-dessous, dans les mêmes conditions qu’à l’issue d’un engagement de 24 mois.
   </p>
   <h3>Formule Gardiennage</h3>
   <p>
@@ -161,7 +180,7 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
   <p>
     Les mensualités sont payables d’avance, par prélèvement SEPA ou carte bancaire. La première mensualité est prélevée à la
     date de mise en ligne du site, puis chaque mois à la même date. La période d’engagement de 24 mois correspond
-    donc à 24 mensualités. Pour les offres sans engagement, les frais de mise en service sont payables à la commande. Les articles SEO
+    donc à 24 mensualités, et celle de 12 mois à 12 mensualités. Pour les offres sans engagement, les frais de mise en service sont payables à la commande. Les articles SEO
     commandés en plus de ceux inclus dans le forfait sont payables une seule fois, avec la première mensualité.
   </p>
   <p>
@@ -183,8 +202,8 @@ const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
     Le Client peut à tout moment demander à Moyo le code de transfert de son nom de domaine.
   </p>
   <p>
-    À l’issue de la période d’engagement, pendant la formule Gardiennage ou lors de la résiliation d’une formule sans
-    engagement, le Client peut acquérir son site moyennant la prestation de transfert à 490 €. Après paiement complet,
+    À l’issue de la période d’engagement, pendant la formule Gardiennage, lors de la résiliation d’une formule
+    12 mois après sa durée initiale ou lors de la résiliation d’une formule sans engagement, le Client peut acquérir son site moyennant la prestation de transfert à 490 €. Après paiement complet,
     Moyo remet les fichiers du site, ses contenus et les informations utiles à sa reprise au Client ou au prestataire
     qu’il désigne, pour un hébergement de son choix, et cède au Client les droits
     patrimoniaux d’auteur sur le site (reproduction, représentation et adaptation), pour le monde entier et pour

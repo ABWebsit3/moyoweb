@@ -1,4 +1,4 @@
-import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, planFeats, type Option, type PlanId } from '../data/devis';
+import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, FORMULES, PRICE_SUFFIX, VAT_MENTION, planFeats, planPrice as priceFor, isFormule, type Formule, type Option, type PlanId } from '../data/devis';
 import { computeQuote, seoQty as sharedSeoQty, type QuoteInput } from '../lib/quote';
 import { CALENDLY_URL } from '../data/site';
 import { track } from '../lib/analytics';
@@ -9,7 +9,7 @@ type FormKey = 'nom' | 'prenom' | 'societe' | 'email';
 interface State {
   step: Step;
   plan: PlanId;
-  engage: boolean;
+  formule: Formule;
   sel: Record<string, boolean>;
   seo: number | null; // null = quantité incluse dans le forfait
   form: Record<FormKey, string>;
@@ -45,7 +45,7 @@ export function initDevis(root: HTMLElement) {
   const s: State = {
     step: 1,
     plan: 'pro',
-    engage: true,
+    formule: 'e24',
     sel: {},
     seo: null,
     form: { nom: '', prenom: '', societe: '', email: '' },
@@ -60,7 +60,8 @@ export function initDevis(root: HTMLElement) {
 
   // --- Calculs ---------------------------------------------------------------
   const plan = () => PLANS.find((p) => p.id === s.plan)!;
-  const planPrice = (p = plan()) => (s.engage ? p.price : p.free);
+  const planPrice = (p = plan()) => priceFor(p, s.formule);
+  const setupDue = () => FORMULES[s.formule].setup;
   const included = (o: Option) => o.inc?.[s.plan] ?? 0;
   const seoQty = () => sharedSeoQty(s.plan, s.seo);
   const isOn = (o: Option) => (o.id === SEO_OPTION_ID ? seoQty() > 0 : included(o) > 0 || !!s.sel[o.id]);
@@ -68,7 +69,7 @@ export function initDevis(root: HTMLElement) {
 
   const quoteInput = (): QuoteInput => ({
     plan: s.plan,
-    engage: s.engage,
+    formule: s.formule,
     selected: Object.keys(s.sel).filter((id) => s.sel[id]),
     seo: s.seo,
   });
@@ -124,8 +125,8 @@ export function initDevis(root: HTMLElement) {
         </div>
         <div style="display:flex;flex-direction:column">
           <span class="dv-plan__from">À partir de</span>
-          <span class="dv-plan__price"><span class="dv-plan__int">${int}</span><span class="dv-plan__dec">,${dec} €/mois</span></span>
-          <span class="dv-plan__setup">${s.engage ? '' : `+ ${SETUP_FEE} € de mise en service`}</span>
+          <span class="dv-plan__price"><span class="dv-plan__int">${int}</span><span class="dv-plan__dec">,${dec} € ${PRICE_SUFFIX}/mois</span></span>
+          <span class="dv-plan__setup">${setupDue() ? `+ ${SETUP_FEE} € de mise en service` : '0 € de frais'}</span>
         </div>
         <p class="dv-plan__desc">${p.desc}</p>
         <ul class="dv-plan__feats">${planFeats(p).map((f) => `<li>${f}</li>`).join('')}</ul>
@@ -135,14 +136,17 @@ export function initDevis(root: HTMLElement) {
     return `
       <div class="dv-toggle-row">
         <div class="dv-toggle" role="group" aria-label="Type d’abonnement">
-          <button type="button" data-engage="1" aria-pressed="${s.engage}">Engagement 24 mois<span class="dv-toggle__badge">Meilleur prix</span></button>
-          <button type="button" data-engage="0" aria-pressed="${!s.engage}">Sans engagement</button>
+          <button type="button" data-formule="e24" aria-pressed="${s.formule === 'e24'}">24 mois<span class="dv-toggle__badge">Meilleur prix</span></button>
+          <button type="button" data-formule="e12" aria-pressed="${s.formule === 'e12'}">12 mois</button>
+          <button type="button" data-formule="libre" aria-pressed="${s.formule === 'libre'}">Sans engagement</button>
         </div>
         <p class="dv-note">${
-          s.engage
-            ? 'Engagement initial de 24 mois, tarif préférentiel et 0 € au départ.'
-            : `Abonnement majoré de 30 % + ${SETUP_FEE} € de mise en service payés à la commande. Résiliable à tout moment avec un préavis d’un mois.`
-        }</p>
+          {
+            e24: 'Engagement initial de 24 mois : le meilleur tarif et 0 € au départ.',
+            e12: 'Engagement initial de 12 mois, 0 € au départ. Ensuite, ton abonnement continue au mois, résiliable avec un préavis d’un mois.',
+            libre: `Abonnement majoré de 25 % + ${SETUP_FEE} € de mise en service payés à la commande. Résiliable à tout moment avec un préavis d’un mois.`,
+          }[s.formule]
+        } Prix ${PRICE_SUFFIX} : ${VAT_MENTION}.</p>
       </div>
       <div class="dv-plans">${plans}</div>
       <div class="dv-actions">
@@ -158,12 +162,12 @@ export function initDevis(root: HTMLElement) {
       const incl = isIncluded(o);
       const isSeo = o.id === SEO_OPTION_ID;
       const fg = on && o.color === '#8A4FFF' ? '#fff' : '#17131F';
-      let priceLabel = eur(o.price) + '/mois';
+      let priceLabel = eur(o.price) + ` ${PRICE_SUFFIX}/mois`;
       let qty = '';
       if (isSeo) {
         const q = seoQty();
         const i = included(o);
-        priceLabel = (i ? i + ' inclus · ' : '') + eur(o.price) + '/article, 1 fois';
+        priceLabel = (i ? i + ' inclus · ' : '') + eur(o.price) + ` ${PRICE_SUFFIX}/article, 1 fois`;
         qty = `<div class="dv-qty">
           <button type="button" data-seo="-1" aria-label="Retirer un article">−</button>
           <span class="dv-qty__label" aria-live="polite">${q} article${q > 1 ? 's' : ''}</span>
@@ -232,7 +236,7 @@ export function initDevis(root: HTMLElement) {
     return `
       <div style="display:flex;flex-direction:column;gap:20px">
         <div class="dv-sent">${s.mailed ? `✓ Devis envoyé à ${esc(s.form.email.trim())}` : '✓ Demande de devis enregistrée'}</div>
-        <h3 class="dv-result-title">Ton site ${plan().name} pour ${eur(total)}/mois, ${esc(s.form.prenom.trim() || 'toi')}.</h3>
+        <h3 class="dv-result-title">Ton site ${plan().name} pour ${eur(total)} ${PRICE_SUFFIX}/mois, ${esc(s.form.prenom.trim() || 'toi')}.</h3>
         <div class="dv-result-text">
           <p>Le devis que tu vois n’est qu’une première esquisse : il sert à te donner une idée générale.</p>
           <p>Après ton premier café (ou thé !) avec notre équipe, on pourra peaufiner les chiffres, ajouter ou retirer des options, et faire en sorte que tout colle parfaitement à tes besoins.</p>
@@ -334,10 +338,12 @@ export function initDevis(root: HTMLElement) {
     }
     const p = plan();
     const { lines, total, oneTime } = quote();
-    const setup = !s.engage;
-    const terms = s.engage
-      ? 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.'
-      : 'Sans engagement · résiliable à tout moment, préavis d’un mois.';
+    const setup = setupDue();
+    const terms = {
+      e24: 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.',
+      e12: 'Engagement initial de 12 mois, puis au mois (préavis d’un mois).',
+      libre: 'Sans engagement · résiliable à tout moment, préavis d’un mois.',
+    }[s.formule];
     const line = (a: string, b: string, cls = '') =>
       `<div class="dv-ticket__line"><span class="${cls}">${a}</span><span>${b}</span></div>`;
 
@@ -351,7 +357,7 @@ export function initDevis(root: HTMLElement) {
           </div>
           <div class="dv-ticket__rule"></div>
           <strong>&gt;&gt;&gt; FORFAIT</strong>
-          ${line(`FORFAIT ${p.name.toUpperCase()} ×1`, eur(planPrice()))}
+          ${line(`FORFAIT ${p.name.toUpperCase()} · ${FORMULES[s.formule].short.toUpperCase()}`, eur(planPrice()))}
           ${setup ? line('MISE EN SERVICE (1 FOIS)', eur(SETUP_FEE)) : ''}
           <strong>&gt;&gt;&gt; OPTIONS</strong>
           ${lines.map((l) => line(l.name, l.price, 'dv-ticket__upper')).join('')}
@@ -359,7 +365,7 @@ export function initDevis(root: HTMLElement) {
           <div class="dv-ticket__rule"></div>
           ${line('SOUS-TOTAL', eur(total))}
           <span style="font-size:11.5px">TVA non applicable, art. 293 B du CGI</span>
-          <div class="dv-ticket__total"><span>TOTAL</span><span>${eur(total)}/mois</span></div>
+          <div class="dv-ticket__total"><span>TOTAL ${PRICE_SUFFIX}</span><span>${eur(total)}/mois</span></div>
           ${setup ? `<div class="dv-ticket__line" style="font-weight:700"><span>À PAYER À LA COMMANDE</span><span>${eur(SETUP_FEE)}</span></div>` : ''}
           ${oneTime ? `<div class="dv-ticket__line" style="font-weight:700"><span>+ 1 FOIS, AVEC LA 1RE MENSUALITÉ</span><span>${eur(oneTime)}</span></div>` : ''}
           <div class="dv-ticket__barcode" aria-hidden="true"></div>
@@ -404,7 +410,7 @@ export function initDevis(root: HTMLElement) {
         s.qt = typeof body.qt === 'string' ? body.qt : '';
         const q = computeQuote(quoteInput());
         // GA4 : renseignements envoyés (événement recommandé « generate_lead »).
-        track('generate_lead', { value: q.totalMonthly, currency: 'EUR', plan: q.plan.name, engagement: q.engage });
+        track('generate_lead', { value: q.totalMonthly, currency: 'EUR', plan: q.plan.name, formule: q.formule });
       } catch {
         s.sending = false;
         s.error = 'Oups, l’envoi n’a pas fonctionné. Réessaie dans un instant ou écris-nous à hello@moyoweb.fr.';
@@ -435,7 +441,7 @@ export function initDevis(root: HTMLElement) {
   const markStarted = () => {
     if (started) return;
     started = true;
-    track('devis_start', { plan: s.plan, engagement: s.engage });
+    track('devis_start', { plan: s.plan, formule: s.formule });
   };
 
   root.addEventListener('click', (e) => {
@@ -443,7 +449,7 @@ export function initDevis(root: HTMLElement) {
     const cal = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href*="calendly.com"]');
     if (cal) track('calendly_click', { location: s.step === 4 ? 'devis_resultat' : 'devis_besoin_specifique', plan: s.plan });
     const t = (e.target as HTMLElement).closest<HTMLElement>(
-      '[data-go],[data-engage],[data-plan],[data-next],[data-prev],[data-restart],[data-seo],[data-opt],[data-calendly-load]',
+      '[data-go],[data-formule],[data-plan],[data-next],[data-prev],[data-restart],[data-seo],[data-opt],[data-calendly-load]',
     );
     if (!t || !root.contains(t)) return;
     markStarted();
@@ -454,8 +460,8 @@ export function initDevis(root: HTMLElement) {
       loadCalendly();
     } else if (d.go) {
       if (s.step !== 4) go(Number(d.go) as Step);
-    } else if (d.engage) {
-      s.engage = d.engage === '1';
+    } else if (d.formule) {
+      if (isFormule(d.formule)) s.formule = d.formule;
       render();
     } else if (d.plan) {
       s.plan = d.plan as PlanId;

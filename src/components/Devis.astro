@@ -4,6 +4,7 @@
 // Envoi : POST JSON vers /api/devis (relais Dolibarr, src/pages/api/devis.ts).
 // PUBLIC_DEVIS_ENDPOINT permet de pointer vers une autre URL si besoin.
 const endpoint = import.meta.env.PUBLIC_DEVIS_ENDPOINT ?? '';
+import Tarifs from './Tarifs.astro';
 ---
 
 <section id="devis" class="container devis" data-devis data-endpoint={endpoint}>
@@ -22,6 +23,8 @@ const endpoint = import.meta.env.PUBLIC_DEVIS_ENDPOINT ?? '';
     </div>
     <aside class="devis__ticket-col" data-ticket hidden></aside>
   </div>
+
+  <Tarifs />
 </section>
 
 <script>

@@ -39,4 +39,4 @@ export const mail = {
 // Entité contractante européenne de Stripe d'après son Privacy Center ; à confirmer dans le contrat Stripe du compte.
 export const paymentProvider = 'Stripe (Stripe Payments Europe, Limited, Irlande)';
 
-export const legalUpdatedAt = '14 octobre 2026';
+export const legalUpdatedAt = '16 octobre 2026';

@@ -1,10 +1,10 @@
 // Calcul du devis, partagé entre le navigateur (affichage) et le serveur (/api/devis).
 // Le serveur recalcule toujours à partir des identifiants : les montants envoyés par le navigateur sont ignorés.
-import { PLANS, OPTS, SETUP_FEE, SEO_OPTION_ID, type Option, type Plan, type PlanId } from '../data/devis';
+import { PLANS, OPTS, SEO_OPTION_ID, planPrice as priceFor, setupFee as setupFor, type Formule, type Option, type Plan, type PlanId } from '../data/devis';
 
 export interface QuoteInput {
   plan: PlanId;
-  engage: boolean;
+  formule: Formule;
   selected: string[]; // options cochées (hors options incluses et hors articles SEO)
   seo: number | null; // nombre d'articles SEO, null = quantité incluse dans le forfait
 }
@@ -23,8 +23,8 @@ export interface QuoteLine {
 export interface Quote {
   plan: Plan;
   planPrice: number;
-  engage: boolean;
-  setupFee: number; // à payer à la commande (0 avec engagement)
+  formule: Formule;
+  setupFee: number; // à payer à la commande (sans engagement uniquement)
   lines: QuoteLine[];
   totalMonthly: number;
   oneTimeTotal: number; // paiements uniques (articles SEO), avec la première mensualité
@@ -42,7 +42,7 @@ export const seoQty = (plan: PlanId, seo: number | null) => {
 export function computeQuote(input: QuoteInput): Quote {
   const plan = findPlan(input.plan);
   if (!plan) throw new Error('Forfait inconnu');
-  const planPrice = input.engage ? plan.price : plan.free;
+  const planPrice = priceFor(plan, input.formule);
   const lines: QuoteLine[] = [];
   let total = planPrice;
   let oneTimeTotal = 0;
@@ -67,8 +67,8 @@ export function computeQuote(input: QuoteInput): Quote {
   return {
     plan,
     planPrice,
-    engage: input.engage,
-    setupFee: input.engage ? 0 : SETUP_FEE,
+    formule: input.formule,
+    setupFee: setupFor(input.formule),
     lines,
     totalMonthly: round(total),
     oneTimeTotal: round(oneTimeTotal),

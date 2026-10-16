@@ -10,6 +10,7 @@ const rateLimited = rateLimiter(5, 10 * 60 * 1000);
 
 const FORMULES: Record<string, string> = {
   engagement: 'Formule avec engagement (24 mois)',
+  'engagement-12': 'Formule avec engagement (12 mois)',
   'sans-engagement': 'Formule sans engagement',
   gardiennage: 'Formule Gardiennage',
   inconnue: 'Je ne sais pas',

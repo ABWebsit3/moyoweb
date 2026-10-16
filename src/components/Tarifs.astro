@@ -1,0 +1,86 @@
+---
+// Tarifs en texte statique (HTML généré au build) : lisibles par les moteurs de recherche et les IA,
+// et sans JavaScript. Mêmes données que le calculateur (src/data/devis.ts).
+import { PLANS, OPTS, FORMULES, FORMULE_IDS, SETUP_FEE, PRICE_SUFFIX, VAT_MENTION, planFeats, planPrice } from '../data/devis';
+
+const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
+const options = OPTS.filter((o) => !o.unit);
+const seo = OPTS.find((o) => o.unit);
+---
+
+<details class="tarifs" data-reveal>
+  <summary>Voir toutes les formules et leur contenu</summary>
+  <div class="tarifs__body">
+    <div class="tarifs__wrap">
+      <table>
+        <caption>Prix mensuels {PRICE_SUFFIX} ({VAT_MENTION})</caption>
+        <thead>
+          <tr>
+            <th scope="col">Forfait</th>
+            {FORMULE_IDS.map((f) => <th scope="col">{FORMULES[f].label}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {PLANS.map((p) => (
+            <tr>
+              <th scope="row">Offre {p.name}<br /><small>{p.tag}</small></th>
+              {FORMULE_IDS.map((f) => <td>{eur(planPrice(p, f))} {PRICE_SUFFIX}/mois</td>)}
+            </tr>
+          ))}
+          <tr>
+            <th scope="row">Frais de mise en service</th>
+            {FORMULE_IDS.map((f) => <td>{FORMULES[f].setup ? `${eur(SETUP_FEE)} ${PRICE_SUFFIX}, à la commande` : '0 €'}</td>)}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tarifs__note">
+      Engagement 24 mois : ensuite Gardiennage à 25,99 €/mois, transfert du site à 490 € ou arrêt.
+      Engagement 12 mois : ensuite l’abonnement continue au mois, résiliable avec un préavis d’un mois.
+      Sans engagement : résiliable à tout moment avec un préavis d’un mois.
+    </p>
+
+    <div class="tarifs__plans">
+      {PLANS.map((p) => (
+        <section>
+          <h3>Offre {p.name}</h3>
+          <ul>{planFeats(p).map((f) => <li>{f}</li>)}</ul>
+        </section>
+      ))}
+    </div>
+
+    <h3>Options</h3>
+    <ul class="tarifs__opts">
+      {options.map((o) => (
+        <li>
+          <strong>{o.name}</strong> : {eur(o.price)} {PRICE_SUFFIX}/mois
+          {o.inc && Object.keys(o.inc).length > 0 && (
+            <Fragment> (inclus en {PLANS.filter((p) => (o.inc?.[p.id] ?? 0) > 0).map((p) => p.name).join(' et ')})</Fragment>
+          )}. {o.desc}
+        </li>
+      ))}
+      {seo && (
+        <li>
+          <strong>{seo.name}</strong> : {eur(seo.price)} {PRICE_SUFFIX} l’article, paiement unique (
+          {PLANS.filter((p) => (seo.inc?.[p.id] ?? 0) > 0).map((p) => `${seo.inc?.[p.id]} inclus en ${p.name}`).join(', ')}). {seo.desc}
+        </li>
+      )}
+    </ul>
+    <p class="tarifs__note">{VAT_MENTION} : le prix affiché est le prix payé. Détails dans les <a href="/cgv/">conditions générales de vente</a>.</p>
+  </div>
+</details>
+
+<style>
+  .tarifs { border: var(--border); border-radius: 18px; background: #fff; }
+  .tarifs summary { cursor: pointer; padding: 18px 22px; font-weight: 800; color: var(--ink); }
+  .tarifs__body { padding: 0 22px 22px; display: flex; flex-direction: column; gap: 16px; color: var(--text); font-size: 15.5px; line-height: 1.55; }
+  .tarifs__wrap { overflow-x: auto; }
+  .tarifs table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  .tarifs caption { text-align: left; font-weight: 700; padding-bottom: 8px; color: var(--ink); }
+  .tarifs th, .tarifs td { border: 1px solid var(--rule); padding: 8px 10px; text-align: left; vertical-align: top; }
+  .tarifs thead th { background: var(--lilac); color: var(--ink); }
+  .tarifs h3 { margin: 6px 0 0; font-size: 18px; color: var(--ink); }
+  .tarifs__plans { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+  .tarifs__plans ul, .tarifs__opts { margin: 6px 0 0; padding-left: 20px; }
+  .tarifs__note { margin: 0; font-size: 14px; color: var(--muted); }
+</style>

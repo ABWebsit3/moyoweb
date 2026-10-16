@@ -1,6 +1,7 @@
 // Contenus de la page d'accueil (repris de la maquette « Moyo Landing »).
 // Les avis clients sont fictifs (maquette) : la section est masquée tant que SHOW_REVIEWS vaut false.
 
+import { PLANS, SETUP_FEE, VAT_MENTION } from './devis';
 import logo from '../assets/moyo_logo.png';
 import transat from '../assets/moyo_transat.png';
 import surprised from '../assets/moyo_surprised.png';
@@ -34,13 +35,13 @@ export const keyFigures = [
 ];
 
 export const compare = [
-  { label: 'Pour démarrer', them: '1 500 à 3 000 € d’un coup', us: '0 € avec engagement, juste une mensualité' },
+  { label: 'Pour démarrer', them: '1 500 à 3 000 € d’un coup', us: '0 € avec engagement (12 ou 24 mois), juste une mensualité' },
   { label: 'Hébergement & domaine', them: 'En supplément', us: 'Inclus' },
   { label: 'Mises à jour & sécurité', them: 'Facturées à chaque fois', us: 'Incluses' },
   { label: 'Délai de mise en ligne', them: '4 à 8 semaines', us: '3 à 5 jours ouvrés' },
   { label: 'Modifications', them: 'Devis à chaque demande', us: '60 min/mois incluses' },
   { label: 'Nom de domaine', them: 'Souvent au nom de l’agence', us: 'Enregistré à ton nom' },
-  { label: 'Formule', them: 'Une seule formule, à prendre ou à laisser', us: '24 mois au meilleur tarif, ou sans engagement' },
+  { label: 'Formule', them: 'Une seule formule, à prendre ou à laisser', us: '24 mois au meilleur tarif, 12 mois, ou sans engagement' },
 ];
 
 export const steps = [
@@ -64,7 +65,7 @@ export const timeline = [
 ];
 
 export const guarantees = [
-  { icon: '↺', color: '#7EE08F', title: 'Avec ou sans engagement', text: 'Avec engagement, tu profites du meilleur tarif. Sans, tu gardes ta liberté. C’est toi qui choisis.' },
+  { icon: '↺', color: '#7EE08F', title: 'Avec ou sans engagement', text: '24 mois pour le meilleur tarif, 12 mois sans frais, ou sans engagement pour garder ta liberté. C’est toi qui choisis.' },
   { icon: '⚡', color: '#F49B2A', title: 'Livré en 3 à 5 jours ouvrés', text: 'Délai garanti à compter de la réception de tous tes contenus. En retard de notre fait ? Ta première mensualité est offerte.' },
   { icon: '🔒', color: '#EFE6FF', title: 'Paiement sécurisé', text: 'Prélèvement SEPA ou carte bancaire, via une plateforme certifiée.' },
 ];
@@ -78,10 +79,15 @@ export const reviews = [
   { quote: 'Le site a tout de suite fait la différence sur Google. Et l’équipe est vraiment sympa, ce qui ne gâche rien.', name: 'Karim B.', role: 'TKL Miami', initials: 'KB', bg: '#FFE3BF', rot: '-.5deg' },
 ];
 
+// Prix de la FAQ tirés de src/data/devis.ts (aucune copie à resynchroniser).
+const eurFr = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
+const prices = (k: 'price' | 'p12' | 'free') => PLANS.map((p) => `${p.name} ${eurFr(p[k])}`).join(', ');
+
 export const faq = [
-  ['Avec ou sans engagement, quelle différence ?', 'Avec engagement, tu bénéficies d’un tarif mensuel préférentiel, avec une durée minimale fixée dans le contrat. Sans engagement, l’abonnement est majoré de 30 % et résiliable à tout moment avec un préavis d’un mois. Tu peux aussi récupérer ton site via le transfert à 490 € au moment de la résiliation.'],
-  ['Y a-t-il des frais de mise en service ?', 'Uniquement pour les offres sans engagement : 600 € fixes, payés à la commande. Ils financent la conception et la mise en ligne de ton site. Avec engagement, 0 € au départ.'],
-  ['Combien ça coûte ?', 'Avec l’engagement de 24 mois : Essentielle 44,99 €/mois, Standard 74,99 €/mois, Premium 144,99 €/mois. Sans engagement : 58,49 €, 97,49 € et 188,49 €/mois, plus 600 € de mise en service.'],
+  ['Avec ou sans engagement, quelle différence ?', 'Trois formules : l’engagement 24 mois, au meilleur tarif et sans frais ; l’engagement 12 mois, environ 12 % plus cher mais toujours sans frais, qui continue ensuite au mois ; et le sans engagement, majoré de 25 % avec 600 € de mise en service, résiliable à tout moment avec un préavis d’un mois. Tu peux aussi récupérer ton site via le transfert à 490 € au moment de la résiliation.'],
+  ['Y a-t-il des frais de mise en service ?', 'Uniquement pour les offres sans engagement : 600 € TTC fixes, payés à la commande. Ils financent la conception et la mise en ligne de ton site. Avec un engagement de 12 ou 24 mois, 0 € au départ.'],
+  ['Combien ça coûte ?', `Prix TTC par mois. Engagement 24 mois : ${prices('price')}. Engagement 12 mois : ${prices('p12')}. Sans engagement : ${prices('free')}, plus ${SETUP_FEE} € de mise en service. ${VAT_MENTION} : le prix affiché est le prix payé.`],
+  ['Et la formule 12 mois ?', 'Tu t’engages pour 12 mois seulement, sans frais de départ. À la fin de la première année, ton abonnement continue au mois au même tarif, et tu peux le résilier à tout moment avec un préavis d’un mois (avec le transfert de ton site à 490 € si tu le souhaites).'],
   ['En combien de temps mon site est-il en ligne ?', 'Notre délai cible est de 3 à 5 jours ouvrés, dès qu’on a reçu tous les contenus nécessaires (textes, images, logo…). Si on dépasse ce délai de notre fait, ta première mensualité est offerte.'],
   ['Avec quoi est fait mon site ?', 'Ton site est construit avec Astro, et tu disposes d’un espace d’édition WordPress ou TinaCMS selon ton besoin. Hébergement, maintenance et assistance dépendent de la formule choisie.'],
   ['Les modifications et la maintenance sont-elles incluses ?', 'Oui : maintenance de ton site et de ton espace d’édition (WordPress ou TinaCMS) avec leurs extensions et dépendances, sauvegardes, mises à jour et contrôles de sécurité. Tu as aussi 60 minutes par mois de petites modifications de contenu (non reportées d’un mois à l’autre). Créations de pages, refontes et développements supplémentaires font l’objet d’un devis.'],
