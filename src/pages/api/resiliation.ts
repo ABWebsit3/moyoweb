@@ -82,7 +82,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         recap,
         '',
         'Nous te confirmerons par e-mail, dans les meilleurs délais, la date à laquelle ton contrat prendra fin',
-        'et les effets de la résiliation (site désactivé et fichiers supprimés, ou, si tu le demandes avant cette date, transfert à 490 €),',
+        'et les effets de la résiliation (site désactivé et fichiers supprimés, ou, si tu le demandes avant cette date, transfert du site à 199 € après un engagement ou 499 € sans engagement),',
         'conformément aux conditions générales de vente : https://moyoweb.fr/cgv/',
         '',
         'Une question ? Réponds simplement à cet e-mail.',

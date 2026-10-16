@@ -1,7 +1,7 @@
 ---
 // Tarifs en texte statique (HTML généré au build) : lisibles par les moteurs de recherche et les IA,
 // et sans JavaScript. Mêmes données que le calculateur (src/data/devis.ts).
-import { PLANS, OPTS, FORMULES, FORMULE_IDS, PRICE_SUFFIX, VAT_MENTION, planFeats, planPrice } from '../data/devis';
+import { PLANS, OPTS, FORMULES, FORMULE_IDS, TRANSFER_FEE, PRICE_SUFFIX, VAT_MENTION, planFeats, planPrice } from '../data/devis';
 
 const eur = (n: number) => n.toFixed(2).replace('.', ',') + ' €';
 const options = OPTS.filter((o) => !o.unit);
@@ -31,13 +31,17 @@ const seo = OPTS.find((o) => o.unit);
             <th scope="row">Frais de mise en service</th>
             {FORMULE_IDS.map(() => <td>0 €</td>)}
           </tr>
+          <tr>
+            <th scope="row">Récupération du site (transfert)</th>
+            {FORMULE_IDS.map((f) => <td>{TRANSFER_FEE[f]} € {PRICE_SUFFIX}, une fois</td>)}
+          </tr>
         </tbody>
       </table>
     </div>
     <p class="tarifs__note">
-      Engagement 24 mois : ensuite Gardiennage à 25,99 €/mois, transfert du site à 490 € ou arrêt.
-      Engagement 12 mois : ensuite l’abonnement continue au mois, résiliable avec un préavis d’un mois.
-      Sans engagement : résiliable à tout moment avec un préavis d’un mois.
+      Engagement 24 mois : ensuite Gardiennage à 25,99 € TTC/mois, transfert du site à {TRANSFER_FEE.e24} € TTC ou arrêt.
+      Engagement 12 mois : ensuite l’abonnement continue au mois, résiliable avec un préavis d’un mois ; transfert du site à {TRANSFER_FEE.e12} € TTC.
+      Sans engagement : résiliable à tout moment avec un préavis d’un mois ; transfert du site à {TRANSFER_FEE.libre} € TTC.
     </p>
 
     <div class="tarifs__plans">

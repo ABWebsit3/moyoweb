@@ -338,9 +338,9 @@ export function initDevis(root: HTMLElement) {
     const p = plan();
     const { lines, total, oneTime } = quote();
     const terms = {
-      e24: 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.',
-      e12: 'Engagement initial de 12 mois, puis au mois (préavis d’un mois).',
-      libre: 'Sans engagement · résiliable à tout moment, préavis d’un mois.',
+      e24: 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 199 €.',
+      e12: 'Engagement initial de 12 mois, puis au mois (préavis d’un mois). Transfert du site : 199 €.',
+      libre: 'Sans engagement · résiliable à tout moment, préavis d’un mois. Transfert du site : 499 €.',
     }[s.formule];
     const line = (a: string, b: string, cls = '') =>
       `<div class="dv-ticket__line"><span class="${cls}">${a}</span><span>${b}</span></div>`;

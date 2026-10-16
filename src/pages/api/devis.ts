@@ -111,9 +111,9 @@ function ticketText(quote: Quote, ticketNo: string) {
   rows.push(
     'TVA non applicable, art. 293 B du CGI.',
     {
-      e24: 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert 490 €.',
-      e12: 'Engagement initial de 12 mois, puis reconduction au mois (préavis d’un mois).',
-      libre: 'Sans engagement, résiliable selon les conditions générales de vente.',
+      e24: 'Engagement initial de 24 mois. Ensuite : gardiennage 25,99 €/mois ou transfert du site 199 €.',
+      e12: 'Engagement initial de 12 mois, puis reconduction au mois (préavis d’un mois). Transfert du site : 199 €.',
+      libre: 'Sans engagement, résiliable selon les conditions générales de vente. Transfert du site : 499 €.',
     }[quote.formule],
     'Hébergement, nom de domaine et maintenance inclus.',
   );

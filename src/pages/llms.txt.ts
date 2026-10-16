@@ -23,9 +23,9 @@ export const GET: APIRoute = ({ site }) => {
 
 ${PLANS.map((p) => `- Offre ${p.name} (${p.tag}) : ${eur(p.price)} ${PRICE_SUFFIX}/mois avec engagement 24 mois (0 € de frais), ${eur(p.p12)} ${PRICE_SUFFIX}/mois avec engagement 12 mois (0 € de frais), ${eur(p.free)} ${PRICE_SUFFIX}/mois sans engagement (0 € de frais). Inclus : ${planFeats(p).map((f) => f.replace(/ inclus$/, '')).join(', ')}.`).join('\n')}
 
-- Après l'engagement de 24 mois : formule Gardiennage à 25,99 € ${PRICE_SUFFIX}/mois, transfert du site à 490 € ou arrêt du service.
-- Après l'engagement de 12 mois : l'abonnement continue au mois au même tarif, résiliable avec un préavis d'un mois (transfert du site possible à 490 €).
-- Sans engagement : résiliable à tout moment avec un préavis d'un mois.
+- Après l'engagement de 24 mois : formule Gardiennage à 25,99 € ${PRICE_SUFFIX}/mois, transfert du site à 199 € ou arrêt du service.
+- Après l'engagement de 12 mois : l'abonnement continue au mois au même tarif, résiliable avec un préavis d'un mois (transfert du site possible à 199 €).
+- Sans engagement : résiliable à tout moment avec un préavis d'un mois (transfert du site possible à 499 €).
 
 ## Options (prix mensuels TTC, sauf articles SEO)
 

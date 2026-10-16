@@ -15,6 +15,10 @@ export const FORMULES: Record<Formule, { label: string; short: string; months: n
 export const FORMULE_IDS = Object.keys(FORMULES) as Formule[];
 export const isFormule = (v: unknown): v is Formule => typeof v === 'string' && v in FORMULES;
 
+// Prestation de transfert (récupération du site) : 199 € après un engagement de 24 ou 12 mois
+// (et pendant le Gardiennage), 499 € pour une formule sans engagement.
+export const TRANSFER_FEE: Record<Formule, number> = { e24: 199, e12: 199, libre: 499 };
+
 export const PRICE_SUFFIX = 'TTC';
 export const VAT_MENTION = 'TVA non applicable, art. 293 B du CGI';
 
