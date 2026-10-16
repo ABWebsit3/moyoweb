@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /questionnaire/
+
+Sitemap: https://moyoweb.fr/sitemap.xml
