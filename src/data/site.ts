@@ -8,17 +8,18 @@ import surprised from '../assets/moyo_surprised.png';
 import tkl from '../assets/tkllobster.webp';
 import jd from '../assets/jdeventandhomedesign.webp';
 import lucas from '../assets/lucasinvestimmo.webp';
+import obaria from '../assets/obaria.webp';
 
 // Images optimisées au build via <Image> (astro:assets).
-export const IMAGES = { logo, transat, surprised, tkl, jd, lucas };
+export const IMAGES = { logo, transat, surprised, tkl, jd, lucas, obaria };
 
 export const CONTACT_EMAIL = 'hello@moyoweb.fr';
 
 // Prise de rendez-vous après un devis (simple lien : aucun script ni cookie Calendly sur le site).
 export const CALENDLY_URL = 'https://calendly.com/moyoweb/30min';
 
-// Clients réels. Jessica Da Veiga (jdeventandhomedesign.fr) est mise en avant : seul site encore en ligne.
-export const clients = ['Jessica Da Veiga', 'TKL Miami', 'Lucas Invest Immo'];
+// Clients réels. Jessica Da Veiga (jdeventandhomedesign.fr) et Obaria (obaria.fr) sont mis en avant : sites en ligne.
+export const clients = ['Jessica Da Veiga', 'Obaria', 'TKL Miami', 'Lucas Invest Immo'];
 
 export const nav = [
   { href: '/#concept', label: 'Quésako ?' },
