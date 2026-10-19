@@ -10,6 +10,8 @@ import jd from '../assets/jdeventandhomedesign.webp';
 import lucas from '../assets/lucasinvestimmo.webp';
 import obaria from '../assets/obaria.webp';
 import obariaLogo from '../assets/obaria-logo.png';
+import jdLogo from '../assets/jd-logo.png';
+import lucasLogo from '../assets/lucas-logo.png';
 
 // Images optimisées au build via <Image> (astro:assets).
 export const IMAGES = { logo, transat, surprised, tkl, jd, lucas, obaria, obariaLogo };
@@ -21,8 +23,9 @@ export const CALENDLY_URL = 'https://calendly.com/moyoweb/30min';
 
 // Clients réels. Jessica Da Veiga (jdeventandhomedesign.fr) et Obaria (obaria.fr) sont mis en avant : sites en ligne.
 export const clients = ['Jessica Da Veiga', 'Obaria', 'TKL Miami', 'Lucas Invest Immo'];
-// Logos disponibles (sinon le nom est affiché en texte). Obaria : logo repris d'une capture de obaria.fr.
-export const clientLogos: Record<string, typeof obariaLogo> = { Obaria: obariaLogo };
+// Logos disponibles (sinon le nom est affiché en texte), recolorés dans le gris de la bande.
+// Obaria : repris d'une capture de obaria.fr ; Jessica Da Veiga et Lucas Invest Immo : fichiers fournis.
+export const clientLogos: Record<string, typeof obariaLogo> = { 'Jessica Da Veiga': jdLogo, Obaria: obariaLogo, 'Lucas Invest Immo': lucasLogo };
 
 export const nav = [
   { href: '/#concept', label: 'Quésako ?' },
