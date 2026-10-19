@@ -1,11 +1,18 @@
 ---
-import { clients } from '../data/site';
-// Wordmarks texte en attendant les vrais logos clients.
+import { Image } from 'astro:assets';
+import { clients, clientLogos } from '../data/site';
+// Logo du client s'il est disponible, sinon son nom en texte.
 ---
 
 <section class="container logos" aria-label="Ils nous font confiance" data-reveal-stagger>
   <span class="logos__kicker">Ils ont sauté le pas</span>
-  {clients.map((name) => <span class="logos__item">{name}</span>)}
+  {clients.map((name) =>
+    clientLogos[name] ? (
+      <Image src={clientLogos[name]} alt={name} class="logos__img" height={40} densities={[1, 2]} />
+    ) : (
+      <span class="logos__item">{name}</span>
+    ),
+  )}
 </section>
 
 <style>
@@ -25,5 +32,6 @@ import { clients } from '../data/site';
     text-transform: uppercase;
     color: var(--muted);
   }
+  .logos :global(.logos__img) { height: 40px; width: auto; display: block; }
   .logos__item { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--logo-grey); }
 </style>

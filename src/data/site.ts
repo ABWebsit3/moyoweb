@@ -1,5 +1,5 @@
 // Contenus de la page d'accueil (repris de la maquette « Moyo Landing »).
-// Les avis clients sont fictifs (maquette) : la section est masquée tant que SHOW_REVIEWS vaut false.
+// Avis clients : uniquement des avis réels, transmis par les clients.
 
 import { PLANS, VAT_MENTION } from './devis';
 import logo from '../assets/moyo_logo.png';
@@ -9,9 +9,10 @@ import tkl from '../assets/tkllobster.webp';
 import jd from '../assets/jdeventandhomedesign.webp';
 import lucas from '../assets/lucasinvestimmo.webp';
 import obaria from '../assets/obaria.webp';
+import obariaLogo from '../assets/obaria-logo.png';
 
 // Images optimisées au build via <Image> (astro:assets).
-export const IMAGES = { logo, transat, surprised, tkl, jd, lucas, obaria };
+export const IMAGES = { logo, transat, surprised, tkl, jd, lucas, obaria, obariaLogo };
 
 export const CONTACT_EMAIL = 'hello@moyoweb.fr';
 
@@ -20,6 +21,8 @@ export const CALENDLY_URL = 'https://calendly.com/moyoweb/30min';
 
 // Clients réels. Jessica Da Veiga (jdeventandhomedesign.fr) et Obaria (obaria.fr) sont mis en avant : sites en ligne.
 export const clients = ['Jessica Da Veiga', 'Obaria', 'TKL Miami', 'Lucas Invest Immo'];
+// Logos disponibles (sinon le nom est affiché en texte). Obaria : logo repris d'une capture de obaria.fr.
+export const clientLogos: Record<string, typeof obariaLogo> = { Obaria: obariaLogo };
 
 export const nav = [
   { href: '/#concept', label: 'Quésako ?' },
@@ -71,13 +74,19 @@ export const guarantees = [
   { icon: '🔒', color: '#EFE6FF', title: 'Paiement sécurisé', text: 'Prélèvement SEPA ou carte bancaire, via une plateforme certifiée.' },
 ];
 
-// ⚠ Avis fictifs (maquette) : à remplacer par de vrais avis avant de passer SHOW_REVIEWS à true.
-export const SHOW_REVIEWS = false;
+// Avis clients réels uniquement (jamais d'avis inventé).
+export const SHOW_REVIEWS = true;
 
 export const reviews = [
-  { quote: 'J’avais un devis à 2 400 € ailleurs. Avec Moyo, mon site était en ligne en 4 jours et je paie moins que mon forfait téléphone.', name: 'Lucas M.', role: 'Lucas Invest Immo', initials: 'LM', bg: '#EFE6FF', rot: '-1deg' },
-  { quote: 'Je leur envoie un message pour changer mes horaires, c’est fait dans l’heure. Je ne pense plus du tout à mon site.', name: 'Sofia R.', role: 'Atelier Brume, céramiste', initials: 'SR', bg: '#7EE08F', rot: '.8deg' },
-  { quote: 'Le site a tout de suite fait la différence sur Google. Et l’équipe est vraiment sympa, ce qui ne gâche rien.', name: 'Karim B.', role: 'TKL Miami', initials: 'KB', bg: '#FFE3BF', rot: '-.5deg' },
+  {
+    quote: 'Merci Moyo pour mon site ! Avec le système de réservation que vous m’avez créé, plus besoin de faire de la paperasse à longueur de journée ! Je gagne un temps fou et je peux enfin me concentrer sur mon activité. Simple, pratique et efficace !',
+    stars: 5,
+    name: 'Obaria',
+    role: 'Massages bien-être · obaria.fr',
+    initials: 'O',
+    bg: '#EFE6FF',
+    rot: '-.6deg',
+  },
 ];
 
 // Prix de la FAQ tirés de src/data/devis.ts (aucune copie à resynchroniser).

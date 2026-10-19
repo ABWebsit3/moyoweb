@@ -1,21 +1,16 @@
 ---
 import { reviews } from '../data/site';
-// ⚠ Note et avis fictifs (maquette) : à remplacer par les vrais avis Google.
+// Avis réels uniquement. Pas de note moyenne affichée tant qu'il n'y a pas assez d'avis vérifiables.
 ---
 
 <section class="container reviews">
   <div class="section-head">
     <h2 class="h2"><span class="hl hl--green">Ils en parlent mieux que nous</span></h2>
-    <div class="reviews__score">
-      {/* TODO [À COMPLÉTER : source de la note 4,9/5] — section masquée (SHOW_REVIEWS) tant que les avis sont fictifs. */}
-      <span class="display" style="font-size:34px">4,9/5</span>
-      <span class="reviews__count">★★★★★ note moyenne</span>
-    </div>
   </div>
-  <div class="grid-auto" style="--min:300px" data-reveal-stagger>
+  <div class="reviews__grid" data-reveal-stagger>
     {reviews.map((r) => (
       <figure class="card review" style={`background:${r.bg};transform:rotate(${r.rot})`}>
-        <span class="review__stars" aria-label="5 étoiles sur 5">★★★★★</span>
+        <span class="review__stars" role="img" aria-label={`${r.stars} étoiles sur 5`}>{'★'.repeat(r.stars)}{'☆'.repeat(5 - r.stars)}</span>
         <blockquote class="review__quote">“{r.quote}”</blockquote>
         <figcaption class="review__author">
           <span class="review__avatar" aria-hidden="true">{r.initials}</span>
@@ -31,8 +26,8 @@ import { reviews } from '../data/site';
 
 <style>
   .reviews { padding-top: 96px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 40px; }
-  .reviews__score { display: flex; flex-direction: column; align-items: flex-end; }
-  .reviews__count { font-size: 14px; color: var(--muted); }
+  .reviews__grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+  .reviews__grid:has(> :only-child) { grid-template-columns: minmax(0, 640px); }
   .review { margin: 0; padding: 26px; display: flex; flex-direction: column; gap: 18px; }
   .review__stars { font-size: 18px; letter-spacing: 2px; }
   .review__quote { margin: 0; font-size: 18px; line-height: 1.45; font-weight: 500; text-wrap: pretty; }
