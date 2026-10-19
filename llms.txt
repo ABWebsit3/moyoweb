@@ -1,0 +1,58 @@
+# Moyo
+
+> Moyo crée des sites internet professionnels en location mensuelle pour les professionnels et les associations : site livré clé en main en 3 à 5 jours ouvrés, hébergé, sécurisé et maintenu, dès 44,99 € TTC/mois avec engagement de 24 mois, avec un engagement de 12 mois ou sans engagement. Moyo est un service d'ABweb (France).
+
+- Clientèle : professionnels (indépendants, entreprises) et associations uniquement, pas les particuliers.
+- Inclus dans tous les forfaits : hébergement, nom de domaine au nom du client, maintenance et sécurité, 60 minutes de petites modifications par mois.
+- Technologies : sites construits avec Astro, espace d'édition WordPress ou TinaCMS selon le besoin.
+- Prix TTC : TVA non applicable, art. 293 B du CGI (le prix affiché est le prix payé).
+- Contact : hello@moyoweb.fr
+
+## Forfaits
+
+- Offre Essentielle (Site vitrine essentiel) : 44,99 € TTC/mois avec engagement 24 mois (0 € de frais), 49,99 € TTC/mois avec engagement 12 mois (0 € de frais), 56,24 € TTC/mois sans engagement (0 € de frais). Inclus : 1 site vitrine 1–3 pages, Design personnalisé, Formulaire de contact, Nom de domaine + hébergement, Maintenance + sécurité, 60 min/mois de modifications, Support Moyo-friendly.
+- Offre Standard (Site vitrine plus complet) : 74,99 € TTC/mois avec engagement 24 mois (0 € de frais), 83,99 € TTC/mois avec engagement 12 mois (0 € de frais), 93,74 € TTC/mois sans engagement (0 € de frais). Inclus : 1 site 1–6 pages, Design premium, Formulaire de contact, Nom de domaine + hébergement, SEO de base, Maintenance + sécurité + optimisation, 60 min/mois de modifications, Support Moyo-friendly, 3 articles SEO, Site multilingue, Google My Business, Rapport Analytics.
+- Offre Premium (Site avec besoins avancés) : 144,99 € TTC/mois avec engagement 24 mois (0 € de frais), 162,99 € TTC/mois avec engagement 12 mois (0 € de frais), 181,24 € TTC/mois sans engagement (0 € de frais). Inclus : Site complet 1–10 pages, Design sur-mesure, Formulaire de contact, Intégration API / automatisations, Nom de domaine + hébergement, SEO premium, Maintenance + sécurité + optimisation, 60 min/mois de modifications, Support Moyo-friendly, 6 articles SEO, Site multilingue, Google My Business, Rapport Analytics.
+
+- Après l'engagement de 24 mois : formule Gardiennage à 25,99 € TTC/mois, transfert du site à 199 € ou arrêt du service.
+- Après l'engagement de 12 mois : l'abonnement continue au mois au même tarif, résiliable avec un préavis d'un mois (transfert du site possible à 199 €).
+- Sans engagement : résiliable à tout moment avec un préavis d'un mois (transfert du site possible à 499 €).
+
+## Options (prix mensuels TTC, sauf articles SEO)
+
+- E-commerce : 66,99 €/mois. Un module pour vendre tes produits. Création des produits et configuration avec la banque incluses.
+- Articles SEO : 9,99 € par article (paiement unique). Articles de blog optimisés pour le référencement naturel. Paiement unique par article. Inclus en Standard (3) et Premium (6).
+- Site multilingue : 16,99 €/mois. Ton site en plusieurs langues (une langue incluse, frais possibles par langue en plus). Inclus en Standard et Premium.
+- Système de réservation : 20,99 €/mois. Calendrier de réservation en ligne pour tes rendez-vous.
+- Chat Messenger / WhatsApp : 5,99 €/mois. Tes visiteurs te contactent en un clic via Messenger ou WhatsApp.
+- Fil d’actualités : 15,99 €/mois. Affiche tes derniers posts Instagram / Facebook.
+- Création de logo : 39,99 €/mois. Un logo tout beau tout neuf !
+- Google My Business : 4,99 €/mois. Une fiche établissement visible directement dans les recherches Google. Inclus en Standard et Premium.
+- Newsletter / Emailing : 34,99 €/mois. Un envoi par mois pour tenir tes clients au courant de tes promos.
+- SEA (Google) : 11,99 €/mois. Mise en place de ta visibilité payante sur Google (hors budget publicité).
+- SEA (Facebook) : 11,99 €/mois. Mise en place de ta visibilité payante sur Facebook (hors budget publicité).
+- Rapport Analytics : 3,99 €/mois. Suis le nombre de visites sur ton site, et plus encore. Inclus en Standard et Premium.
+
+## Questions fréquentes
+
+- Avec ou sans engagement, quelle différence ? Trois formules : l’engagement 24 mois, au meilleur tarif et sans frais ; l’engagement 12 mois, environ 12 % plus cher mais toujours sans frais, qui continue ensuite au mois ; et le sans engagement, majoré de 25 %, lui aussi sans frais, résiliable à tout moment avec un préavis d’un mois. Tu peux aussi récupérer ton site au moment de la résiliation : transfert à 199 € après un engagement de 12 ou 24 mois, 499 € sans engagement.
+- Y a-t-il des frais de mise en service ? Non, aucuns frais : quelle que soit la formule (24 mois, 12 mois ou sans engagement), la conception et la mise en ligne de ton site sont comprises dans la mensualité. 0 € au départ.
+- Combien ça coûte ? Prix TTC par mois. Engagement 24 mois : Essentielle 44,99 €, Standard 74,99 €, Premium 144,99 €. Engagement 12 mois : Essentielle 49,99 €, Standard 83,99 €, Premium 162,99 €. Sans engagement : Essentielle 56,24 €, Standard 93,74 €, Premium 181,24 €. Aucuns frais de mise en service. TVA non applicable, art. 293 B du CGI : le prix affiché est le prix payé.
+- Et la formule 12 mois ? Tu t’engages pour 12 mois seulement, sans frais de départ. À la fin de la première année, ton abonnement continue au mois au même tarif, et tu peux le résilier à tout moment avec un préavis d’un mois (avec le transfert de ton site à 199 € si tu le souhaites).
+- En combien de temps mon site est-il en ligne ? Notre délai cible est de 3 à 5 jours ouvrés, dès qu’on a reçu tous les contenus nécessaires (textes, images, logo…). Si on dépasse ce délai de notre fait, ta première mensualité est offerte.
+- Avec quoi est fait mon site ? Ton site est construit avec Astro, et tu disposes d’un espace d’édition WordPress ou TinaCMS selon ton besoin. Hébergement, maintenance et assistance dépendent de la formule choisie.
+- Les modifications et la maintenance sont-elles incluses ? Oui : maintenance de ton site et de ton espace d’édition (WordPress ou TinaCMS) avec leurs extensions et dépendances, sauvegardes, mises à jour et contrôles de sécurité. Tu as aussi 60 minutes par mois de petites modifications de contenu (non reportées d’un mois à l’autre). Créations de pages, refontes et développements supplémentaires font l’objet d’un devis.
+- Que se passe-t-il après 24 mois ? Trois options : le Gardiennage à 25,99 €/mois (hébergement, maintenance, 45 min d’assistance par mois, gestion du domaine), sans engagement ; le transfert à 199 € pour récupérer tes fichiers et contenus et partir chez l’hébergeur de ton choix ; ou l’arrêt du service. Si tu ne choisis rien, ton site passe automatiquement en Gardiennage : on te prévient par e-mail avant l’échéance.
+- Combien coûte la récupération de mon site ? Le transfert (envoi des fichiers du site, de ses contenus et des informations utiles à toi ou à ton nouveau prestataire, avec cession des droits sur le site) coûte 199 € TTC après un engagement de 12 ou 24 mois, ou pendant le Gardiennage, et 499 € TTC avec la formule sans engagement. Il se demande avant la date de fin du service.
+- À qui appartient le nom de domaine ? Il est enregistré à ton nom. On en assure simplement la gestion technique pendant la durée du service, et on t’accompagne s’il doit être transféré.
+
+## Pages
+
+- [Accueil et calcul de devis](https://moyoweb.fr/): présentation de l'offre, comparatif, réalisations (Jessica Da Veiga, Obaria, TKL Miami, Lucas Invest Immo) et calculateur de devis en ligne.
+- [Conditions générales de vente](https://moyoweb.fr/cgv/): durée, engagement, résiliation, paiement, propriété du site.
+- [Mentions légales](https://moyoweb.fr/mentions-legales/): éditeur et hébergeur.
+- [Politique de confidentialité](https://moyoweb.fr/confidentialite/): données personnelles et cookies.
+
+## Optional
+
+- [Résilier ton contrat](https://moyoweb.fr/resiliation/): résiliation en ligne.
